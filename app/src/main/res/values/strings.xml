@@ -1,0 +1,11 @@
+<resources>
+    <string name="allAlbumName">All</string>
+    <string name="favoriteAlbumName">Favorite</string>
+    <string name="addAlbumText">Insert name...</string>
+    <string name="addAlbumSaveText">Save</string>
+    <string name="addAlbumCancelText">Cancel</string>
+    <string name="longString">retfe rwer gwerg werg werg erg werg re greg ergerg </string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="emptyAudioList">No audio</string>
+</resources>
