@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 
 class AudioListAdapter(private val ctx: MainActivity): BaseAdapter() {
     var ltInflater: LayoutInflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater;
-    private val model = ctx.getModel()
+    private val model = ViewModelProvider(ctx).get(Model::class.java)
     private val audioLiveData = model?.getAudioData()
     private val audioPlayLiveData = model?.getAudioPlayItemData()
 
@@ -35,7 +37,7 @@ class AudioListAdapter(private val ctx: MainActivity): BaseAdapter() {
         name?.text = itemData.name
 
         audioPlayContent.setOnClickListener {
-            model?.setAudioPlayData(itemData)
+            model?.audioPlayItemLiveData?.value = itemData
         }
         return view
     }

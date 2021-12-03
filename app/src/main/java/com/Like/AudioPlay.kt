@@ -12,8 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -28,21 +29,20 @@ class AudioPlay : Fragment() {
     var nameScroll: HorizontalScrollView? = null
     var audioTimer: CountDownTimer? = null
     private var itemData: MutableLiveData<Constants.Audio>? = null
-    private val mediaPlayer: MediaPlayer = MediaPlayer()
+    private val mediaPlayer: MediaPlayer by lazy { model?.mediaPlayer!! }
     private var audioData: MutableLiveData<ArrayList<Constants.Audio>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        model = ViewModelProvider(activity as MainActivity).get()
+        itemData = model?.getAudioPlayItemData()
+        audioData = model?.getAudioData()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val callActivity = activity as MainActivity
-        model = callActivity.getModel()
-        itemData = model?.getAudioPlayItemData()
-        audioData = model?.getAudioData()
         return inflater.inflate(R.layout.audio_play, container, false)
     }
 
@@ -50,19 +50,24 @@ class AudioPlay : Fragment() {
         super.onStart()
 
         if (view?.isVisible === true) {
-            initPlayBtn()
             progress = view?.findViewById(R.id.audioPlayProgress)
             name = view?.findViewById(R.id.audioName)
             duration = view?.findViewById(R.id.audioPlayDuration)
+
+            name?.text = itemData?.value?.name
+            duration?.text = getTime(itemData?.value?.duration?.toLong())
+            progress?.max = itemData?.value?.duration!!
+
             nameScroll = view?.findViewById(R.id.nameScroll)
             audioTimer = getTrackTimer()
-            val act: MainActivity = activity as MainActivity
-            val b = act.getModel()
+            initPlayBtn()
             itemData?.observe(viewLifecycleOwner, {
-                mediaPlayer.reset()
-
-                initMediaPlayerData(itemData!!)
                 if (!isInit) {
+                    name?.text = itemData?.value?.name
+                    duration?.text = getTime(itemData?.value?.duration?.toLong())
+                    progress?.max = itemData?.value?.duration!!
+                    mediaPlayer.reset()
+                    initMediaPlayerData(itemData!!)
                     mediaPlayer.start()
                     audioTimer?.start()
                     playBtn?.setBackgroundResource(R.drawable.stop)
@@ -75,7 +80,15 @@ class AudioPlay : Fragment() {
 
     private fun initPlayBtn() {
         playBtn = view?.findViewById(R.id.audioPlayPause)
-        mediaPlayer.setDataSource(itemData?.value?.url)
+        if (mediaPlayer.isPlaying) {
+            playBtn?.isChecked = mediaPlayer.isPlaying
+            playBtn?.setBackgroundResource(R.drawable.stop)
+            audioTimer?.start()
+            startNameScroll()
+        } else {
+            mediaPlayer.reset()
+            mediaPlayer.setDataSource(itemData?.value?.url)
+        }
         playBtn?.setOnClickListener {
             if (playBtn?.isChecked == true) {
                 playBtn?.setBackgroundResource(R.drawable.stop)
@@ -90,12 +103,9 @@ class AudioPlay : Fragment() {
     }
 
     private fun initMediaPlayerData(itemData: MutableLiveData<Constants.Audio>) {
-        name?.text = itemData.value?.name
-        duration?.text = getTime(itemData.value?.duration?.toLong())
-        progress?.max = itemData.value?.duration!!
         val audioAttributes = AudioAttributes.Builder()
         audioAttributes.setLegacyStreamType(AudioManager.STREAM_MUSIC)
-        mediaPlayer.setDataSource(requireContext(), Uri.parse(itemData.value?.url))
+        mediaPlayer.setDataSource(itemData?.value?.url)
         mediaPlayer.setAudioAttributes(audioAttributes.build())
         mediaPlayer.prepare()
     }

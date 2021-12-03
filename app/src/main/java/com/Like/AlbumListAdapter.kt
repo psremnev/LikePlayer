@@ -12,11 +12,12 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 
 class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentManager): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
     var preHolder: ViewHolder? = null
-    private val model = ctx.getModel()
+    private val model = ViewModelProvider(ctx).get(Model::class.java)
     val dataHelper = DataHelper(ctx)
     val albumLiveData = model?.getAlbumData()
     val audioLiveData = model?.getAudioData()
@@ -82,7 +83,7 @@ class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentMa
             if (preHolder !== null) {
                 preHolder!!.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.album_info))
             }
-            audioLiveData?.value = dataHelper?.getAllAudioByAlbumId(itemData.id!!)
+            audioLiveData.value = dataHelper.getAllAudioByAlbumId(itemData.id!!)
             holder.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
             preHolder = holder
         }

@@ -14,30 +14,40 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import java.io.InputStream
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
-    private var dataHelper: DataHelper? = null
-    private var frgManager: FragmentManager? = null
-    private var model: Model? = null
+    private val dataHelper: DataHelper by lazy { DataHelper(this) }
+    private val model: Model by lazy { ViewModelProvider(this).get() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        dataHelper = DataHelper(this)
-        model = Model(application)
-        frgManager = supportFragmentManager
-        initNewMp3Songs()
-        initAddAlbumBtn()
-        initAlbumList()
-        initAudioList()
+        if (savedInstanceState === null) {
+            initModelData()
+            initNewMp3Songs()
+            initAddAlbumBtn()
+            initAlbumList()
+            initAudioList()
+        } else {
+            initAddAlbumBtn()
+            initAlbumList()
+            initAudioList()
+        }
+    }
+
+    private fun initModelData() {
+        model.audioLiveData.value = dataHelper?.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
+        model.albumLiveData.value = dataHelper?.getAllAlbum()
+        val audioData = model.audioLiveData.value
+        if (audioData !== null && audioData?.size !== 0) {
+            model.audioPlayItemLiveData.value = audioData[0]
+        }
+        model.dataHelper = dataHelper
     }
 
     @SuppressLint("Range")
@@ -87,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         val addAlbumBtn: Button = findViewById(R.id.addAlbumBtn)
         addAlbumBtn.setOnClickListener {
             val addAlbumFrg: DialogFragment = AddAlbumDialog()
-            addAlbumFrg.show(frgManager!!, "addAlbum")
+            addAlbumFrg.show(supportFragmentManager, "addAlbum")
         }
     }
 
@@ -97,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         albumList.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
         val albumLiveData: MutableLiveData<ArrayList<Constants.Album>>? = model?.getAlbumData()
-        albumList.adapter = AlbumListAdapter(this, frgManager!!)
+        albumList.adapter = AlbumListAdapter(this, supportFragmentManager)
         albumLiveData?.observe(this, {
             albumList.adapter?.notifyDataSetChanged()
         })
@@ -140,9 +150,5 @@ class MainActivity : AppCompatActivity() {
                 audioData = newAudioData
             }
         })
-    }
-
-    fun getModel(): Model? {
-        return model
     }
 }

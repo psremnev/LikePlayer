@@ -1,6 +1,5 @@
 package com.Like
 
-import android.app.Application
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +10,8 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 
 class AddAlbumDialog(private val adapter: AlbumListAdapter? = null): DialogFragment() {
     var albumPosition: Int? = null
@@ -21,18 +22,18 @@ class AddAlbumDialog(private val adapter: AlbumListAdapter? = null): DialogFragm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        model = ViewModelProvider(activity as MainActivity).get()
+        dataHelper = DataHelper(requireContext())
+        albumLiveData = model?.getAlbumData()
+        albumPosition = arguments?.getInt("position")
+        albumName = arguments?.getString("name")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val callActivity = activity as MainActivity
-        model = callActivity.getModel()
-        dataHelper = DataHelper(requireContext())
-        albumLiveData = model?.getAlbumData()
-        albumPosition = arguments?.getInt("position")
-        albumName = arguments?.getString("name")
         return inflater.inflate(R.layout.add_album_dialog, container, false)
     }
 
@@ -67,7 +68,7 @@ class AddAlbumDialog(private val adapter: AlbumListAdapter? = null): DialogFragm
                 } else {
                     // если добавление нового альбома
                     val newAlbum = object: Constants.Album {
-                        override val id: Int? = null
+                        override val id: Int? = albumLiveData?.value?.size!! + 1
                         override var name = albumName.toString()
                         override val audioCount = 0
                     }
