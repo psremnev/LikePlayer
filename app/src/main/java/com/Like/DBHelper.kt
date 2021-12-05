@@ -22,6 +22,7 @@ class DBHelper(context: Context?): SQLiteOpenHelper(context, DATABASE_NAME, null
                     + KEY_URL + " text,"
                     + KEY_DURATION + " integer, "
                     + KEY_ALBUM + " text, "
+                    + KEY_ALBUM_ID + " text, "
                     + KEY_ARTIST + " text)"
         )
     }
@@ -44,5 +45,6 @@ class DBHelper(context: Context?): SQLiteOpenHelper(context, DATABASE_NAME, null
         const val KEY_AUDIO_COUNT = "audio_count"
         const val KEY_DURATION = "duration"
         const val KEY_ARTIST = "artist"
+        const val KEY_ALBUM_ID = "albumId"
     }
 }

@@ -8,4 +8,5 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="emptyAudioList">No audio</string>
+    <string name="emptyAlbumPhoto">No Photo</string>
 </resources>

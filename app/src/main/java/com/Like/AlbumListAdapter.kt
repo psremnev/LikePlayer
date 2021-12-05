@@ -19,8 +19,6 @@ class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentMa
     var preHolder: ViewHolder? = null
     private val model = ViewModelProvider(ctx).get(Model::class.java)
     val dataHelper = DataHelper(ctx)
-    val albumLiveData = model?.getAlbumData()
-    val audioLiveData = model?.getAudioData()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.albumName)
@@ -65,7 +63,7 @@ class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentMa
                             }
                             R.id.delete -> {
                                 dataHelper.deleteAlbum(itemData.id)
-                                albumLiveData?.value?.remove(itemData)
+                                model.albumLiveData.value?.remove(itemData)
                                 notifyItemRemoved(position)
                             }
                         }
@@ -83,17 +81,17 @@ class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentMa
             if (preHolder !== null) {
                 preHolder!!.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.album_info))
             }
-            audioLiveData.value = dataHelper.getAllAudioByAlbumId(itemData.id!!)
+            model.audioLiveData.value = dataHelper.getAllAudioByAlbumId(itemData.id!!)
             holder.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
             preHolder = holder
         }
     }
 
     override fun getItemCount(): Int {
-        return albumLiveData?.value!!.size
+        return model.albumLiveData?.value!!.size
     }
 
     private fun getItemData(position: Int): Constants.Album {
-        return albumLiveData?.value!![position]
+        return model.albumLiveData?.value!![position]
     }
 }

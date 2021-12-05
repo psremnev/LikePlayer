@@ -8,6 +8,8 @@ object Constants {
     const val audioType: String = "audio/mpeg"
     const val AL_ALBUM_ID = 1
     const val FAVORITE_ALBUM_ID = 2
+    const val unknownArtist = "<unknown>"
+    const val ALBUM_ART_URI = "content://media/external/audio/albumart"
     interface Album {
         val id: Int?
         var name: String
@@ -20,6 +22,7 @@ object Constants {
         val duration: Int
         val artist: String
         val url: String
+        val albumId: Long
         val album: Int
     }
 

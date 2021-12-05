@@ -23,6 +23,7 @@ class DataHelper(ctx: Context) {
             val artistIndex = cursor.getColumnIndex(DBHelper.KEY_ARTIST)
             val urlIndex = cursor.getColumnIndex(DBHelper.KEY_URL)
             val albumIndex = cursor.getColumnIndex(DBHelper.KEY_ALBUM)
+            val albumUrlIndex = cursor.getColumnIndex(DBHelper.KEY_ALBUM_ID)
             do {
                 audioData .add(
                     object: Constants.Audio {
@@ -31,6 +32,7 @@ class DataHelper(ctx: Context) {
                         override val duration = cursor.getInt(durationIndex)
                         override val artist = cursor.getString(artistIndex)
                         override val url = cursor.getString(urlIndex)
+                        override val albumId = cursor.getLong(albumUrlIndex)
                         override val album = cursor.getInt(albumIndex)
                     }
                 );
@@ -56,6 +58,7 @@ class DataHelper(ctx: Context) {
         audioValues.put(DBHelper.KEY_ARTIST, data.artist)
         audioValues.put(DBHelper.KEY_URL, data.url)
         audioValues.put(DBHelper.KEY_ALBUM, data.album)
+        audioValues.put(DBHelper.KEY_ALBUM_ID, data.albumId)
         database.insert(DBHelper.DATABASE_AUDIO_NAME, null, audioValues);
         audioValues.clear()
     }
@@ -66,6 +69,7 @@ class DataHelper(ctx: Context) {
         audioValues.put(DBHelper.KEY_ARTIST, data.artist)
         audioValues.put(DBHelper.KEY_URL, data.url)
         audioValues.put(DBHelper.KEY_ALBUM, data.album)
+        audioValues.put(DBHelper.KEY_ALBUM_ID, data.albumId)
         database.update(DBHelper.DATABASE_AUDIO_NAME, audioValues,"id=${data.id}", null);
         audioValues.clear()
     }

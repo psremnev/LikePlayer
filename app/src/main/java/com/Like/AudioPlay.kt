@@ -20,8 +20,9 @@ import kotlin.collections.ArrayList
 
 class AudioPlay : Fragment() {
     private var model: Model? = null
-    private var isInit: Boolean = true;
+    private var isInit: Boolean = true
     private var progress: ProgressBar? = null
+    var fragmentVisibility: Boolean = false;
     var name: TextView? = null
     var duration: TextView? = null
     var playBtn: ToggleButton? = null
@@ -34,7 +35,7 @@ class AudioPlay : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProvider(activity as MainActivity).get()
-        itemData = model?.getAudioPlayItemData()
+        itemData = model?.audioPlayItemLiveData
         audioData = model?.getAudioData()
     }
 
@@ -42,13 +43,13 @@ class AudioPlay : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        fragmentVisibility = container?.visibility === View.VISIBLE
         return inflater.inflate(R.layout.audio_play, container, false)
     }
 
     override fun onStart() {
         super.onStart()
-
-        if (view?.isVisible === true) {
+        if (fragmentVisibility) {
             progress = view?.findViewById(R.id.audioPlayProgress)
             name = view?.findViewById(R.id.audioName)
             duration = view?.findViewById(R.id.audioPlayDuration)

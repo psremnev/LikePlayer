@@ -26,7 +26,4 @@ class Model(): ViewModel() {
         return audioPlayItemLiveData
     }
 
-    fun getSaveDataHelper(): DataHelper {
-        return dataHelper!!
-    }
 }

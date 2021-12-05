@@ -2,8 +2,6 @@ package com.Like
 
 import android.annotation.SuppressLint
 import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,9 +12,10 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
-import java.io.InputStream
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -28,8 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState === null) {
-            initModelData()
             initNewMp3Songs()
+            initModelData()
             initAddAlbumBtn()
             initAlbumList()
             initAudioList()
@@ -59,13 +58,12 @@ class MainActivity : AppCompatActivity() {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    val fileType =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE))
+                    val fileType = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE))
                     if (fileType == Constants.audioType) {
                         val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                        val audioCursor = dataHelper?.getAudio(id)
-                        if (audioCursor?.count === 0) {
-                            dataHelper?.addAudio(object : Constants.Audio {
+                        val audioCursor = dataHelper.getAudio(id)
+                        if (audioCursor.count === 0) {
+                            dataHelper.addAudio(object : Constants.Audio {
                                 override val id =
                                     cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
                                 override val name =
@@ -76,6 +74,7 @@ class MainActivity : AppCompatActivity() {
                                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
                                 override val url =
                                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                                override val albumId: Long = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
                                 override val album = Constants.AL_ALBUM_ID
                             })
                         }
@@ -84,13 +83,6 @@ class MainActivity : AppCompatActivity() {
             }
             cursor.close()
         }
-    }
-
-    fun getBitmapByLink(fileName: String): Bitmap? {
-        var bitmap: Bitmap? = null
-        val inputStream: InputStream = assets.open(fileName)
-        bitmap = BitmapFactory.decodeStream(inputStream)
-        return bitmap
     }
 
     private fun initAddAlbumBtn() {
@@ -144,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 
         // обновление данных по альбому
         audioData?.observe(this, {
-            val newAudioData = model?.getAudioData()
+            val newAudioData = model.audioLiveData
             isVisible = setVisibility(newAudioData?.value)
             if (audioData !== newAudioData?.value) {
                 audioData = newAudioData
