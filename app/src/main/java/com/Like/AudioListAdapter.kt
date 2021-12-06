@@ -1,7 +1,9 @@
 package com.Like
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +13,16 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import java.io.File
+import android.provider.MediaStore
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.core.net.toFile
+import java.io.FileNotFoundException
+import java.io.InputStream
+import java.lang.RuntimeException
+
 
 class AudioListAdapter(private val ctx: MainActivity):
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
@@ -33,32 +45,52 @@ class AudioListAdapter(private val ctx: MainActivity):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val position = holder.adapterPosition
         val itemData = getItemData(position)
-        val newName = itemData.name.replace(Regex("""[.com.mp3]*"""), "")
-        holder.name?.text = newName
-        if (itemData.artist != Constants.unknownArtist) {
-            holder.artist?.text = itemData.artist
-        } else {
-            holder.artist?.text = ""
+        val setName = {
+            holder.name?.text = itemData.name
         }
-        val uri = getImageUriByAlbumId(itemData.albumId)
-        holder.image?.setImageURI(uri)
-        // если нет превью у аудио
-        if (holder.image?.drawable == null) {
-            holder.emptyAlbumPhoto.visibility = View.VISIBLE
+        val setArtist = {
+            if (itemData.artist != Constants.unknownArtist) {
+                holder.artist?.text = itemData.artist
+            } else {
+                holder.artist?.text = ""
+            }
+        }
+        val setPhoto = {
+            val sArtworkUri = Uri.parse(Constants.ALBUM_ART_URI)
+            val uri: Uri = ContentUris.withAppendedId(sArtworkUri, itemData.albumId)
+            try {
+                val inputStr = ctx.contentResolver.openInputStream(uri)
+                val bitmap = BitmapFactory.decodeStream(inputStr)
+                holder.emptyAlbumPhoto.visibility = View.GONE
+                holder.image?.setImageBitmap(bitmap)
+            } catch (e: FileNotFoundException) {
+                holder.emptyAlbumPhoto.visibility = View.VISIBLE
+            }
         }
 
-        holder.audioPlayContent.setOnClickListener {
-            model.audioPlayItemLiveData.value = itemData
-            model.playItemPos = position
+        val setListeners = {
+            holder.audioPlayContent.setOnClickListener {
+                model.audioPlayItemLiveData.value = itemData
+                model.playItemPos = position
+            }
+            holder.menu?.setOnClickListener{
+                val args = Bundle()
+                args.putInt("audioPos", position)
+                val frg = SelectAlbumDialog()
+                frg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
+                frg.arguments = args
+                frg.show(ctx.supportFragmentManager, "selectAlbum")
+            }
         }
-        holder.menu?.setOnClickListener{
-            val args = Bundle()
-            args.putInt("audioPos", position)
-            val frg = SelectAlbumDialog()
-            frg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
-            frg.arguments = args
-            frg.show(ctx.supportFragmentManager, "selectAlbum")
+
+        setName()
+        setArtist()
+        setPhoto()
+        setListeners()
+        if (holder.image?.drawable === null) {
+            holder.emptyAlbumPhoto.visibility = View.VISIBLE
         }
     }
 
@@ -68,10 +100,5 @@ class AudioListAdapter(private val ctx: MainActivity):
 
     private fun getItemData(position: Int): Constants.Audio {
         return model.audioLiveData.value!![position]
-    }
-
-    private fun getImageUriByAlbumId(albumId: Long): Uri {
-        val sArtworkUri = Uri.parse(Constants.ALBUM_ART_URI)
-        return ContentUris.withAppendedId(sArtworkUri, albumId)
     }
 }

@@ -2,6 +2,8 @@ package com.Like
 
 import android.annotation.SuppressLint
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -68,11 +70,11 @@ class MainActivity : AppCompatActivity() {
                         val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
                         val audioCursor = dataHelper.getAudio(id)
                         if (audioCursor.count === 0) {
+                            val baseName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                             dataHelper.addAudio(object : Constants.Audio {
                                 override val id =
                                     cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                                override val name =
-                                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                                override val name = baseName.replace(Regex("""[.com.mp3]*"""), "")
                                 override val duration =
                                     cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                                 override val artist =
@@ -148,11 +150,5 @@ class MainActivity : AppCompatActivity() {
             }
             audioList.scrollToPosition(model.playItemPos)
         })
-    }
-
-    fun updateAlbum(item: Constants.Album, pos: Int) {
-        model
-        model.albumLiveData.value!![pos] = item
-        albumList.adapter?.notifyDataSetChanged()
     }
 }
