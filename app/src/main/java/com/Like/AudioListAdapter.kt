@@ -10,52 +10,49 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 
-class AudioListAdapter(private val ctx: MainActivity): BaseAdapter() {
-    var ltInflater: LayoutInflater = ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater;
+class AudioListAdapter(private val ctx: MainActivity):
+    RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
     private val model = ViewModelProvider(ctx)[Model::class.java]
 
-    override fun getCount(): Int {
-        return model.audioLiveData.value!!.size
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val audioPlayContent: LinearLayout = itemView.findViewById(R.id.audioPlayContent)
+        val image: ImageView? = itemView.findViewById(R.id.audioImage)
+        val name: TextView? = itemView.findViewById(R.id.audioName)
+        val artist: TextView? = itemView.findViewById(R.id.audioArtist)
+        val menu: Button? = itemView.findViewById(R.id.audioMenu)
+        val emptyAlbumPhoto: LinearLayout = itemView.findViewById(R.id.emptyAlbumPhoto)
     }
 
-    override fun getItem(position: Int): Constants.Audio {
-        return model.audioLiveData.value!![position]
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val itemView =
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.audio_list_item, parent, false)
+        return ViewHolder(itemView)
     }
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view: View = ltInflater.inflate(R.layout.audio_list_item, parent, false);
-        val itemData = getItem(position)
-        val audioPlayContent: LinearLayout = view.findViewById(R.id.audioPlayContent)
-        val image: ImageView? = view.findViewById(R.id.audioImage)
-        val name: TextView? = view.findViewById(R.id.audioName)
-        val artist: TextView? = view.findViewById(R.id.audioArtist)
-        val menu: Button? = view.findViewById(R.id.audioMenu)
-        val emptyAlbumPhoto: LinearLayout = view.findViewById(R.id.emptyAlbumPhoto)
-
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val itemData = getItemData(position)
         val newName = itemData.name.replace(Regex("""[.com.mp3]*"""), "")
-        name?.text = newName
+        holder.name?.text = newName
         if (itemData.artist != Constants.unknownArtist) {
-            artist?.text = itemData.artist
+            holder.artist?.text = itemData.artist
         } else {
-            artist?.text = ""
+            holder.artist?.text = ""
         }
         val uri = getImageUriByAlbumId(itemData.albumId)
-        image?.setImageURI(uri)
+        holder.image?.setImageURI(uri)
         // если нет превью у аудио
-        if (image?.drawable == null) {
-            emptyAlbumPhoto.visibility = View.VISIBLE
+        if (holder.image?.drawable == null) {
+            holder.emptyAlbumPhoto.visibility = View.VISIBLE
         }
 
-        audioPlayContent.setOnClickListener {
+        holder.audioPlayContent.setOnClickListener {
             model.audioPlayItemLiveData.value = itemData
             model.playItemPos = position
         }
-        menu?.setOnClickListener{
+        holder.menu?.setOnClickListener{
             val args = Bundle()
             args.putInt("audioPos", position)
             val frg = SelectAlbumDialog()
@@ -63,7 +60,14 @@ class AudioListAdapter(private val ctx: MainActivity): BaseAdapter() {
             frg.arguments = args
             frg.show(ctx.supportFragmentManager, "selectAlbum")
         }
-        return view
+    }
+
+    override fun getItemCount(): Int {
+        return model.audioLiveData.value!!.size
+    }
+
+    private fun getItemData(position: Int): Constants.Audio {
+        return model.audioLiveData.value!![position]
     }
 
     private fun getImageUriByAlbumId(albumId: Long): Uri {

@@ -20,7 +20,7 @@
         <SearchView
             android:id="@+id/search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></SearchView>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout
@@ -48,9 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:visibility="visible">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            android:visibility="visible" />
 
     </LinearLayout>
 
@@ -64,7 +62,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/albumListLayout">
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/audioList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -13,7 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 
-class AddAlbumDialog(private val adapter: AlbumListAdapter? = null): DialogFragment() {
+class AddAlbumDialog(): DialogFragment() {
     var albumPosition: Int? = null
     var albumName: String? = null
     var dataHelper: DataHelper? = null
@@ -63,8 +63,7 @@ class AddAlbumDialog(private val adapter: AlbumListAdapter? = null): DialogFragm
                     val item = albumLiveData?.value?.elementAt(albumPosition!!)
                     item?.name = albumName.toString()
                     dataHelper?.updateAlbum(item!!)
-                    albumLiveData?.value?.set(albumPosition!!, item!!)
-                    adapter?.notifyItemChanged(albumPosition!!)
+                    albumLiveData?.value = dataHelper?.getAllAlbum()
                 } else {
                     // если добавление нового альбома
                     val newAlbum = object: Constants.Album {
@@ -73,7 +72,7 @@ class AddAlbumDialog(private val adapter: AlbumListAdapter? = null): DialogFragm
                         override var audioCount = 0
                     }
                     dataHelper?.addAlbum(newAlbum)
-                    albumLiveData?.value?.add(newAlbum)
+                    albumLiveData?.value = dataHelper?.getAllAlbum()
                 }
                 close()
             }

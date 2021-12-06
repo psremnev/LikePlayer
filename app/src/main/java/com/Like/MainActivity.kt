@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val dataHelper: DataHelper by lazy { DataHelper(this) }
     private val model: Model by lazy { ViewModelProvider(this).get() }
     private val albumList: RecyclerView by lazy { findViewById(R.id.albumList) }
-    private val audioList: ListView by lazy { findViewById(R.id.audioList) }
+    private val audioList: RecyclerView by lazy { findViewById(R.id.audioList) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // поменяем тему со splash screen
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         model.audioLiveData.value = dataHelper?.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
         model.albumLiveData.value = dataHelper?.getAllAlbum()
         val audioData = model.audioLiveData.value
-        if (audioData !== null && audioData?.size !== 0) {
+        if (audioData !== null && audioData.size !== 0) {
             model.audioPlayItemLiveData.value = audioData[0]
         }
         model.dataHelper = dataHelper
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAlbumList() {
-        dataHelper?.initDefaultAlbum(this)
+        dataHelper.initDefaultAlbum(this)
         albumList.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
         val albumLiveData: MutableLiveData<ArrayList<Constants.Album>>? = model?.getAlbumData()
@@ -111,6 +111,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAudioList() {
+        audioList.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         val audioPlay: View? = findViewById(R.id.audioPlay)
         val emptyView: TextView? = findViewById(R.id.emptyAudioList)
         var isVisible: Boolean
@@ -134,8 +136,7 @@ class MainActivity : AppCompatActivity() {
         // инициализация
         isVisible = setVisibility(audioData?.value)
         if (isVisible) {
-            val adapter = AudioListAdapter(this)
-            audioList.adapter = adapter
+            audioList.adapter = AudioListAdapter(this)
         }
 
         // обновление данных по альбому
@@ -145,11 +146,12 @@ class MainActivity : AppCompatActivity() {
             if (audioData !== newAudioData?.value) {
                 audioData = newAudioData
             }
-            audioList.setSelection(model.playItemPos)
+            audioList.scrollToPosition(model.playItemPos)
         })
     }
 
     fun updateAlbum(item: Constants.Album, pos: Int) {
+        model
         model.albumLiveData.value!![pos] = item
         albumList.adapter?.notifyDataSetChanged()
     }

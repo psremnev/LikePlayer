@@ -55,8 +55,7 @@ class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<Albu
                     popup.setOnMenuItemClickListener { item ->
                         when (item?.itemId) {
                             R.id.edit -> {
-                                val addAlbumFrg: DialogFragment =
-                                    AddAlbumDialog(this@AlbumListAdapter)
+                                val addAlbumFrg: DialogFragment = AddAlbumDialog()
                                 addAlbumFrg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
                                 val args = Bundle()
                                 args.putInt("position", position)
@@ -94,10 +93,10 @@ class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<Albu
     }
 
     override fun getItemCount(): Int {
-        return model.albumLiveData?.value!!.size
+        return model.albumLiveData.value!!.size
     }
 
     private fun getItemData(position: Int): Constants.Album {
-        return model.albumLiveData?.value!![position]
+        return model.albumLiveData.value!![position]
     }
 }

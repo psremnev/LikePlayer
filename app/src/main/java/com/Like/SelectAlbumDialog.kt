@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -52,7 +50,7 @@ class SelectAlbumDialog : DialogFragment() {
             val audioItem: Constants.Audio = model.audioLiveData.value!![audioPos!!]
             audioItem.album = albumItem.id!!
             model.dataHelper?.updateAudio(audioItem)
-            (activity as MainActivity).updateAlbum(albumItem, albumPos)
+            model.albumLiveData.value = model.dataHelper?.getAllAlbum()
         }
     }
 }
