@@ -13,10 +13,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 
 class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
-    var preHolder: ViewHolder? = null
+    private var preHolder: ViewHolder? = null
     private val model = ViewModelProvider(ctx)[Model::class.java]
-    val dataHelper = DataHelper(ctx)
-    val holderList = HashMap<Int, ViewHolder>()
+    private val dataHelper = DataHelper(ctx)
+    private val holderList = HashMap<Int, ViewHolder>()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.albumName)
@@ -32,56 +32,69 @@ class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<Albu
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val itemData = getItemData(position)
+
+        // инициализируем текущий набор view
         if (!holderList.containsKey(position)) {
             holderList[position] = holder
         }
-        val position = holder.adapterPosition
-        val itemData = getItemData(position)
 
+        // инициализируем данные шаблона
         holder.name.text = itemData.name
         holder.count.text = itemData.audioCount!!.toString()
 
+        // инициализируем маркер
         if (itemData.id === Constants.AL_ALBUM_ID) {
             // изначально и при удалении сбрасываем маркер на альбом Все
             holder.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
             preHolder = holder
         }
 
-        holder.itemView.setOnLongClickListener(object: View.OnLongClickListener {
-            override fun onLongClick(v: View?): Boolean {
-                if (itemData.id !== Constants.AL_ALBUM_ID && itemData.id !== Constants.FAVORITE_ALBUM_ID) {
-                    val popup= PopupMenu(v?.context, v);
-                    popup.inflate(R.menu.album);
-                    popup.setOnMenuItemClickListener { item ->
-                        when (item?.itemId) {
-                            R.id.edit -> {
-                                val addAlbumFrg: DialogFragment = AddAlbumDialog()
-                                addAlbumFrg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
-                                val args = Bundle()
-                                args.putInt("position", position)
-                                args.putString("name", itemData.name)
-                                addAlbumFrg.arguments = args
-                                addAlbumFrg.show(ctx.supportFragmentManager, "addAlbum")
-                            }
-                            R.id.delete -> {
-                                dataHelper.deleteAlbum(itemData.id)
-                                model.albumLiveData.value?.remove(itemData)
-                                notifyItemRemoved(position)
-                                // чтобы сменить маркер на предыдущий элемент и данные
-                                val newPos = position-1
-                                // чтобы снять маркер если удаляем не переключаясь на запись
-                                preHolder = holderList[newPos]
-                                preHolder?.albumInfo?.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
-                                model.audioLiveData.value = dataHelper.getAllAudioByAlbumId(getItemData(newPos).id!!)
-                            }
+        // обработка лонг тап клика на альбом, открытие меню
+        holder.itemView.setOnLongClickListener { v ->
+            if (itemData.id !== Constants.AL_ALBUM_ID && itemData.id !== Constants.FAVORITE_ALBUM_ID) {
+                val popup = PopupMenu(v?.context, v);
+                popup.inflate(R.menu.album);
+                popup.setOnMenuItemClickListener { item ->
+                    when (item?.itemId) {
+                        R.id.edit -> {
+                            val addAlbumFrg: DialogFragment = AddAlbumDialog()
+                            addAlbumFrg.setStyle(
+                                DialogFragment.STYLE_NORMAL,
+                                R.style.ThemeOverlay_AppCompat_Dialog
+                            )
+                            val args = Bundle()
+                            args.putInt("position", position)
+                            args.putString("name", itemData.name)
+                            addAlbumFrg.arguments = args
+                            addAlbumFrg.show(ctx.supportFragmentManager, "addAlbum")
                         }
-                        true
-                    };
-                    popup.show();
-                }
-                return true
+                        R.id.delete -> {
+                            dataHelper.deleteAlbum(itemData.id)
+                            model.albumLiveData.value?.remove(itemData)
+                            notifyItemRemoved(position)
+                            // чтобы сменить маркер на предыдущий элемент и данные
+                            val newPos = position - 1
+                            // чтобы снять маркер если удаляем не переключаясь на запись
+                            preHolder = holderList[newPos]
+                            preHolder?.albumInfo?.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    ctx,
+                                    R.color.black
+                                )
+                            )
+                            model.audioLiveData.value =
+                                dataHelper.getAllAudioByAlbumId(getItemData(newPos).id!!)
+                        }
+                    }
+                    true
+                };
+                popup.show();
             }
-        })
+            true
+        }
+
+        // обработка клика на альбом
         holder.itemView.setOnClickListener {
             if (preHolder !== null) {
                 preHolder!!.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.album_info))

@@ -2,8 +2,6 @@ package com.Like
 
 import android.annotation.SuppressLint
 import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
-import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData

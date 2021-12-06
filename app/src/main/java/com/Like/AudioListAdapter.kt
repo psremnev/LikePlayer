@@ -1,9 +1,6 @@
 package com.Like
 
-import android.content.ContentResolver
 import android.content.ContentUris
-import android.content.Context
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,16 +10,8 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import java.io.File
-import android.provider.MediaStore
-
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.core.net.toFile
 import java.io.FileNotFoundException
-import java.io.InputStream
-import java.lang.RuntimeException
-
 
 class AudioListAdapter(private val ctx: MainActivity):
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
@@ -45,7 +34,6 @@ class AudioListAdapter(private val ctx: MainActivity):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val position = holder.adapterPosition
         val itemData = getItemData(position)
         val setName = {
             holder.name?.text = itemData.name
