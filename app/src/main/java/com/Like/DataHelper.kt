@@ -33,7 +33,7 @@ class DataHelper(ctx: Context) {
                         override val artist = cursor.getString(artistIndex)
                         override val url = cursor.getString(urlIndex)
                         override val albumId = cursor.getLong(albumUrlIndex)
-                        override val album = cursor.getInt(albumIndex)
+                        override var album = cursor.getInt(albumIndex)
                     }
                 );
             } while (cursor.moveToNext())
@@ -102,6 +102,12 @@ class DataHelper(ctx: Context) {
     }
 
     fun deleteAlbum(id: Int?) {
+        // меняем альбом для аудиозаписей на Все
+        val albumAudio = getAllAudioByAlbumId(id!!)
+        for (audio in albumAudio) {
+            audio.album = Constants.AL_ALBUM_ID
+            updateAudio(audio)
+        }
         database.delete(DBHelper.DATABASE_ALBUM_NAME, "id=${id}", null);
     }
 
@@ -118,7 +124,7 @@ class DataHelper(ctx: Context) {
                     object: Constants.Album {
                         override val id = cursor.getInt(idIndex)
                         override var name = cursor.getString(nameIndex)
-                        override val audioCount = getAlbumCount(id)
+                        override var audioCount = getAlbumCount(id)
                     }
                 );
             } while (cursor.moveToNext())
@@ -132,12 +138,12 @@ class DataHelper(ctx: Context) {
             object: Constants.Album {
                 override val id = Constants.AL_ALBUM_ID
                 override var name = ctx.getString(R.string.allAlbumName);
-                override val audioCount = 0
+                override var audioCount = 0
             },
             object: Constants.Album {
                 override val id = Constants.FAVORITE_ALBUM_ID
                 override var name = ctx.getString(R.string.favoriteAlbumName);
-                override val audioCount = 0
+                override var audioCount = 0
             }
         )
 

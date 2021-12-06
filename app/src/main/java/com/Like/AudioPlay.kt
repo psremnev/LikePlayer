@@ -31,12 +31,13 @@ class AudioPlay : Fragment() {
     private var itemData: MutableLiveData<Constants.Audio>? = null
     private val mediaPlayer: MediaPlayer by lazy { model?.mediaPlayer!! }
     private var audioData: MutableLiveData<ArrayList<Constants.Audio>>? = null
+    private var nameScrollTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProvider(activity as MainActivity).get()
         itemData = model?.audioPlayItemLiveData
-        audioData = model?.getAudioData()
+        audioData = model?.audioLiveData
     }
 
     override fun onCreateView(
@@ -61,6 +62,7 @@ class AudioPlay : Fragment() {
             nameScroll = view?.findViewById(R.id.nameScroll)
             audioTimer = getTrackTimer()
             initPlayBtn()
+            nameScrollTimer = startNameScroll()
             itemData?.observe(viewLifecycleOwner, {
                 if (!isInit) {
                     name?.text = itemData?.value?.name
@@ -70,11 +72,11 @@ class AudioPlay : Fragment() {
                     initMediaPlayerData(itemData!!)
                     mediaPlayer.start()
                     audioTimer?.start()
-                    playBtn?.setBackgroundResource(R.drawable.stop)
+                    playBtn?.setButtonDrawable(R.drawable.stop)
+                    restartNameScroll()
                 }
                 isInit = false
             })
-            startNameScroll()
         }
     }
 
@@ -82,7 +84,7 @@ class AudioPlay : Fragment() {
         playBtn = view?.findViewById(R.id.audioPlayPause)
         if (mediaPlayer.isPlaying) {
             playBtn?.isChecked = mediaPlayer.isPlaying
-            playBtn?.setBackgroundResource(R.drawable.stop)
+            playBtn?.setButtonDrawable(R.drawable.stop)
             audioTimer?.start()
             startNameScroll()
         } else {
@@ -91,15 +93,21 @@ class AudioPlay : Fragment() {
         }
         playBtn?.setOnClickListener {
             if (playBtn?.isChecked == true) {
-                playBtn?.setBackgroundResource(R.drawable.stop)
+                playBtn?.setButtonDrawable(R.drawable.stop)
+                //playBtn?.setBackgroundResource(R.drawable.stop)
                 mediaPlayer.start()
                 audioTimer?.start()
             } else {
-                playBtn?.setBackgroundResource(R.drawable.play)
+                playBtn?.setButtonDrawable(R.drawable.play)
                 mediaPlayer.pause()
                 audioTimer?.cancel()
             }
         }
+    }
+
+    private fun restartNameScroll() {
+        nameScrollTimer?.cancel()
+        nameScrollTimer?.start()
     }
 
     private fun initMediaPlayerData(itemData: MutableLiveData<Constants.Audio>) {
@@ -133,7 +141,7 @@ class AudioPlay : Fragment() {
         return timer
     }
 
-    private fun startNameScroll() {
+    private fun startNameScroll(): CountDownTimer {
         val timer = object: CountDownTimer(itemData?.value?.duration!!.toLong(), Constants.halfSecond.toLong()) {
             override fun onTick(millisUntilFinished: Long) {
                 val currentScrollX = nameScroll?.scrollX!!
@@ -150,5 +158,6 @@ class AudioPlay : Fragment() {
             }
         }
         timer.start()
+        return timer
     }
 }

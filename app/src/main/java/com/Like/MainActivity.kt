@@ -21,8 +21,13 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
     private val dataHelper: DataHelper by lazy { DataHelper(this) }
     private val model: Model by lazy { ViewModelProvider(this).get() }
+    private val albumList: RecyclerView by lazy { findViewById(R.id.albumList) }
+    private val audioList: ListView by lazy { findViewById(R.id.audioList) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // поменяем тему со splash screen
+        setTheme(R.style.Theme_Like)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -75,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                                 override val url =
                                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
                                 override val albumId: Long = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-                                override val album = Constants.AL_ALBUM_ID
+                                override var album = Constants.AL_ALBUM_ID
                             })
                         }
                     }
@@ -89,24 +94,23 @@ class MainActivity : AppCompatActivity() {
         val addAlbumBtn: Button = findViewById(R.id.addAlbumBtn)
         addAlbumBtn.setOnClickListener {
             val addAlbumFrg: DialogFragment = AddAlbumDialog()
+            addAlbumFrg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
             addAlbumFrg.show(supportFragmentManager, "addAlbum")
         }
     }
 
     private fun initAlbumList() {
         dataHelper?.initDefaultAlbum(this)
-        val albumList: RecyclerView = findViewById(R.id.albumList)
         albumList.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
         val albumLiveData: MutableLiveData<ArrayList<Constants.Album>>? = model?.getAlbumData()
-        albumList.adapter = AlbumListAdapter(this, supportFragmentManager)
+        albumList.adapter = AlbumListAdapter(this)
         albumLiveData?.observe(this, {
             albumList.adapter?.notifyDataSetChanged()
         })
     }
 
     private fun initAudioList() {
-        val audioList: ListView = findViewById(R.id.audioList)
         val audioPlay: View? = findViewById(R.id.audioPlay)
         val emptyView: TextView? = findViewById(R.id.emptyAudioList)
         var isVisible: Boolean
@@ -137,10 +141,16 @@ class MainActivity : AppCompatActivity() {
         // обновление данных по альбому
         audioData?.observe(this, {
             val newAudioData = model.audioLiveData
-            isVisible = setVisibility(newAudioData?.value)
+            isVisible = setVisibility(newAudioData.value)
             if (audioData !== newAudioData?.value) {
                 audioData = newAudioData
             }
+            audioList.setSelection(model.playItemPos)
         })
+    }
+
+    fun updateAlbum(item: Constants.Album, pos: Int) {
+        model.albumLiveData.value!![pos] = item
+        albumList.adapter?.notifyDataSetChanged()
     }
 }

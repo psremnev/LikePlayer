@@ -1,9 +1,7 @@
 package com.Like
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -11,14 +9,14 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 
-class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentManager): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
+class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
     var preHolder: ViewHolder? = null
-    private val model = ViewModelProvider(ctx).get(Model::class.java)
+    private val model = ViewModelProvider(ctx)[Model::class.java]
     val dataHelper = DataHelper(ctx)
+    val holderList = HashMap<Int, ViewHolder>()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.albumName)
@@ -34,6 +32,9 @@ class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentMa
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (!holderList.containsKey(position)) {
+            holderList[position] = holder
+        }
         val position = holder.adapterPosition
         val itemData = getItemData(position)
 
@@ -41,6 +42,7 @@ class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentMa
         holder.count.text = itemData.audioCount!!.toString()
 
         if (itemData.id === Constants.AL_ALBUM_ID) {
+            // изначально и при удалении сбрасываем маркер на альбом Все
             holder.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
             preHolder = holder
         }
@@ -55,20 +57,24 @@ class AlbumListAdapter(private val ctx: MainActivity, val frgManager: FragmentMa
                             R.id.edit -> {
                                 val addAlbumFrg: DialogFragment =
                                     AddAlbumDialog(this@AlbumListAdapter)
+                                addAlbumFrg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
                                 val args = Bundle()
                                 args.putInt("position", position)
                                 args.putString("name", itemData.name)
                                 addAlbumFrg.arguments = args
-                                addAlbumFrg.show(frgManager!!, "addAlbum")
+                                addAlbumFrg.show(ctx.supportFragmentManager, "addAlbum")
                             }
                             R.id.delete -> {
                                 dataHelper.deleteAlbum(itemData.id)
                                 model.albumLiveData.value?.remove(itemData)
                                 notifyItemRemoved(position)
+                                // чтобы сменить маркер на предыдущий элемент и данные
+                                val newPos = position-1
+                                // чтобы снять маркер если удаляем не переключаясь на запись
+                                preHolder = holderList[newPos]
+                                preHolder?.albumInfo?.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
+                                model.audioLiveData.value = dataHelper.getAllAudioByAlbumId(getItemData(newPos).id!!)
                             }
-                        }
-                        if (item?.itemId === R.id.edit) {
-
                         }
                         true
                     };

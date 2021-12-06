@@ -13,7 +13,7 @@ object Constants {
     interface Album {
         val id: Int?
         var name: String
-        val audioCount: Int?
+        var audioCount: Int
     }
 
     interface Audio {
@@ -23,7 +23,7 @@ object Constants {
         val artist: String
         val url: String
         val albumId: Long
-        val album: Int
+        var album: Int
     }
 
     val albumLiveData: MutableLiveData<ArrayList<Album>> = MutableLiveData<ArrayList<Album>>()

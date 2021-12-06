@@ -70,7 +70,7 @@ class AddAlbumDialog(private val adapter: AlbumListAdapter? = null): DialogFragm
                     val newAlbum = object: Constants.Album {
                         override val id: Int? = albumLiveData?.value?.size!! + 1
                         override var name = albumName.toString()
-                        override val audioCount = 0
+                        override var audioCount = 0
                     }
                     dataHelper?.addAlbum(newAlbum)
                     albumLiveData?.value?.add(newAlbum)

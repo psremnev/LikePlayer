@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainContent"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ProgressBar
@@ -31,14 +32,15 @@
 
         <ToggleButton
             android:id="@+id/audioPlayPause"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/play"
-            android:padding="16dp"
+            android:layout_width="34dp"
+            android:layout_height="47dp"
+            android:layout_marginLeft="6dp"
+            android:background="#00FFFFFF"
+            android:button="@drawable/play"
+            android:buttonTint="#FDD835"
             android:textOff=""
-            android:textOn="" />
+            android:textOn=""
+            tools:ignore="TouchTargetSizeCheck" />
 
         <HorizontalScrollView
             android:id="@+id/nameScroll"

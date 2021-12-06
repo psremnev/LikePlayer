@@ -18,9 +18,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <SearchView
+            android:id="@+id/search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </SearchView>
+            android:layout_height="match_parent"></SearchView>
     </LinearLayout>
 
     <LinearLayout

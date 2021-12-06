@@ -13,6 +13,7 @@ class Model(): ViewModel() {
     var audioPlayItemLiveData: MutableLiveData<Constants.Audio> = MutableLiveData<Constants.Audio>()
     var dataHelper: DataHelper? = null;
     var mediaPlayer: MediaPlayer = MediaPlayer()
+    var playItemPos: Int = 0
 
     fun getAudioData(): MutableLiveData<ArrayList<Constants.Audio>> {
         return  audioLiveData

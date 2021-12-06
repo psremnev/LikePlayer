@@ -3,10 +3,12 @@ package com.Like
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 
 class AudioListAdapter(private val ctx: MainActivity): BaseAdapter() {
@@ -51,6 +53,15 @@ class AudioListAdapter(private val ctx: MainActivity): BaseAdapter() {
 
         audioPlayContent.setOnClickListener {
             model.audioPlayItemLiveData.value = itemData
+            model.playItemPos = position
+        }
+        menu?.setOnClickListener{
+            val args = Bundle()
+            args.putInt("audioPos", position)
+            val frg = SelectAlbumDialog()
+            frg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
+            frg.arguments = args
+            frg.show(ctx.supportFragmentManager, "selectAlbum")
         }
         return view
     }
@@ -59,5 +70,4 @@ class AudioListAdapter(private val ctx: MainActivity): BaseAdapter() {
         val sArtworkUri = Uri.parse(Constants.ALBUM_ART_URI)
         return ContentUris.withAppendedId(sArtworkUri, albumId)
     }
-
 }
