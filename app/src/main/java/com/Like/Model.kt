@@ -1,9 +1,6 @@
 package com.Like
 
-
-import android.content.Context
 import android.media.MediaPlayer
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
@@ -14,6 +11,8 @@ class Model(): ViewModel() {
     var dataHelper: DataHelper? = null;
     var mediaPlayer: MediaPlayer = MediaPlayer()
     var playItemPos: Int = 0
+    var progress: MutableLiveData<Int> = MutableLiveData(0)
+    var duration: MutableLiveData<String> = MutableLiveData("")
 
     fun getAudioData(): MutableLiveData<ArrayList<Constants.Audio>> {
         return  audioLiveData

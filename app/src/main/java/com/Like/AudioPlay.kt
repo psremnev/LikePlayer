@@ -1,5 +1,6 @@
 package com.Like
 
+import android.content.res.Resources
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -60,6 +62,11 @@ class AudioPlay : Fragment() {
             progress?.max = itemData?.value?.duration!!
 
             nameScroll = view?.findViewById(R.id.nameScroll)
+            name?.setOnClickListener {
+                val fullscrFrg = AudioPlayFullscreen()
+                fullscrFrg.setStyle(STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen)
+                fullscrFrg.show(activity?.supportFragmentManager!!, "AudioPlayFullscr")
+            }
             audioTimer = getTrackTimer()
             initPlayBtn()
             nameScrollTimer = startNameScroll()
@@ -130,8 +137,11 @@ class AudioPlay : Fragment() {
             override fun onTick(millisUntilFinished: Long) {
                 val time = mediaPlayer.currentPosition
                 val newTime = itemData?.value?.duration!! - time
+                val newTextDuration = getTime(newTime.toLong())
+                model?.duration?.value = newTextDuration
+                model?.progress?.value = time
                 progress?.progress = time
-                duration?.text = getTime(newTime.toLong())
+                duration?.text = newTextDuration
             }
 
             override fun onFinish() {

@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="6dp"
         android:layout_weight="0"
+        android:progressTint="@color/progress_color"
         app:layout_constraintBottom_toTopOf="@+id/audioPlayContent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -35,7 +36,7 @@
             android:layout_width="34dp"
             android:layout_height="47dp"
             android:layout_marginLeft="6dp"
-            android:background="#00FFFFFF"
+            android:background="@android:color/transparent"
             android:button="@drawable/play"
             android:buttonTint="#FDD835"
             android:textOff=""
@@ -59,7 +60,8 @@
                 <TextView
                     android:id="@+id/audioName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:padding="6dp"
                     android:text="Name"
                     android:textAlignment="viewStart" />

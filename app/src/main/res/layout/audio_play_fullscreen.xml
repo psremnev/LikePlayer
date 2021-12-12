@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AudioPlayFullscreen">
+
+    <Button
+        android:id="@+id/rollBtn"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="#00FFFFFF"
+        android:foregroundGravity="center"
+        app:icon="@drawable/roll_up"
+        app:iconGravity="textEnd"
+        app:iconTint="#6C6A6A"
+        app:layout_constraintBottom_toTopOf="@+id/audioImageScrollList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/audioImageScrollList"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="51dp" />
+
+    <LinearLayout
+        android:id="@+id/playInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/audioImageScrollList">
+
+        <LinearLayout
+            android:id="@+id/firstColumn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/audioNameFullscr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="2dp"
+                android:layout_weight="0"
+                android:text="Name"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/audioArtistFullscr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="0"
+                android:text="Artist"
+                android:textAlignment="center"
+                android:textColor="@color/unnacented" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/audioDurationFullscr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="Duration" />
+
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/playSeekBar"
+        style="@style/Widget.AppCompat.SeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:indeterminate="false"
+        android:progressTint="@color/progress_color"
+        android:thumbTint="@color/progress_thumb"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playInfo" />
+
+    <LinearLayout
+        android:id="@+id/playButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playSeekBar">
+
+        <Button
+            android:id="@+id/previousBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="40dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:textAlignment="center"
+            app:icon="@drawable/previos"
+            app:iconGravity="textStart"
+            app:iconTint="@color/unnacented" />
+
+        <ToggleButton
+            android:id="@+id/playPauseBtn"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/transparent"
+            android:button="@drawable/play"
+            android:checked="false"
+            android:drawingCacheQuality="auto"
+            android:fontFamily="sans-serif-light"
+            android:foregroundGravity="center"
+            android:textOff=""
+            android:textOn=""
+            android:typeface="normal" />
+
+        <Button
+            android:id="@+id/nextBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="30dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:textAlignment="center"
+            app:icon="@drawable/next"
+            app:iconGravity="textEnd"
+            app:iconTint="@color/unnacented" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

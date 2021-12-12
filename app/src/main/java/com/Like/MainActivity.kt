@@ -24,9 +24,6 @@ class MainActivity : AppCompatActivity() {
     private val audioList: RecyclerView by lazy { findViewById(R.id.audioList) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // поменяем тему со splash screen
-        setTheme(R.style.Theme_Like)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
