@@ -41,8 +41,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initModelData() {
-        model.audioLiveData.value = dataHelper?.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
-        model.albumLiveData.value = dataHelper?.getAllAlbum()
+        model.audioLiveData.value = dataHelper.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
+        model.albumLiveData.value = dataHelper.getAllAlbum()
         val audioData = model.audioLiveData.value
         if (audioData !== null && audioData.size !== 0) {
             model.audioPlayItemLiveData.value = audioData[0]
@@ -99,9 +99,9 @@ class MainActivity : AppCompatActivity() {
         dataHelper.initDefaultAlbum(this)
         albumList.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        val albumLiveData: MutableLiveData<ArrayList<Constants.Album>>? = model?.getAlbumData()
+        val albumLiveData: MutableLiveData<ArrayList<Constants.Album>> = model.getAlbumData()
         albumList.adapter = AlbumListAdapter(this)
-        albumLiveData?.observe(this, {
+        albumLiveData.observe(this, {
             albumList.adapter?.notifyDataSetChanged()
         })
     }
@@ -112,17 +112,20 @@ class MainActivity : AppCompatActivity() {
         val audioPlay: View? = findViewById(R.id.audioPlay)
         val emptyView: TextView? = findViewById(R.id.emptyAudioList)
         var isVisible: Boolean
-        var audioData: MutableLiveData<ArrayList<Constants.Audio>>? = model?.getAudioData()
+        var audioData: MutableLiveData<ArrayList<Constants.Audio>>? = model.getAudioData()
 
         // установка видимости компонентов исходя из данных
         val setVisibility: (audioData: ArrayList<Constants.Audio>?) -> Boolean =  {
-            if (audioData !== null && audioData?.value?.size !== 0) {
+            if (model.audioPlayItemLiveData.value !== null) {
                 audioPlay?.visibility = View.VISIBLE
+            } else {
+                audioPlay?.visibility = View.GONE
+            }
+            if (audioData !== null && audioData?.value?.size !== 0) {
                 audioList.visibility = View.VISIBLE
                 emptyView?.visibility = View.GONE
                 true
             } else {
-                audioPlay?.visibility = View.GONE
                 audioList.visibility = View.GONE
                 emptyView?.visibility = View.VISIBLE
                 false
