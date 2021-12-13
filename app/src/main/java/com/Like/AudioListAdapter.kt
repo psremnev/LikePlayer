@@ -20,7 +20,7 @@ class AudioListAdapter(private val ctx: MainActivity):
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val audioPlayContent: LinearLayout = itemView.findViewById(R.id.audioPlayContent)
         val image: ImageView? = itemView.findViewById(R.id.audioImage)
-        val name: TextView? = itemView.findViewById(R.id.audioName)
+        val name: TextView? = itemView.findViewById(R.id.audioPlayName)
         val artist: TextView? = itemView.findViewById(R.id.audioArtist)
         val menu: Button? = itemView.findViewById(R.id.audioMenu)
         val emptyAlbumPhoto: LinearLayout = itemView.findViewById(R.id.emptyAlbumPhoto)

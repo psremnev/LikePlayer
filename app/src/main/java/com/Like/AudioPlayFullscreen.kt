@@ -5,10 +5,7 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.ToggleButton
+import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 class AudioPlayFullscreen : DialogFragment() {
     private val model: Model by lazy { ViewModelProvider(activity as MainActivity).get() }
     private var itemData: MutableLiveData<Constants.Audio>? = null;
+    private var playBtnChecked: Boolean = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +41,7 @@ class AudioPlayFullscreen : DialogFragment() {
         val artist: TextView? = view?.findViewById(R.id.audioArtistFullscr)
         val seekBar: SeekBar? = view?.findViewById(R.id.playSeekBar)
         val previousBtn: Button? = view?.findViewById(R.id.previousBtn)
-        val playBtn: ToggleButton? = view?.findViewById(R.id.playPauseBtn)
+        val playBtn: ImageButton? = view?.findViewById(R.id.playPauseBtn)
         val nextBtn: Button? = view?.findViewById(R.id.nextBtn)
         val duration: TextView? = view?.findViewById(R.id.audioDurationFullscr)
         val audioImageScrollList: RecyclerView? = view?.findViewById(R.id.audioImageScrollList)
@@ -54,22 +52,22 @@ class AudioPlayFullscreen : DialogFragment() {
         seekBar?.max = itemData?.value?.duration!!
         seekBar?.progress = model.mediaPlayer.currentPosition
 
-        playBtn?.isChecked = model.mediaPlayer.isPlaying
-        if (playBtn!!.isChecked) {
-            playBtn.setButtonDrawable(R.drawable.stop)
+        playBtnChecked = model.mediaPlayer.isPlaying
+        if (playBtnChecked) {
+            playBtn?.setImageResource(R.drawable.pause_fullscr)
         } else {
-            playBtn.setButtonDrawable(R.drawable.play)
+            playBtn?.setImageResource(R.drawable.play_fullscr)
         }
         playBtn?.setOnClickListener {
-            if (playBtn.isChecked) {
+            playBtnChecked = !playBtnChecked
+            if (playBtnChecked) {
                 model.mediaPlayer.start()
-                playBtn.setButtonDrawable(R.drawable.stop)
+                playBtn.setImageResource(R.drawable.pause_fullscr)
             } else {
                 model.mediaPlayer.pause()
-                playBtn.setButtonDrawable(R.drawable.play)
+                playBtn.setImageResource(R.drawable.play_fullscr)
             }
         }
-
         nextBtn?.setOnClickListener {
             val newPos = model.playItemPos + 1
             model.playItemPos = newPos

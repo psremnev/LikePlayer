@@ -1,6 +1,5 @@
 package com.Like
 
-import android.content.res.Resources
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -11,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment.STYLE_NORMAL
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -24,10 +22,12 @@ class AudioPlay : Fragment() {
     private var model: Model? = null
     private var isInit: Boolean = true
     private var progress: ProgressBar? = null
-    var fragmentVisibility: Boolean = false;
+    var fragmentVisibility: Boolean = false
     var name: TextView? = null
+    var artist: TextView? = null
     var duration: TextView? = null
-    var playBtn: ToggleButton? = null
+    var playBtn: ImageButton? = null
+    var playBtnChecked: Boolean = false
     var nameScroll: HorizontalScrollView? = null
     var audioTimer: CountDownTimer? = null
     private var itemData: MutableLiveData<Constants.Audio>? = null
@@ -54,10 +54,12 @@ class AudioPlay : Fragment() {
         super.onStart()
         if (fragmentVisibility) {
             progress = view?.findViewById(R.id.audioPlayProgress)
-            name = view?.findViewById(R.id.audioName)
+            name = view?.findViewById(R.id.audioPlayName)
+            artist = view?.findViewById(R.id.audioPlayArtist)
             duration = view?.findViewById(R.id.audioPlayDuration)
 
             name?.text = itemData?.value?.name
+            artist?.text = itemData?.value?.artist
             duration?.text = getTime(itemData?.value?.duration?.toLong())
             progress?.max = itemData?.value?.duration!!
 
@@ -79,7 +81,7 @@ class AudioPlay : Fragment() {
                     initMediaPlayerData(itemData!!)
                     mediaPlayer.start()
                     audioTimer?.start()
-                    playBtn?.setButtonDrawable(R.drawable.stop)
+                    playBtn?.setImageResource(R.drawable.stop)
                     restartNameScroll()
                 }
                 isInit = false
@@ -88,10 +90,10 @@ class AudioPlay : Fragment() {
     }
 
     private fun initPlayBtn() {
-        playBtn = view?.findViewById(R.id.audioPlayPause)
+        playBtn = view?.findViewById(R.id.audioPlay)
         if (mediaPlayer.isPlaying) {
-            playBtn?.isChecked = mediaPlayer.isPlaying
-            playBtn?.setButtonDrawable(R.drawable.stop)
+            playBtnChecked = mediaPlayer.isPlaying
+            playBtn?.setImageResource(R.drawable.stop)
             audioTimer?.start()
             startNameScroll()
         } else {
@@ -99,13 +101,13 @@ class AudioPlay : Fragment() {
             mediaPlayer.setDataSource(itemData?.value?.url)
         }
         playBtn?.setOnClickListener {
-            if (playBtn?.isChecked == true) {
-                playBtn?.setButtonDrawable(R.drawable.stop)
-                //playBtn?.setBackgroundResource(R.drawable.stop)
+            playBtnChecked = !playBtnChecked
+            if (playBtnChecked) {
+                playBtn?.setImageResource(R.drawable.stop)
                 mediaPlayer.start()
                 audioTimer?.start()
             } else {
-                playBtn?.setButtonDrawable(R.drawable.play)
+                playBtn?.setImageResource(R.drawable.play)
                 mediaPlayer.pause()
                 audioTimer?.cancel()
             }

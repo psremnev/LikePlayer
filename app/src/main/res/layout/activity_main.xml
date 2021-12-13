@@ -27,6 +27,7 @@
         android:id="@+id/albumListLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal"
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/top">
@@ -34,7 +35,7 @@
         <Button
             android:id="@+id/addAlbumBtn"
             android:layout_width="48dp"
-            android:layout_height="match_parent"
+            android:layout_height="48dp"
             android:layout_gravity="center"
             android:layout_marginStart="6dp"
             android:backgroundTint="@color/album_info"
