@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 
 class AudioPlayFullscreen : DialogFragment() {
     private val model: Model by lazy { ViewModelProvider(activity as MainActivity).get() }
@@ -44,8 +45,17 @@ class AudioPlayFullscreen : DialogFragment() {
         val playBtn: ImageButton? = view?.findViewById(R.id.playPauseBtn)
         val nextBtn: Button? = view?.findViewById(R.id.nextBtn)
         val duration: TextView? = view?.findViewById(R.id.audioDurationFullscr)
-        val audioImageScrollList: RecyclerView? = view?.findViewById(R.id.audioImageScrollList)
+        val audioImageScrollList: ViewPager2? = view?.findViewById(R.id.audioImageScrollList)
 
+        audioImageScrollList?.adapter = AudioViewPageAdapter(activity as MainActivity)
+        audioImageScrollList?.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                val audioArray = model.audioLiveData.value
+                model.audioPlayItemLiveData.value = audioArray!![position]
+                model.playItemPos = position
+                super.onPageSelected(position)
+            }
+        })
         name?.text = itemData?.value?.name
         artist?.text = itemData?.value?.artist
 
@@ -71,12 +81,14 @@ class AudioPlayFullscreen : DialogFragment() {
         nextBtn?.setOnClickListener {
             val newPos = model.playItemPos + 1
             model.playItemPos = newPos
+            audioImageScrollList?.currentItem = newPos
             model.audioPlayItemLiveData.value = model.audioLiveData.value!![newPos]
         }
 
         previousBtn?.setOnClickListener {
             val newPos = model.playItemPos - 1
             model.playItemPos = newPos
+            audioImageScrollList?.currentItem = newPos
             model.audioPlayItemLiveData.value = model.audioLiveData.value!![newPos]
         }
 
