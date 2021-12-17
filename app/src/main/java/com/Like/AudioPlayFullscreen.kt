@@ -12,17 +12,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AudioPlayFullscreen : DialogFragment() {
     private val model: Model by lazy { ViewModelProvider(activity as MainActivity).get() }
-    private var itemData: MutableLiveData<Constants.Audio>? = null;
     private var playBtnChecked: Boolean = false;
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        itemData = model.audioPlayItemLiveData
-    }
+    private val audioImageScrollList: ViewPager2? by lazy { view?.findViewById(R.id.audioImageScrollList)}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,19 +31,67 @@ class AudioPlayFullscreen : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
+        CoroutineScope(Dispatchers.Default).launch {
+            imageScrollInit()
+        }
+        rollBtnInit()
+        infoInit()
+        durationInit()
+        seekbarInit()
+        playBtnsInit()
+    }
+
+    private fun rollBtnInit() {
         val rollBtn: Button? = view?.findViewById(R.id.rollBtn)
         rollBtn?.setOnClickListener {
             parentFragmentManager.beginTransaction().remove(this).commit()
         }
+    }
+
+    private fun seekbarInit() {
+        val seekBar: SeekBar? = view?.findViewById(R.id.playSeekBar)
+        seekBar?.max = model.audioPlayItemLiveData.value?.duration!!
+        seekBar?.progress = model.mediaPlayer.currentPosition
+        model.progress.observe(this, {
+            seekBar?.progress = it
+        })
+        seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    model.mediaPlayer.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                return
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                return
+            }
+        })
+    }
+
+    private fun infoInit() {
         val name: TextView? = view?.findViewById(R.id.audioNameFullscr)
         val artist: TextView? = view?.findViewById(R.id.audioArtistFullscr)
-        val seekBar: SeekBar? = view?.findViewById(R.id.playSeekBar)
-        val previousBtn: Button? = view?.findViewById(R.id.previousBtn)
-        val playBtn: ImageButton? = view?.findViewById(R.id.playPauseBtn)
-        val nextBtn: Button? = view?.findViewById(R.id.nextBtn)
-        val duration: TextView? = view?.findViewById(R.id.audioDurationFullscr)
-        val audioImageScrollList: ViewPager2? = view?.findViewById(R.id.audioImageScrollList)
+        name?.text = model.audioPlayItemLiveData.value?.name
+        artist?.text = model.audioPlayItemLiveData.value?.artist
+        model.audioPlayItemLiveData.observe(this, {
+            name?.text = it.name
+            artist?.text = it.artist
+        })
+    }
 
+    private fun durationInit() {
+        val duration: TextView? = view?.findViewById(R.id.audioDurationFullscr)
+
+        model.duration.observe(this, {
+            duration?.text = it
+        })
+    }
+
+    private fun imageScrollInit() {
         audioImageScrollList?.adapter = AudioViewPageAdapter(activity as MainActivity)
         audioImageScrollList?.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -56,11 +101,12 @@ class AudioPlayFullscreen : DialogFragment() {
                 super.onPageSelected(position)
             }
         })
-        name?.text = itemData?.value?.name
-        artist?.text = itemData?.value?.artist
+    }
 
-        seekBar?.max = itemData?.value?.duration!!
-        seekBar?.progress = model.mediaPlayer.currentPosition
+    private fun playBtnsInit() {
+        val previousBtn: Button? = view?.findViewById(R.id.previousBtn)
+        val playBtn: ImageButton? = view?.findViewById(R.id.playPauseBtn)
+        val nextBtn: Button? = view?.findViewById(R.id.nextBtn)
 
         playBtnChecked = model.mediaPlayer.isPlaying
         if (playBtnChecked) {
@@ -91,35 +137,5 @@ class AudioPlayFullscreen : DialogFragment() {
             audioImageScrollList?.currentItem = newPos
             model.audioPlayItemLiveData.value = model.audioLiveData.value!![newPos]
         }
-
-        model.progress.observe(this, {
-            seekBar?.progress = it
-        })
-
-        model.duration.observe(this, {
-            duration?.text = it
-        })
-
-        itemData!!.observe(this, {
-            itemData = MutableLiveData(it)
-            name?.text = it.name
-            artist?.text = it.artist
-        })
-
-        seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    model.mediaPlayer.seekTo(progress)
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                return
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                return
-            }
-        })
     }
 }

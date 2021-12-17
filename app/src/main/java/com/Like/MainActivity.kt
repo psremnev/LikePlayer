@@ -15,6 +15,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +31,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState === null) {
-            initNewMp3Songs()
+            CoroutineScope(Dispatchers.Default).launch {
+                initNewMp3Songs()
+            }
             initModelData()
             initAddAlbumBtn()
             initAlbumList()
