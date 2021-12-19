@@ -1,5 +1,6 @@
 package com.Like
 
+import android.annotation.SuppressLint
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -53,25 +54,36 @@ class AudioPlay : Fragment() {
     override fun onStart() {
         super.onStart()
         if (fragmentVisibility) {
-            progress = view?.findViewById(R.id.audioPlayProgress)
-            name = view?.findViewById(R.id.audioPlayName)
-            artist = view?.findViewById(R.id.audioPlayArtist)
-            duration = view?.findViewById(R.id.audioPlayDuration)
+            if (isInit) {
+                val container: LinearLayout? = view?.findViewById(R.id.mainContent)
+                val openFullscreen = {
+                    val fullscrFrg = AudioPlayFullscreen()
+                    fullscrFrg.setStyle(STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen)
+                    fullscrFrg.show(activity?.supportFragmentManager!!, "AudioPlayFullscr")
+                }
+                progress = view?.findViewById(R.id.audioPlayProgress)
+                name = view?.findViewById(R.id.audioPlayName)
+                artist = view?.findViewById(R.id.audioPlayArtist)
+                duration = view?.findViewById(R.id.audioPlayDuration)
 
-            name?.text = itemData?.value?.name
-            artist?.text = itemData?.value?.artist
-            duration?.text = getTime(itemData?.value?.duration?.toLong())
-            progress?.max = itemData?.value?.duration!!
+                name?.text = itemData?.value?.name
+                artist?.text = itemData?.value?.artist
+                duration?.text = getTime(itemData?.value?.duration?.toLong())
+                progress?.max = itemData?.value?.duration!!
 
-            nameScroll = view?.findViewById(R.id.nameScroll)
-            name?.setOnClickListener {
-                val fullscrFrg = AudioPlayFullscreen()
-                fullscrFrg.setStyle(STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen)
-                fullscrFrg.show(activity?.supportFragmentManager!!, "AudioPlayFullscr")
+                nameScroll = view?.findViewById(R.id.nameScroll)
+                container?.setOnClickListener {
+                    openFullscreen()
+                }
+                nameScroll?.setOnClickListener {
+                    openFullscreen()
+                }
+                audioTimer = getTrackTimer()
+                initPlayBtn()
+                mediaPlayer.reset()
+                initMediaPlayerData(itemData!!)
+                nameScrollTimer = startNameScroll()
             }
-            audioTimer = getTrackTimer()
-            initPlayBtn()
-            nameScrollTimer = startNameScroll()
             itemData?.observe(viewLifecycleOwner, {
                 if (!isInit) {
                     name?.text = itemData?.value?.name
@@ -79,14 +91,23 @@ class AudioPlay : Fragment() {
                     progress?.max = itemData?.value?.duration!!
                     mediaPlayer.reset()
                     initMediaPlayerData(itemData!!)
-                    mediaPlayer.start()
-                    audioTimer?.start()
-                    playBtn?.setImageResource(R.drawable.stop)
-                    restartNameScroll()
+                    if (!model?.isAlbumChanged!!) {
+                        playAudio()
+                    } else {
+                        playBtn?.setImageResource(R.drawable.play)
+                    }
                 }
                 isInit = false
+                model?.isAlbumChanged = false
             })
         }
+    }
+
+    private fun playAudio() {
+        mediaPlayer.start()
+        audioTimer?.start()
+        playBtn?.setImageResource(R.drawable.stop)
+        restartNameScroll()
     }
 
     private fun initPlayBtn() {
@@ -122,11 +143,12 @@ class AudioPlay : Fragment() {
     private fun initMediaPlayerData(itemData: MutableLiveData<Constants.Audio>) {
         val audioAttributes = AudioAttributes.Builder()
         audioAttributes.setLegacyStreamType(AudioManager.STREAM_MUSIC)
-        mediaPlayer.setDataSource(itemData?.value?.url)
+        mediaPlayer.setDataSource(itemData.value?.url)
         mediaPlayer.setAudioAttributes(audioAttributes.build())
         mediaPlayer.prepare()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun getTime(milliseconds: Long?): String {
         val formatter = SimpleDateFormat("mm:ss")
         val calendar: Calendar = Calendar.getInstance()

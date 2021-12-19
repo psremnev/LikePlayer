@@ -31,10 +31,8 @@ class AudioPlayFullscreen : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        CoroutineScope(Dispatchers.Default).launch {
-            imageScrollInit()
-        }
         rollBtnInit()
+        imageScrollInit()
         infoInit()
         durationInit()
         seekbarInit()
@@ -93,6 +91,7 @@ class AudioPlayFullscreen : DialogFragment() {
 
     private fun imageScrollInit() {
         audioImageScrollList?.adapter = AudioViewPageAdapter(activity as MainActivity)
+        audioImageScrollList?.currentItem = model.playItemPos
         audioImageScrollList?.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val audioArray = model.audioLiveData.value
@@ -126,16 +125,20 @@ class AudioPlayFullscreen : DialogFragment() {
         }
         nextBtn?.setOnClickListener {
             val newPos = model.playItemPos + 1
-            model.playItemPos = newPos
-            audioImageScrollList?.currentItem = newPos
-            model.audioPlayItemLiveData.value = model.audioLiveData.value!![newPos]
+            if (newPos <=  model.audioLiveData.value?.size!! - 1) {
+                model.playItemPos = newPos
+                audioImageScrollList?.currentItem = newPos
+                model.audioPlayItemLiveData.value = model.audioLiveData.value!![newPos]
+            }
         }
 
         previousBtn?.setOnClickListener {
             val newPos = model.playItemPos - 1
-            model.playItemPos = newPos
-            audioImageScrollList?.currentItem = newPos
-            model.audioPlayItemLiveData.value = model.audioLiveData.value!![newPos]
+            if (newPos >= 0) {
+                model.playItemPos = newPos
+                audioImageScrollList?.currentItem = newPos
+                model.audioPlayItemLiveData.value = model.audioLiveData.value!![newPos]
+            }
         }
     }
 }

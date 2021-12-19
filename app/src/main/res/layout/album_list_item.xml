@@ -1,51 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/albumBackground"
+    android:id="@+id/albumInfo"
     android:layout_width="60dp"
-    android:layout_height="60dp"
-    android:layout_marginLeft="3dp"
-    android:background="@drawable/album_background">
+    android:layout_height="48dp"
+    android:layout_margin="3dp"
+    android:background="@drawable/album_background"
+    android:orientation="vertical"
+    android:padding="4dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout
-        android:id="@+id/albumInfo"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
-        android:background="@color/album_info"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+    <TextView
+        android:id="@+id/albumName"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="name"
+        android:textAlignment="viewStart"
+        android:textColor="@color/white"
+        app:autoSizeMaxTextSize="18dp"
+        app:autoSizeMinTextSize="8dp"
+        app:autoSizeTextType="uniform" />
 
-        <TextView
-            android:id="@+id/albumName"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
-            android:text="name"
-            android:textAlignment="viewStart"
-            android:textColor="@color/white"
-            app:autoSizeMaxTextSize="18dp"
-            app:autoSizeMinTextSize="8dp"
-            app:autoSizeTextType="uniform" />
+    <TextView
+        android:id="@+id/albumAudioCount"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_weight="1"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:text="Count"
+        android:textAlignment="viewStart"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
 
-        <TextView
-            android:id="@+id/albumAudioCount"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
-            android:text="Count"
-            android:textAlignment="viewStart"
-            android:textColor="@color/white"
-            android:textSize="6sp" />
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

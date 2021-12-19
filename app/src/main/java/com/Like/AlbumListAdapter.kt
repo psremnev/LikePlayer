@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -44,9 +43,9 @@ class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<Albu
         holder.count.text = itemData.audioCount!!.toString()
 
         // инициализируем маркер
-        if (itemData.id === Constants.AL_ALBUM_ID) {
+        if (itemData.id === model.selectedAlbum) {
             // изначально и при удалении сбрасываем маркер на альбом Все
-            holder.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
+            holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
             preHolder = holder
         }
 
@@ -77,12 +76,7 @@ class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<Albu
                             val newPos = position - 1
                             // чтобы снять маркер если удаляем не переключаясь на запись
                             preHolder = holderList[newPos]
-                            preHolder?.albumInfo?.setBackgroundColor(
-                                ContextCompat.getColor(
-                                    ctx,
-                                    R.color.black
-                                )
-                            )
+                            preHolder?.albumInfo?.background = ctx.getDrawable(R.drawable.album_background_selected)
                             model.audioLiveData.value =
                                 dataHelper.getAllAudioByAlbumId(getItemData(newPos).id!!)
                         }
@@ -96,11 +90,16 @@ class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<Albu
 
         // обработка клика на альбом
         holder.itemView.setOnClickListener {
+            model.selectedAlbum = itemData.id!!
+            model.isAlbumChanged = true
             if (preHolder !== null) {
-                preHolder!!.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.album_info))
+                preHolder!!.albumInfo.background = ctx.getDrawable(R.drawable.album_background)
             }
             model.audioLiveData.value = dataHelper.getAllAudioByAlbumId(itemData.id!!)
-            holder.albumInfo.setBackgroundColor(ContextCompat.getColor(ctx, R.color.black))
+            if (model.audioLiveData.value!!.size > 0) {
+                model.audioPlayItemLiveData.value = model.audioLiveData.value!![0]
+            }
+            holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
             preHolder = holder
         }
     }

@@ -12,7 +12,6 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:layout_marginTop="-2dp"
         android:layout_weight="0"
         android:progressTint="@color/progress_color"
         app:layout_constraintBottom_toTopOf="@+id/audioPlayContent"
@@ -37,10 +36,11 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:backgroundTint="@android:color/transparent"
-            android:tint="@color/play_buttons"
+            android:tint="@color/baseColor"
             app:srcCompat="@drawable/play" />
 
         <LinearLayout
+            android:id="@+id/audioInfo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"

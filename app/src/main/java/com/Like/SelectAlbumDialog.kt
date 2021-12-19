@@ -34,23 +34,22 @@ class SelectAlbumDialog : DialogFragment() {
         list?.choiceMode = ListView.CHOICE_MODE_SINGLE;
         val albumNames = ArrayList<Any>()
         for (album in model.albumLiveData.value!!) {
-            if (album.id !== Constants.AL_ALBUM_ID && album.id !== Constants.FAVORITE_ALBUM_ID) {
-                albumNames.add(album.name)
-            }
+            albumNames.add(album.name)
         }
         val adapter: ArrayAdapter<Any> = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_single_choice,
             albumNames
         )
         list?.adapter = adapter
-        list?.setOnItemClickListener { parent, view, position, id ->
-            val defAlbumCount = 2
-            val albumPos = position + defAlbumCount
-            val albumItem = model.albumLiveData.value!![albumPos]
-            albumItem.audioCount = albumItem.audioCount?.plus(1)
+        list?.setItemChecked(model.selectedAlbum - 1, true)
+        list?.setOnItemClickListener { _, _, position, _ ->
+            val albumItem = model.albumLiveData.value!![position]
+            albumItem.audioCount = albumItem.audioCount.plus(1)
             val audioItem: Constants.Audio = model.audioLiveData.value!![audioPos!!]
             audioItem.album = albumItem.id!!
             model.dataHelper?.updateAudio(audioItem)
             model.albumLiveData.value = model.dataHelper?.getAllAlbum()
+            // обновляем записи в текущем альбоме
+            model.audioLiveData.value = model.dataHelper?.getAllAudioByAlbumId(model.selectedAlbum)
         }
     }
 }

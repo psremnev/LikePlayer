@@ -6,8 +6,9 @@
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/drawable/album_item_bacground.xml" value="0.1" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/drawable/play_pause.xml" value="0.225" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/activity_splash_screen.xml" value="0.2" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/add_album_dialog.xml" value="0.33064516129032256" />
-        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/album_list_item.xml" value="0.9" />
+        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/album_list_item.xml" value="0.75" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_list_item.xml" value="0.35357917570498915" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play.xml" value="0.25" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play_fullscreen.xml" value="0.25" />

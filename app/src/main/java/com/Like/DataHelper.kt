@@ -13,9 +13,18 @@ class DataHelper(ctx: Context) {
     private val albumValues: ContentValues = ContentValues()
 
     fun getAllAudioByAlbumId(albumId: Int): ArrayList<Constants.Audio> {
+        return getAllAudioBySelection("album=$albumId")
+    }
+
+    fun getAllAudioBySearch(albumId: Int, searchString: String): ArrayList<Constants.Audio> {
+        //TODO: Пока не работает, неправильный запрос
+        return getAllAudioBySelection("album=$albumId and name match '%$searchString%'")
+    }
+
+    private fun getAllAudioBySelection(selection: String): ArrayList<Constants.Audio> {
         val audioData = ArrayList<Constants.Audio>()
         val cursor: Cursor =
-            database.query(DBHelper.DATABASE_AUDIO_NAME, null, "album=$albumId", null, null, null, null)
+            database.query(DBHelper.DATABASE_AUDIO_NAME, null, selection, null, null, null, null)
         if (cursor.moveToFirst()) {
             val idIndex = cursor.getColumnIndex(DBHelper.KEY_ID)
             val nameIndex = cursor.getColumnIndex(DBHelper.KEY_NAME)
@@ -48,7 +57,6 @@ class DataHelper(ctx: Context) {
 
     fun deleteAllAudio() {
         database.delete(DBHelper.DATABASE_AUDIO_NAME, null, null);
-
     }
 
     fun addAudio(data: Constants.Audio) {
@@ -88,6 +96,7 @@ class DataHelper(ctx: Context) {
     }
 
     fun addAlbum(data: Constants.Album) {
+        albumValues.put(DBHelper.KEY_ID, data.id)
         albumValues.put(DBHelper.KEY_NAME, data.name)
         albumValues.put(DBHelper.KEY_AUDIO_COUNT, data.audioCount)
         database.insert(DBHelper.DATABASE_ALBUM_NAME, null, albumValues);

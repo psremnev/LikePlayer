@@ -25,7 +25,7 @@ class AddAlbumDialog(): DialogFragment() {
 
         model = ViewModelProvider(activity as MainActivity).get()
         dataHelper = DataHelper(requireContext())
-        albumLiveData = model?.getAlbumData()
+        albumLiveData = model?.albumLiveData
         albumPosition = arguments?.getInt("position")
         albumName = arguments?.getString("name")
     }

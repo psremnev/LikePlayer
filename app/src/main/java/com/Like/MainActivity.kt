@@ -1,23 +1,17 @@
 package com.Like
 
-import android.annotation.SuppressLint
-import android.database.Cursor
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
-import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -31,18 +25,36 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState === null) {
-            CoroutineScope(Dispatchers.Default).launch {
-                initNewMp3Songs()
-            }
             initModelData()
             initAddAlbumBtn()
             initAlbumList()
             initAudioList()
+            initSearch()
         } else {
             initAddAlbumBtn()
             initAlbumList()
             initAudioList()
+            initSearch()
         }
+    }
+
+    private fun initSearch() {
+        //TODO: Пока не работает, неправильный запрос
+        val search: SearchView = findViewById(R.id.searchAudio)
+        search.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                model.audioLiveData.value = query?.let { model.albumLiveData.value!![model.selectedAlbum].id?.let { it1 ->
+                    dataHelper.getAllAudioBySearch(
+                        it1, it)
+                } }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
     }
 
     private fun initModelData() {
@@ -53,42 +65,6 @@ class MainActivity : AppCompatActivity() {
             model.audioPlayItemLiveData.value = audioData[0]
         }
         model.dataHelper = dataHelper
-    }
-
-    @SuppressLint("Range")
-    fun initNewMp3Songs() {
-        val allSongsUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
-        val cursor: Cursor? =
-            contentResolver.query(allSongsUri, null, null, null, selection)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                do {
-                    val fileType = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE))
-                    if (fileType == Constants.audioType) {
-                        val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                        val audioCursor = dataHelper.getAudio(id)
-                        if (audioCursor.count === 0) {
-                            val baseName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                            dataHelper.addAudio(object : Constants.Audio {
-                                override val id =
-                                    cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                                override val name = baseName.replace(Regex("""[.com.mp3]*"""), "")
-                                override val duration =
-                                    cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                                override val artist =
-                                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                                override val url =
-                                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                                override val albumId: Long = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-                                override var album = Constants.AL_ALBUM_ID
-                            })
-                        }
-                    }
-                } while (cursor.moveToNext())
-            }
-            cursor.close()
-        }
     }
 
     private fun initAddAlbumBtn() {
@@ -104,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         dataHelper.initDefaultAlbum(this)
         albumList.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        val albumLiveData: MutableLiveData<ArrayList<Constants.Album>> = model.getAlbumData()
+        val albumLiveData: MutableLiveData<ArrayList<Constants.Album>> = model.albumLiveData
         albumList.adapter = AlbumListAdapter(this)
         albumLiveData.observe(this, {
             albumList.adapter?.notifyDataSetChanged()
@@ -117,21 +93,18 @@ class MainActivity : AppCompatActivity() {
         val audioPlay: View? = findViewById(R.id.audioPlay)
         val emptyView: TextView? = findViewById(R.id.emptyAudioList)
         var isVisible: Boolean
-        var audioData: MutableLiveData<ArrayList<Constants.Audio>>? = model.getAudioData()
+        var audioData: MutableLiveData<ArrayList<Constants.Audio>>? = model.audioLiveData
 
         // установка видимости компонентов исходя из данных
         val setVisibility: (audioData: ArrayList<Constants.Audio>?) -> Boolean =  {
-            if (model.audioPlayItemLiveData.value !== null) {
-                audioPlay?.visibility = View.VISIBLE
-            } else {
-                audioPlay?.visibility = View.GONE
-            }
             if (audioData !== null && audioData?.value?.size !== 0) {
                 audioList.visibility = View.VISIBLE
+                audioPlay?.visibility = View.VISIBLE
                 emptyView?.visibility = View.GONE
                 true
             } else {
                 audioList.visibility = View.GONE
+                audioPlay?.visibility = View.GONE
                 emptyView?.visibility = View.VISIBLE
                 false
             }

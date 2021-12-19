@@ -49,7 +49,7 @@
             android:id="@+id/firstRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:orientation="vertical">
 
             <HorizontalScrollView
@@ -72,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="2dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0"
                         android:text="Name"
                         android:textAlignment="center" />
                 </LinearLayout>
@@ -108,7 +108,7 @@
                 android:backgroundTint="@android:color/transparent"
                 android:indeterminate="false"
                 android:progressTint="@color/progress_color"
-                android:thumbTint="@color/progress_thumb" />
+                android:thumbTint="@color/baseColor" />
 
             <TextView
                 android:id="@+id/audioDurationFullscr"
@@ -140,7 +140,7 @@
             android:textAlignment="center"
             app:icon="@drawable/previous_fullscr"
             app:iconGravity="textStart"
-            app:iconTint="@color/play_buttons" />
+            app:iconTint="@color/baseColor" />
 
         <ImageButton
             android:id="@+id/playPauseBtn"
@@ -149,7 +149,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/play_fullscr"
-            android:tint="@color/play_buttons" />
+            android:tint="@color/baseColor" />
 
         <Button
             android:id="@+id/nextBtn"
@@ -160,7 +160,7 @@
             android:textAlignment="center"
             app:icon="@drawable/next_fullscr"
             app:iconGravity="textEnd"
-            app:iconTint="@color/play_buttons" />
+            app:iconTint="@color/baseColor" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
