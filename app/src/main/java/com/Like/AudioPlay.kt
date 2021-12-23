@@ -25,16 +25,13 @@ class AudioPlay : Fragment() {
     private var progress: ProgressBar? = null
     var fragmentVisibility: Boolean = false
     var name: TextView? = null
-    var artist: TextView? = null
     var duration: TextView? = null
     var playBtn: ImageButton? = null
     var playBtnChecked: Boolean = false
-    var nameScroll: HorizontalScrollView? = null
     var audioTimer: CountDownTimer? = null
     private var itemData: MutableLiveData<Constants.Audio>? = null
     private val mediaPlayer: MediaPlayer by lazy { model?.mediaPlayer!! }
     private var audioData: MutableLiveData<ArrayList<Constants.Audio>>? = null
-    private var nameScrollTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,26 +60,22 @@ class AudioPlay : Fragment() {
                 }
                 progress = view?.findViewById(R.id.audioPlayProgress)
                 name = view?.findViewById(R.id.audioPlayName)
-                artist = view?.findViewById(R.id.audioPlayArtist)
                 duration = view?.findViewById(R.id.audioPlayDuration)
 
                 name?.text = itemData?.value?.name
-                artist?.text = itemData?.value?.artist
                 duration?.text = getTime(itemData?.value?.duration?.toLong())
                 progress?.max = itemData?.value?.duration!!
 
-                nameScroll = view?.findViewById(R.id.nameScroll)
                 container?.setOnClickListener {
                     openFullscreen()
                 }
-                nameScroll?.setOnClickListener {
+                name?.setOnClickListener {
                     openFullscreen()
                 }
                 audioTimer = getTrackTimer()
                 initPlayBtn()
                 mediaPlayer.reset()
                 initMediaPlayerData(itemData!!)
-                nameScrollTimer = startNameScroll()
             }
             itemData?.observe(viewLifecycleOwner, {
                 if (!isInit) {
@@ -95,6 +88,7 @@ class AudioPlay : Fragment() {
                         playAudio()
                     } else {
                         playBtn?.setImageResource(R.drawable.play)
+                        progress?.progress = 0
                     }
                 }
                 isInit = false
@@ -107,7 +101,6 @@ class AudioPlay : Fragment() {
         mediaPlayer.start()
         audioTimer?.start()
         playBtn?.setImageResource(R.drawable.stop)
-        restartNameScroll()
     }
 
     private fun initPlayBtn() {
@@ -116,7 +109,6 @@ class AudioPlay : Fragment() {
             playBtnChecked = mediaPlayer.isPlaying
             playBtn?.setImageResource(R.drawable.stop)
             audioTimer?.start()
-            startNameScroll()
         } else {
             mediaPlayer.reset()
             mediaPlayer.setDataSource(itemData?.value?.url)
@@ -133,11 +125,6 @@ class AudioPlay : Fragment() {
                 audioTimer?.cancel()
             }
         }
-    }
-
-    private fun restartNameScroll() {
-        nameScrollTimer?.cancel()
-        nameScrollTimer?.start()
     }
 
     private fun initMediaPlayerData(itemData: MutableLiveData<Constants.Audio>) {
@@ -172,26 +159,6 @@ class AudioPlay : Fragment() {
                 return
             }
         }
-        return timer
-    }
-
-    private fun startNameScroll(): CountDownTimer {
-        val timer = object: CountDownTimer(itemData?.value?.duration!!.toLong(), Constants.halfSecond.toLong()) {
-            override fun onTick(millisUntilFinished: Long) {
-                val currentScrollX = nameScroll?.scrollX!!
-                val textLength = name?.right!!
-                val scrollXPos = nameScroll?.width!! + nameScroll?.scrollX!!
-                if (scrollXPos < textLength) {
-                    nameScroll?.scrollX = currentScrollX + 5
-                } else {
-                    nameScroll?.smoothScrollTo(0, 0)
-                }
-            }
-            override fun onFinish() {
-                start()
-            }
-        }
-        timer.start()
         return timer
     }
 }

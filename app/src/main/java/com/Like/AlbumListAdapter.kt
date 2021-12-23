@@ -51,7 +51,7 @@ class AlbumListAdapter(private val ctx: MainActivity): RecyclerView.Adapter<Albu
 
         // обработка лонг тап клика на альбом, открытие меню
         holder.itemView.setOnLongClickListener { v ->
-            if (itemData.id !== Constants.AL_ALBUM_ID && itemData.id !== Constants.FAVORITE_ALBUM_ID) {
+            if (itemData.id !== Constants.AL_ALBUM_ID) {
                 val popup = PopupMenu(v?.context, v);
                 popup.inflate(R.menu.album);
                 popup.setOnMenuItemClickListener { item ->

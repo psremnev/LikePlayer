@@ -127,7 +127,6 @@ class DataHelper(ctx: Context) {
         if (cursor.moveToFirst()) {
             val idIndex = cursor.getColumnIndex(DBHelper.KEY_ID)
             val nameIndex = cursor.getColumnIndex(DBHelper.KEY_NAME)
-            val audioCountIndex = cursor.getColumnIndex(DBHelper.KEY_AUDIO_COUNT)
             do {
                 albumsData.add(
                     object: Constants.Album {
@@ -143,24 +142,11 @@ class DataHelper(ctx: Context) {
     }
 
     fun initDefaultAlbum(ctx: Context) {
-        val defaultAlbums: ArrayList<Constants.Album> = arrayListOf(
-            object: Constants.Album {
+        val defaultAlbum = object: Constants.Album {
                 override val id = Constants.AL_ALBUM_ID
                 override var name = ctx.getString(R.string.allAlbumName);
                 override var audioCount = 0
-            },
-            object: Constants.Album {
-                override val id = Constants.FAVORITE_ALBUM_ID
-                override var name = ctx.getString(R.string.favoriteAlbumName);
-                override var audioCount = 0
             }
-        )
-
-        for (album in defaultAlbums) {
-            val albumCursor = getAlbum(album.id)
-            if (albumCursor.count === 0) {
-                addAlbum(album)
-            }
-        }
+        addAlbum(defaultAlbum)
     }
 }

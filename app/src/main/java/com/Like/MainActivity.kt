@@ -1,7 +1,12 @@
 package com.Like
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
+import android.database.Cursor
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.Button
@@ -25,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState === null) {
+            initNewMp3Songs()
             initModelData()
             initAddAlbumBtn()
             initAlbumList()
@@ -36,6 +42,13 @@ class MainActivity : AppCompatActivity() {
             initAudioList()
             initSearch()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // ставим обычную ориентацию и тему после splash экрана
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+        setTheme(R.style.Theme_Like)
     }
 
     private fun initSearch() {
@@ -58,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initModelData() {
+        dataHelper.initDefaultAlbum(this)
         model.audioLiveData.value = dataHelper.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
         model.albumLiveData.value = dataHelper.getAllAlbum()
         val audioData = model.audioLiveData.value
@@ -77,7 +91,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAlbumList() {
-        dataHelper.initDefaultAlbum(this)
         albumList.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
         val albumLiveData: MutableLiveData<ArrayList<Constants.Album>> = model.albumLiveData
@@ -85,6 +98,43 @@ class MainActivity : AppCompatActivity() {
         albumLiveData.observe(this, {
             albumList.adapter?.notifyDataSetChanged()
         })
+    }
+
+    @SuppressLint("Range")
+    fun initNewMp3Songs() {
+        val allSongsUri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
+        val cursor: Cursor? =
+            contentResolver.query(allSongsUri, null, null, null, selection)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    val fileType = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE))
+                    if (fileType == Constants.audioType) {
+                        val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                        val audioCursor = dataHelper.getAudio(id)
+                        if (audioCursor.count === 0) {
+                            val baseName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                            dataHelper.addAudio(object : Constants.Audio {
+                                override val id =
+                                    cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                                override val name = baseName.replace(Regex("""[.com.mp3]*"""), "")
+                                override val duration =
+                                    cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                                override val artist =
+                                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                                override val url =
+                                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                                override val albumId: Long = cursor.getLong(cursor.getColumnIndex(
+                                    MediaStore.Audio.Media.ALBUM_ID))
+                                override var album = Constants.AL_ALBUM_ID
+                            })
+                        }
+                    }
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+        }
     }
 
     private fun initAudioList() {

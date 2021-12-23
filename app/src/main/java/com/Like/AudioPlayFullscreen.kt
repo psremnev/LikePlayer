@@ -141,4 +141,29 @@ class AudioPlayFullscreen : DialogFragment() {
             }
         }
     }
+
+    /*private fun startNameScroll(): CountDownTimer {
+        val timer = object: CountDownTimer(itemData?.value?.duration!!.toLong(), Constants.halfSecond.toLong()) {
+            override fun onTick(millisUntilFinished: Long) {
+                val currentScrollX = nameScroll?.scrollX!!
+                val textLength = name?.right!!
+                val scrollXPos = nameScroll?.width!! + nameScroll?.scrollX!!
+                if (scrollXPos < textLength) {
+                    nameScroll?.scrollX = currentScrollX + 5
+                } else {
+                    nameScroll?.smoothScrollTo(0, 0)
+                }
+            }
+            override fun onFinish() {
+                start()
+            }
+        }
+        timer.start()
+        return timer
+    }*/
+
+    /*private fun restartNameScroll() {
+        nameScrollTimer?.cancel()
+        nameScrollTimer?.start()
+    }*/
 }

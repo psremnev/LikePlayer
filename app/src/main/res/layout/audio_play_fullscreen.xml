@@ -12,11 +12,11 @@
         android:id="@+id/rollBtn"
         android:layout_width="79dp"
         android:layout_height="43dp"
-        android:background="#00FFFFFF"
+        android:background="@android:color/transparent"
         android:foregroundGravity="center"
         app:icon="@drawable/roll_up"
         app:iconGravity="textEnd"
-        app:iconTint="#6C6A6A"
+        app:iconTint="@color/secondColor"
         app:layout_constraintBottom_toTopOf="@+id/audioImageScrollList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,78 +45,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/audioImageScrollList">
 
-        <LinearLayout
-            android:id="@+id/firstRow"
+        <HorizontalScrollView
+            android:id="@+id/nameScrollFullscr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:orientation="vertical">
+            android:scrollbars="none">
 
-            <HorizontalScrollView
-                android:id="@+id/nameScrollFullscr"
+            <LinearLayout
+                android:id="@+id/nameScrollFullscrLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:scrollbars="none">
+                android:layout_gravity="center"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/nameScrollFullscrLayout"
+                <TextView
+                    android:id="@+id/audioNameFullscr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_weight="0"
+                    android:text="Name"
+                    android:textAlignment="center" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
-                    <TextView
-                        android:id="@+id/audioNameFullscr"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="2dp"
-                        android:layout_weight="0"
-                        android:text="Name"
-                        android:textAlignment="center" />
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <TextView
-                android:id="@+id/audioArtistFullscr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="0"
-                android:text="Artist"
-                android:textAlignment="center"
-                android:textColor="@color/unnacented" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/secondRow"
+        <TextView
+            android:id="@+id/audioArtistFullscr"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_weight="0"
+            android:text="Artist"
+            android:textAlignment="center"
+            android:textColor="@color/unnacented" />
+
+        <SeekBar
+            android:id="@+id/playSeekBar"
+            style="@style/Widget.AppCompat.SeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:backgroundTint="@android:color/transparent"
+            android:indeterminate="false"
+            android:progressTint="@color/secondColor"
+            android:thumbTint="@color/secondColor" />
 
-            <SeekBar
-                android:id="@+id/playSeekBar"
-                style="@style/Widget.AppCompat.SeekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="@android:color/transparent"
-                android:indeterminate="false"
-                android:progressTint="@color/progress_color"
-                android:thumbTint="@color/baseColor" />
-
-            <TextView
-                android:id="@+id/audioDurationFullscr"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Duration" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/audioDurationFullscr"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Duration"
+            android:textAlignment="center"
+            android:textColor="@color/secondColor" />
 
     </LinearLayout>
 
@@ -140,7 +124,7 @@
             android:textAlignment="center"
             app:icon="@drawable/previous_fullscr"
             app:iconGravity="textStart"
-            app:iconTint="@color/baseColor" />
+            app:iconTint="@color/secondColor" />
 
         <ImageButton
             android:id="@+id/playPauseBtn"
@@ -149,7 +133,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/play_fullscr"
-            android:tint="@color/baseColor" />
+            android:tint="@color/secondColor" />
 
         <Button
             android:id="@+id/nextBtn"
@@ -160,7 +144,7 @@
             android:textAlignment="center"
             app:icon="@drawable/next_fullscr"
             app:iconGravity="textEnd"
-            app:iconTint="@color/baseColor" />
+            app:iconTint="@color/secondColor" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
