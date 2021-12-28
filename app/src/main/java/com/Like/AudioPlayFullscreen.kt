@@ -1,20 +1,15 @@
 package com.Like
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class AudioPlayFullscreen : DialogFragment() {
     private val model: Model by lazy { ViewModelProvider(activity as MainActivity).get() }
@@ -31,12 +26,22 @@ class AudioPlayFullscreen : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
+        setOrientationBaseLayout()
         rollBtnInit()
         imageScrollInit()
         infoInit()
         durationInit()
         seekbarInit()
         playBtnsInit()
+    }
+
+    private  fun setOrientationBaseLayout() {
+        val baseLayout: LinearLayout? = view?.findViewById(R.id.baseLayout)
+        if (activity?.resources?.configuration?.orientation === ActivityInfo.SCREEN_ORIENTATION_USER) {
+            baseLayout?.orientation= LinearLayout.HORIZONTAL
+        } else {
+            baseLayout?.orientation = LinearLayout.VERTICAL
+        }
     }
 
     private fun rollBtnInit() {
@@ -94,9 +99,11 @@ class AudioPlayFullscreen : DialogFragment() {
         audioImageScrollList?.currentItem = model.playItemPos
         audioImageScrollList?.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                val audioArray = model.audioLiveData.value
-                model.audioPlayItemLiveData.value = audioArray!![position]
-                model.playItemPos = position
+                if (position !== model.playItemPos) {
+                    val audioArray = model.audioLiveData.value
+                    model.audioPlayItemLiveData.value = audioArray!![position]
+                    model.playItemPos = position
+                }
                 super.onPageSelected(position)
             }
         })

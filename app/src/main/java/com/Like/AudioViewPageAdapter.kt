@@ -13,7 +13,6 @@ class AudioViewPageAdapter(ctx: MainActivity): FragmentStateAdapter(ctx) {
     }
 
     override fun createFragment(position: Int): Fragment {
-        val audioArray: ArrayList<Constants.Audio> = model.audioLiveData.value!!
-        return AudioViewPage(audioArray[position])
+        return AudioViewPage()
     }
 }

@@ -10,9 +10,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import java.io.FileNotFoundException
 
-class AudioViewPage(private val itemData: Constants.Audio): Fragment() {
+class AudioViewPage(): Fragment() {
+    val model: Model by lazy { ViewModelProvider(activity as MainActivity).get() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,7 +26,7 @@ class AudioViewPage(private val itemData: Constants.Audio): Fragment() {
         val emptyText: TextView? = view?.findViewById(R.id.noPhoto)
 
         val sArtworkUri = Uri.parse(Constants.ALBUM_ART_URI)
-        val uri: Uri = ContentUris.withAppendedId(sArtworkUri, itemData.albumId)
+        val uri: Uri = ContentUris.withAppendedId(sArtworkUri, model.audioPlayItemLiveData.value!!.albumId)
 
         try {
             val inputStr = activity?.contentResolver?.openInputStream(uri)

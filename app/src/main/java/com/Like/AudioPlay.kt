@@ -74,8 +74,10 @@ class AudioPlay : Fragment() {
                 }
                 audioTimer = getTrackTimer()
                 initPlayBtn()
-                mediaPlayer.reset()
-                initMediaPlayerData(itemData!!)
+                if (!mediaPlayer.isPlaying) {
+                    mediaPlayer.reset()
+                    initMediaPlayerData(itemData!!)
+                }
             }
             itemData?.observe(viewLifecycleOwner, {
                 if (!isInit) {
@@ -88,6 +90,7 @@ class AudioPlay : Fragment() {
                         playAudio()
                     } else {
                         playBtn?.setImageResource(R.drawable.play)
+                        playBtn?.alpha = 1F
                         progress?.progress = 0
                     }
                 }
@@ -101,6 +104,7 @@ class AudioPlay : Fragment() {
         mediaPlayer.start()
         audioTimer?.start()
         playBtn?.setImageResource(R.drawable.stop)
+        playBtn?.alpha = 0.7F
     }
 
     private fun initPlayBtn() {
@@ -108,6 +112,7 @@ class AudioPlay : Fragment() {
         if (mediaPlayer.isPlaying) {
             playBtnChecked = mediaPlayer.isPlaying
             playBtn?.setImageResource(R.drawable.stop)
+            playBtn?.alpha = 0.7F
             audioTimer?.start()
         } else {
             mediaPlayer.reset()
@@ -117,10 +122,12 @@ class AudioPlay : Fragment() {
             playBtnChecked = !playBtnChecked
             if (playBtnChecked) {
                 playBtn?.setImageResource(R.drawable.stop)
+                playBtn?.alpha = 0.7F
                 mediaPlayer.start()
                 audioTimer?.start()
             } else {
                 playBtn?.setImageResource(R.drawable.play)
+                playBtn?.alpha = 1F
                 mediaPlayer.pause()
                 audioTimer?.cancel()
             }
