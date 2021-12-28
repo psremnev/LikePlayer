@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -52,21 +53,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initSearch() {
-        //TODO: Пока не работает, неправильный запрос
         val search: SearchView = findViewById(R.id.searchAudio)
+        val albumListLayout: LinearLayout = findViewById(R.id.albumListLayout)
         search.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                model.audioLiveData.value = query?.let { model.albumLiveData.value!![model.selectedAlbum].id?.let { it1 ->
-                    dataHelper.getAllAudioBySearch(
-                        it1, it)
-                } }
+                query?.let {
+                    model.audioLiveData.value = dataHelper.getAllAudioBySearch(it)
+                }
+                albumListLayout.visibility = LinearLayout.GONE
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText == "") {
+                    model.audioLiveData.value = dataHelper.getAllAudioByAlbumId(model.selectedAlbum)
+                    albumListLayout.visibility = LinearLayout.VISIBLE
+                    search.isIconified = true
+                }
                 return false
             }
-
         })
     }
 
@@ -170,8 +175,9 @@ class MainActivity : AppCompatActivity() {
         audioData?.observe(this, {
             val newAudioData = model.audioLiveData
             isVisible = setVisibility(newAudioData.value)
-            if (audioData !== newAudioData?.value) {
+            if (audioData !== newAudioData.value) {
                 audioData = newAudioData
+                audioList.adapter?.notifyDataSetChanged()
             }
             audioList.scrollToPosition(model.playItemPos)
         })

@@ -16,9 +16,8 @@ class DataHelper(ctx: Context) {
         return getAllAudioBySelection("album=$albumId")
     }
 
-    fun getAllAudioBySearch(albumId: Int, searchString: String): ArrayList<Constants.Audio> {
-        //TODO: Пока не работает, неправильный запрос
-        return getAllAudioBySelection("album=$albumId and name match '%$searchString%'")
+    fun getAllAudioBySearch(searchString: String): ArrayList<Constants.Audio> {
+        return getAllAudioBySelection("name LIKE '%$searchString%'")
     }
 
     private fun getAllAudioBySelection(selection: String): ArrayList<Constants.Audio> {
