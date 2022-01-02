@@ -1,4 +1,4 @@
-package com.Like
+package com.like
 
 import org.junit.Test
 

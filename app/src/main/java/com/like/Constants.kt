@@ -1,4 +1,4 @@
-package com.Like
+package com.like
 
 object Constants {
     const val millisecondsInSec = 1000
@@ -20,5 +20,12 @@ object Constants {
         val url: String
         val albumId: Long
         var album: Int
+    }
+
+    interface AlbumAction {
+        val action: String?
+        val position: Int?
+            get() = null
+        val data: Any
     }
 }

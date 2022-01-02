@@ -1,4 +1,4 @@
-package com.Like
+package com.like.utils
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

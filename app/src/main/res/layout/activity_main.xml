@@ -1,101 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/baseColor"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <SearchView
-            android:id="@+id/searchAudio"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+    <data>
+        <variable
+            name="model"
+            type="com.like.MainActivityModel" />
+    </data>
 
     <LinearLayout
-        android:id="@+id/albumListLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="3dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top">
+        android:layout_height="match_parent"
+        android:background="@color/baseColor"
+        android:orientation="vertical"
+        tools:visibility="visible">
 
-        <Button
-            android:id="@+id/addAlbumBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:background="@drawable/add_album_btn_back"
-            android:backgroundTint="#43A047"
-            android:gravity="center"
-            app:icon="@drawable/plus"
-            app:iconGravity="top"
-            app:iconSize="10dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/albumList"
+        <LinearLayout
+            android:id="@+id/top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:padding="6dp"
-            android:visibility="visible" />
+            android:orientation="horizontal"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <SearchView
+                android:id="@+id/searchAudio"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:onQueryTextChange="@{ model::onSearchTextChanged }"
+                android:onQueryTextSubmit="@{ model::onSearchTextSubmit }" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/albumListLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/top">
+
+            <Button
+                android:id="@+id/addAlbumBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:background="@drawable/add_album_btn_back"
+                android:backgroundTint="#43A047"
+                android:gravity="center"
+                android:onClick="@{ (view) -> model.addAlbum() }"
+                app:icon="@drawable/plus"
+                app:iconGravity="top"
+                app:iconSize="10dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/albumList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:padding="6dp"
+                app:layoutManager="@{ model.albumLayoutManager }"
+                android:adapter="@{ model.albumListAdapter }" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/audioLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/audioPlay"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/albumListLayout">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/audioList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="@{ model.audioLayoutManager }"
+                android:adapter="@{ model.audioListAdapter }"/>
+
+            <TextView
+                android:id="@+id/emptyAudioList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="50dp"
+                android:text="@string/emptyAudioList"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/audioPlay"
+            android:name="com.like.audioPlay.AudioPlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout="@layout/audio_play" />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/audioLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/audioPlay"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/albumListLayout">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/audioList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/emptyAudioList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="50dp"
-            android:text="@string/emptyAudioList"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/audioPlay"
-        android:name="com.Like.AudioPlay"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout="@layout/audio_play" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

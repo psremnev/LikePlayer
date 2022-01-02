@@ -1,10 +1,12 @@
-package com.Like
+package com.like.utils
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import com.like.Constants
+import com.like.R
 
 class DataHelper(ctx: Context) {
     private val db: DBHelper = DBHelper(ctx)
@@ -135,7 +137,9 @@ class DataHelper(ctx: Context) {
                     }
                 );
             } while (cursor.moveToNext())
-        } else Log.d("DB", "Empty DB")
+        } else {
+            Log.d("DB", "Empty DB")
+        }
         cursor.close()
         return albumsData
     }
@@ -146,6 +150,8 @@ class DataHelper(ctx: Context) {
                 override var name = ctx.getString(R.string.allAlbumName);
                 override var audioCount = 0
             }
-        addAlbum(defaultAlbum)
+        if (getAlbum(Constants.AL_ALBUM_ID) == null) {
+            addAlbum(defaultAlbum)
+        }
     }
 }

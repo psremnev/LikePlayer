@@ -1,49 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:padding="6dp"
-    tools:context=".AddAlbumDialog">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <EditText
-        android:id="@+id/addAlbumDialogName"
-        android:layout_width="189dp"
-        android:layout_height="46dp"
-        android:hint="@string/addAlbumText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <variable name="model"
+            type="com.like.addAlbumDialog.AddAlbumDialogModel" />
+    </data>
 
-    <Button
-        android:id="@+id/addAlbumDialogSave"
-        android:layout_width="61dp"
-        android:layout_height="46dp"
-        android:backgroundTint="@color/secondColor"
-        android:text="@string/addAlbumSaveText"
-        android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/addAlbumDialogCancel"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/addAlbumDialogName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.343" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="6dp"
+        tools:context=".addAlbumDialog.AddAlbumDialog">
 
-    <Button
-        android:id="@+id/addAlbumDialogCancel"
-        android:layout_width="30dp"
-        android:layout_height="46dp"
-        android:background="@android:color/transparent"
-        app:icon="@drawable/close"
-        app:iconGravity="top"
-        app:iconSize="16dp"
-        app:iconTint="@color/secondColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        <EditText
+            android:id="@+id/addAlbumDialogName"
+            android:layout_width="189dp"
+            android:layout_height="46dp"
+            android:hint="@string/addAlbumText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@={ model.albumName }"/>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/addAlbumDialogSave"
+            android:layout_width="61dp"
+            android:layout_height="46dp"
+            android:backgroundTint="@color/secondColor"
+            android:text="@string/addAlbumSaveText"
+            android:textSize="8sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/addAlbumDialogCancel"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/addAlbumDialogName"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.343"
+            android:onClick="@{ (view) -> model.save()}"/>
+
+        <Button
+            android:id="@+id/addAlbumDialogCancel"
+            android:layout_width="30dp"
+            android:layout_height="46dp"
+            android:background="@android:color/transparent"
+            app:icon="@drawable/close"
+            app:iconGravity="top"
+            app:iconSize="16dp"
+            app:iconTint="@color/secondColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            android:onClick="@{ (view) -> model.close()}"/>
+
+    </LinearLayout>
+</layout>

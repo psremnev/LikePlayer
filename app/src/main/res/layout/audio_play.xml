@@ -1,62 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainContent"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ProgressBar
-        android:id="@+id/audioPlayProgress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_weight="0"
-        android:progressTint="@color/progress_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0" />
+    <data>
+        <variable name="model"
+            type="com.like.audioPlay.AudioPlayModel" />
+    </data>
 
     <LinearLayout
-        android:id="@+id/audioPlayContent"
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:onClick="@{ (view) -> model.openFullscreen() }"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/audioPlayName"
+        <ProgressBar
+            android:id="@+id/audioPlayProgress"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:padding="6dp"
-            android:singleLine="true"
-            android:text="Name"
-            android:textAlignment="viewStart" />
+            android:layout_height="4dp"
+            android:layout_weight="0"
+            android:max="@{ model.progressMax }"
+            android:progress="@{ model.progress }"
+            android:progressTint="@color/progress_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0" />
 
-        <ImageButton
-            android:id="@+id/audioPlay"
-            android:layout_width="60dp"
-            android:layout_height="42dp"
-            android:background="@color/secondColor"
-            android:tint="@color/secondColor"
-            app:srcCompat="@drawable/play"
-            app:tint="@color/baseColor"
-            tools:srcCompat="@drawable/play" />
+        <LinearLayout
+            android:id="@+id/audioPlayContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/audioPlayDuration"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="Duration"
-            android:textAlignment="viewEnd" />
+            <TextView
+                android:id="@+id/audioPlayName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:onClick="@{ (view) -> model.openFullscreen() }"
+                android:padding="6dp"
+                android:singleLine="true"
+                android:text="@{ model.name }"
+                android:textAlignment="viewStart" />
 
+            <ImageButton
+                android:id="@+id/audioPlay"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@color/secondColor"
+                android:onClick="@{ (view) -> model.onPlayClick() }"
+                android:tint="@color/secondColor"
+                app:srcCompat="@drawable/play"
+                app:tint="@color/baseColor"
+                tools:srcCompat="@drawable/play" />
+
+            <TextView
+                android:id="@+id/audioPlayDuration"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@{ model.duration }"
+                android:textAlignment="viewEnd" />
+
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</layout>

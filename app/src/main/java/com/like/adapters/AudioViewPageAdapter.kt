@@ -1,15 +1,18 @@
-package com.Like
+package com.like.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.like.MainActivity
+import com.like.MainActivityModel
+import com.like.audioViewPage.AudioViewPage
 
 class AudioViewPageAdapter(ctx: MainActivity): FragmentStateAdapter(ctx) {
-    private val model: Model by lazy { ViewModelProvider(ctx).get() }
+    private val model: MainActivityModel by lazy { ViewModelProvider(ctx).get() }
 
     override fun getItemCount(): Int {
-        return model.audioLiveData.value!!.size
+        return model.audioData.size
     }
 
     override fun createFragment(position: Int): Fragment {
