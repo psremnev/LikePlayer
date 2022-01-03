@@ -5,7 +5,6 @@ import android.content.ContentUris
 import android.content.pm.ActivityInfo
 import android.database.Cursor
 import android.graphics.BitmapFactory
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -18,28 +17,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.like.addAlbumDialog.AddAlbumDialog
 import com.like.adapters.AlbumListAdapter
 import com.like.adapters.AudioListAdapter
-import com.like.daggerModules.App
+import com.like.dataClass.Album
+import com.like.dataClass.Audio
 import com.like.selectAlbumDialog.SelectAlbumDialog
-import com.like.utils.DataHelper
 import java.io.FileNotFoundException
 import rx.subjects.PublishSubject
 
 class MainActivityModel: ViewModel() {
     lateinit var ctx: MainActivity
-    val dataHelper by lazy { DataHelper(ctx) }
+    val dataModel by lazy { DataModel(ctx) }
     private var albumHolderList: HashMap<Int, AlbumListAdapter.ViewHolder> = HashMap<Int, AlbumListAdapter.ViewHolder>()
     private var albumPreHolder: AlbumListAdapter.ViewHolder? = null
     lateinit var albumLayoutManager: LinearLayoutManager
     lateinit var audioLayoutManager: LinearLayoutManager
 
-    val albumDataObservable: PublishSubject<Constants.AlbumAction> = PublishSubject.create()
-    val audioDataObservable: PublishSubject<ArrayList<Constants.Audio>> = PublishSubject.create()
-    val playItemDataObservable: PublishSubject<Constants.Audio> = PublishSubject.create()
+    val albumDataObservable: PublishSubject<Interfaces.AlbumAction> = PublishSubject.create()
+    val audioDataObservable: PublishSubject<ArrayList<Audio>> = PublishSubject.create()
+    val playItemDataObservable: PublishSubject<Audio> = PublishSubject.create()
     val mediaPlayerStateChangedObservable: PublishSubject<Boolean> = PublishSubject.create()
 
-    var audioData: ArrayList<Constants.Audio> = ArrayList()
-    var albumData: ArrayList<Constants.Album> = ArrayList()
-    lateinit var playItemData: Constants.Audio
+    var audioData: ArrayList<Audio> = ArrayList()
+    var albumData: ArrayList<Album> = ArrayList()
+    lateinit var playItemData: Audio
 
     val albumListAdapter: AlbumListAdapter by lazy { AlbumListAdapter(ctx, albumData) }
     val audioListAdapter: AudioListAdapter by lazy { AudioListAdapter(ctx, audioData) }
@@ -83,23 +82,18 @@ class MainActivityModel: ViewModel() {
                     val fileType = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.MIME_TYPE))
                     if (fileType == Constants.audioType) {
                         val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                        val audioCursor = dataHelper.getAudio(id)
+                        val audioCursor = dataModel.getAudio(id)
                         if (audioCursor.count === 0) {
                             val baseName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                            dataHelper.addAudio(object : Constants.Audio {
-                                override val id =
-                                    cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                                override val name = baseName.replace(Regex("""[.com.mp3]*"""), "")
-                                override val duration =
-                                    cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                                override val artist =
-                                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                                override val url =
-                                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                                override val albumId: Long = cursor.getLong(cursor.getColumnIndex(
-                                    MediaStore.Audio.Media.ALBUM_ID))
-                                override var album = Constants.AL_ALBUM_ID
-                            })
+                            dataModel.addAudio(Audio(
+                                cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID)),
+                                baseName.replace(Regex("""[.com.mp3]*"""), ""),
+                                cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)),
+                                cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)),
+                                cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)),
+                                cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)),
+                                Constants.AL_ALBUM_ID
+                            ))
                         }
                     }
                 } while (cursor.moveToNext())
@@ -113,19 +107,19 @@ class MainActivityModel: ViewModel() {
             when (it.action) {
                 "updateAll" -> {
                     albumData.clear()
-                    albumData.addAll(it.data as ArrayList<Constants.Album>)
+                    albumData.addAll(it.data as ArrayList<Album>)
                     albumListAdapter.notifyDataSetChanged()
                 }
                 "add" -> {
-                    albumData.add(it.data as Constants.Album)
+                    albumData.add(it.data as Album)
                     albumListAdapter.notifyItemInserted(it.position!!)
                 }
                 "delete" -> {
-                    albumData.remove(it.data as Constants.Album)
+                    albumData.remove(it.data as Album)
                     albumListAdapter.notifyItemRemoved(it.position!!)
                 }
                 "update" -> {
-                    albumData[it.position!!] = it.data as Constants.Album
+                    albumData[it.position!!] = it.data as Album
                     albumListAdapter.notifyItemChanged(it.position!!)
                 }
             }
@@ -142,9 +136,9 @@ class MainActivityModel: ViewModel() {
     }
 
     private fun initModelData() {
-        dataHelper.initDefaultAlbum(ctx)
-        albumData = dataHelper.getAllAlbum()
-        audioData = dataHelper.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
+        dataModel.initDefaultAlbum(ctx)
+        albumData = dataModel.getAllAlbum()
+        audioData = dataModel.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
         if (audioData.size != 0) {
             playItemData = audioData[playItemPosition]
         }
@@ -176,7 +170,7 @@ class MainActivityModel: ViewModel() {
         val search = ctx.binding.searchAudio
         val albumListLayout = ctx.binding.albumListLayout
         if (newText == "") {
-            audioDataObservable.onNext(dataHelper.getAllAudioByAlbumId(selectedAlbum))
+            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(selectedAlbum))
             albumListLayout.visibility = LinearLayout.VISIBLE
             search.isIconified = true
         }
@@ -186,7 +180,7 @@ class MainActivityModel: ViewModel() {
     fun onSearchTextSubmit(query: String?): Boolean {
         val albumListLayout = ctx.binding.albumListLayout
         query?.let {
-            audioDataObservable.onNext(dataHelper.getAllAudioBySearch(it))
+            audioDataObservable.onNext(dataModel.getAllAudioBySearch(it))
         }
         albumListLayout.visibility = LinearLayout.GONE
         return true
@@ -231,8 +225,8 @@ class MainActivityModel: ViewModel() {
                             addAlbumFrg.show(ctx.supportFragmentManager, "addAlbum")
                         }
                         R.id.delete -> {
-                            dataHelper.deleteAlbum(itemData.id)
-                            albumDataObservable.onNext(object: Constants.AlbumAction {
+                            dataModel.deleteAlbum(itemData.id)
+                            albumDataObservable.onNext(object: Interfaces.AlbumAction {
                                 override val action = "delete"
                                 override val data = itemData
                                 override val position = position
@@ -243,7 +237,7 @@ class MainActivityModel: ViewModel() {
                             // чтобы снять маркер если удаляем не переключаясь на запись
                             albumPreHolder = albumHolderList[newPos]
                             albumPreHolder?.albumInfo?.background = ctx.getDrawable(R.drawable.album_background_selected)
-                            audioDataObservable.onNext(dataHelper.getAllAudioByAlbumId(adapter.getItemData(newPos).id!!))
+                            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(adapter.getItemData(newPos).id!!))
                         }
                     }
                     true
@@ -259,7 +253,7 @@ class MainActivityModel: ViewModel() {
             if (albumPreHolder !== null) {
                 albumPreHolder!!.albumInfo.background = ctx.getDrawable(R.drawable.album_background)
             }
-            audioDataObservable.onNext(dataHelper.getAllAudioByAlbumId(selectedAlbum))
+            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(selectedAlbum))
             holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
             albumPreHolder = holder
         }

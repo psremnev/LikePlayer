@@ -1,29 +1,30 @@
-package com.like.utils
+package com.like
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import com.like.Constants
-import com.like.R
+import com.like.dataClass.Album
+import com.like.dataClass.Audio
+import com.like.utils.DBHelper
 
-class DataHelper(ctx: Context) {
+class DataModel(ctx: Context) {
     private val db: DBHelper = DBHelper(ctx)
     private val database: SQLiteDatabase = db.writableDatabase
     private val audioValues: ContentValues = ContentValues()
     private val albumValues: ContentValues = ContentValues()
 
-    fun getAllAudioByAlbumId(albumId: Int): ArrayList<Constants.Audio> {
+    fun getAllAudioByAlbumId(albumId: Int): ArrayList<Audio> {
         return getAllAudioBySelection("album=$albumId")
     }
 
-    fun getAllAudioBySearch(searchString: String): ArrayList<Constants.Audio> {
+    fun getAllAudioBySearch(searchString: String): ArrayList<Audio> {
         return getAllAudioBySelection("name LIKE '%$searchString%'")
     }
 
-    private fun getAllAudioBySelection(selection: String): ArrayList<Constants.Audio> {
-        val audioData = ArrayList<Constants.Audio>()
+    private fun getAllAudioBySelection(selection: String): ArrayList<Audio> {
+        val audioData = ArrayList<Audio>()
         val cursor: Cursor =
             database.query(DBHelper.DATABASE_AUDIO_NAME, null, selection, null, null, null, null)
         if (cursor.moveToFirst()) {
@@ -35,17 +36,15 @@ class DataHelper(ctx: Context) {
             val albumIndex = cursor.getColumnIndex(DBHelper.KEY_ALBUM)
             val albumUrlIndex = cursor.getColumnIndex(DBHelper.KEY_ALBUM_ID)
             do {
-                audioData .add(
-                    object: Constants.Audio {
-                        override val id = cursor.getInt(idIndex)
-                        override var name = cursor.getString(nameIndex)
-                        override val duration = cursor.getInt(durationIndex)
-                        override val artist = cursor.getString(artistIndex)
-                        override val url = cursor.getString(urlIndex)
-                        override val albumId = cursor.getLong(albumUrlIndex)
-                        override var album = cursor.getInt(albumIndex)
-                    }
-                );
+                audioData .add(Audio(
+                        cursor.getInt(idIndex),
+                        cursor.getString(nameIndex),
+                        cursor.getInt(durationIndex),
+                        cursor.getString(artistIndex),
+                        cursor.getString(urlIndex),
+                        cursor.getLong(albumUrlIndex),
+                        cursor.getInt(albumIndex)
+                ))
             } while (cursor.moveToNext())
         } else Log.d("DB", "Empty DB")
         cursor.close()
@@ -56,11 +55,7 @@ class DataHelper(ctx: Context) {
         return database.query(DBHelper.DATABASE_AUDIO_NAME, null, "${DBHelper.KEY_ID} = $id", null, null, null, null)
     }
 
-    fun deleteAllAudio() {
-        database.delete(DBHelper.DATABASE_AUDIO_NAME, null, null);
-    }
-
-    fun addAudio(data: Constants.Audio) {
+    fun addAudio(data: Audio) {
         audioValues.put(DBHelper.KEY_ID, data.id)
         audioValues.put(DBHelper.KEY_NAME, data.name)
         audioValues.put(DBHelper.KEY_DURATION, data.duration)
@@ -72,7 +67,7 @@ class DataHelper(ctx: Context) {
         audioValues.clear()
     }
 
-    fun updateAudio(data: Constants.Audio) {
+    fun updateAudio(data: Audio) {
         audioValues.put(DBHelper.KEY_NAME, data.name)
         audioValues.put(DBHelper.KEY_DURATION, data.duration)
         audioValues.put(DBHelper.KEY_ARTIST, data.artist)
@@ -81,10 +76,6 @@ class DataHelper(ctx: Context) {
         audioValues.put(DBHelper.KEY_ALBUM_ID, data.albumId)
         database.update(DBHelper.DATABASE_AUDIO_NAME, audioValues,"id=${data.id}", null);
         audioValues.clear()
-    }
-
-    fun deleteAudio(id: String) {
-        database.delete(DBHelper.DATABASE_AUDIO_NAME, "id=${id}", null);
     }
 
     fun getAlbum(id: Int?): Cursor {
@@ -96,7 +87,7 @@ class DataHelper(ctx: Context) {
         return cursor.count
     }
 
-    fun addAlbum(data: Constants.Album) {
+    fun addAlbum(data: Album) {
         albumValues.put(DBHelper.KEY_ID, data.id)
         albumValues.put(DBHelper.KEY_NAME, data.name)
         albumValues.put(DBHelper.KEY_AUDIO_COUNT, data.audioCount)
@@ -104,7 +95,7 @@ class DataHelper(ctx: Context) {
         albumValues.clear()
     }
 
-    fun updateAlbum(data: Constants.Album) {
+    fun updateAlbum(data: Album) {
         albumValues.put(DBHelper.KEY_NAME, data.name)
         albumValues.put(DBHelper.KEY_AUDIO_COUNT, data.audioCount)
         database.update(DBHelper.DATABASE_ALBUM_NAME, albumValues,"id=${data.id}", null);
@@ -121,21 +112,20 @@ class DataHelper(ctx: Context) {
         database.delete(DBHelper.DATABASE_ALBUM_NAME, "id=${id}", null);
     }
 
-    fun getAllAlbum(): ArrayList<Constants.Album> {
-        val albumsData = ArrayList<Constants.Album>()
+    fun getAllAlbum(): ArrayList<Album> {
+        val albumsData = ArrayList<Album>()
         val cursor: Cursor =
             database.query(DBHelper.DATABASE_ALBUM_NAME, null, null, null, null, null, null)
         if (cursor.moveToFirst()) {
             val idIndex = cursor.getColumnIndex(DBHelper.KEY_ID)
             val nameIndex = cursor.getColumnIndex(DBHelper.KEY_NAME)
+            val id = cursor.getInt(idIndex)
             do {
-                albumsData.add(
-                    object: Constants.Album {
-                        override val id = cursor.getInt(idIndex)
-                        override var name = cursor.getString(nameIndex)
-                        override var audioCount = getAlbumCount(id)
-                    }
-                );
+                albumsData.add(Album(
+                        id,
+                        cursor.getString(nameIndex),
+                        getAlbumCount(id)
+                ))
             } while (cursor.moveToNext())
         } else {
             Log.d("DB", "Empty DB")
@@ -145,11 +135,11 @@ class DataHelper(ctx: Context) {
     }
 
     fun initDefaultAlbum(ctx: Context) {
-        val defaultAlbum = object: Constants.Album {
-                override val id = Constants.AL_ALBUM_ID
-                override var name = ctx.getString(R.string.allAlbumName);
-                override var audioCount = 0
-            }
+        val defaultAlbum = Album(
+                Constants.AL_ALBUM_ID,
+                ctx.getString(R.string.allAlbumName),
+                0
+        )
         if (getAlbum(Constants.AL_ALBUM_ID) == null) {
             addAlbum(defaultAlbum)
         }

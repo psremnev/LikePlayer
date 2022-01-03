@@ -4,9 +4,10 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.like.Constants
+import com.like.Interfaces
 import com.like.MainActivity
 import com.like.MainActivityModel
+import com.like.dataClass.Audio
 
 class SelectAlbumDialogModel: ViewModel() {
     lateinit var ctx: SelectAlbumDialog
@@ -45,15 +46,15 @@ class SelectAlbumDialogModel: ViewModel() {
     private fun onItemClick(position: Int) {
         val albumItem = model.albumData[position]
         albumItem.audioCount = albumItem.audioCount.plus(1)
-        val audioItem: Constants.Audio = model.playItemData
+        val audioItem: Audio = model.playItemData
         audioItem.album = albumItem.id!!
-        model.dataHelper.updateAudio(audioItem)
+        model.dataModel.updateAudio(audioItem)
 
-        model.albumDataObservable.onNext(object: Constants.AlbumAction {
+        model.albumDataObservable.onNext(object: Interfaces.AlbumAction {
             override val action = "updateAll"
-            override val data = model.dataHelper.getAllAlbum()
+            override val data = model.dataModel.getAllAlbum()
         })
 
-        model.audioDataObservable.onNext(model.dataHelper.getAllAudioByAlbumId(model.selectedAlbum))
+        model.audioDataObservable.onNext(model.dataModel.getAllAudioByAlbumId(model.selectedAlbum))
     }
 }

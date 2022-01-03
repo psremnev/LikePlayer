@@ -16,6 +16,7 @@ import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.R
 import com.like.audioPlayFullscreen.AudioPlayFullscreen
+import com.like.dataClass.Audio
 import rx.subjects.PublishSubject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,15 +31,13 @@ class AudioPlayModel: ViewModel() {
     val durationObservable: PublishSubject<String> = PublishSubject.create()
     var progressMax: ObservableInt = ObservableInt(0)
     var duration: ObservableField<String> = ObservableField<String>("")
-    private var fragmentVisibility: Boolean = false
     var playBtnChecked: Boolean = false
     var audioTimer: CountDownTimer? = null
-    lateinit var itemData: Constants.Audio
+    lateinit var itemData: Audio
 
 
     fun  onCreateView(ctx: AudioPlay) {
         ctx.binding.model = this
-        fragmentVisibility = ctx.binding.root.visibility == View.VISIBLE
     }
 
     private fun subscribeOnItemDataChange() {
@@ -57,17 +56,16 @@ class AudioPlayModel: ViewModel() {
 
     fun onStart(ctx: AudioPlay) {
         this.ctx = ctx
+
         itemData = model.playItemData
         name.set(itemData.name)
         duration.set(getTime(itemData.duration.toLong()))
         progressMax.set(itemData.duration)
         subscribeOnItemDataChange()
-        if (fragmentVisibility) {
-            audioTimer = getTrackTimer()
-            initPlayBtn()
-            if (!mediaPlayer.isPlaying) {
-                initMediaPlayerData(itemData)
-            }
+        audioTimer = getTrackTimer()
+        initPlayBtn()
+        if (!mediaPlayer.isPlaying) {
+            initMediaPlayerData(itemData)
         }
     }
 
@@ -115,7 +113,7 @@ class AudioPlayModel: ViewModel() {
         }
     }
 
-    private fun initMediaPlayerData(itemData: Constants.Audio) {
+    private fun initMediaPlayerData(itemData: Audio) {
         mediaPlayer.reset()
         val audioAttributes = AudioAttributes.Builder()
         audioAttributes.setLegacyStreamType(AudioManager.STREAM_MUSIC)

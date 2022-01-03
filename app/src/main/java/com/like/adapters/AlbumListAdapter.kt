@@ -11,8 +11,9 @@ import com.like.Constants
 import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.R
+import com.like.dataClass.Album
 
-class AlbumListAdapter(ctx: MainActivity, val data: ArrayList<Constants.Album>): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
+class AlbumListAdapter(ctx: MainActivity, val data: ArrayList<Album>): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
     private val model = ViewModelProvider(ctx)[MainActivityModel::class.java]
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,7 +37,7 @@ class AlbumListAdapter(ctx: MainActivity, val data: ArrayList<Constants.Album>):
         return data.size
     }
 
-    fun getItemData(position: Int): Constants.Album {
+    fun getItemData(position: Int): Album {
         return data[position]
     }
 }

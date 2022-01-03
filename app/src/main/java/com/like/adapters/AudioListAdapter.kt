@@ -10,8 +10,9 @@ import com.like.Constants
 import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.R
+import com.like.dataClass.Audio
 
-class AudioListAdapter(ctx: MainActivity, val data: ArrayList<Constants.Audio>):
+class AudioListAdapter(ctx: MainActivity, val data: ArrayList<Audio>):
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
     private val model = ViewModelProvider(ctx)[MainActivityModel::class.java]
 
@@ -39,7 +40,7 @@ class AudioListAdapter(ctx: MainActivity, val data: ArrayList<Constants.Audio>):
         return data.size
     }
 
-    fun getItemData(position: Int): Constants.Audio {
+    fun getItemData(position: Int): Audio {
         return data[position]
     }
 }

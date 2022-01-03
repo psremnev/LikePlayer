@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.like.MainActivity
 import com.like.R
-import com.like.daggerModules.App
+import com.like.App
 import com.like.daggerModules.MainActivityScope
 import com.like.databinding.AudioPlayFullscreenBinding
 import javax.inject.Inject

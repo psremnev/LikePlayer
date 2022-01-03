@@ -1,17 +1,13 @@
 package com.like.addAlbumDialog
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.like.Constants
+import com.like.Interfaces
 import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.databinding.AddAlbumDialogBinding
-import com.like.R
+import com.like.dataClass.Album
 
 class AddAlbumDialogModel: ViewModel() {
 
@@ -21,14 +17,11 @@ class AddAlbumDialogModel: ViewModel() {
     var albumName: ObservableField<String> = ObservableField<String>("")
     val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
 
-    fun onCreate(ctx: AddAlbumDialog) {
+    fun onCreateView(ctx: AddAlbumDialog) {
         this.ctx = ctx
         albumPosition = ctx.arguments?.getInt("position")
         albumName.set(ctx.arguments?.getString("name"))
-    }
-
-    fun onCreateView() {
-        binding.model = this
+        ctx.binding.model = this
     }
 
     fun save() {
@@ -38,8 +31,8 @@ class AddAlbumDialogModel: ViewModel() {
             if (albumPosition !== null) {
                 val item = model.albumData[albumPosition!!]
                 item.name = name
-                model.dataHelper.updateAlbum(item)
-                model.albumDataObservable.onNext(object: Constants.AlbumAction {
+                model.dataModel.updateAlbum(item)
+                model.albumDataObservable.onNext(object: Interfaces.AlbumAction {
                     override val action = "update"
                     override val data = item
                     override val position: Int = albumPosition!!
@@ -47,13 +40,9 @@ class AddAlbumDialogModel: ViewModel() {
             } else {
                 val newPosition = model.albumData.size + 1
                 // если добавление нового альбома
-                val newAlbum = object: Constants.Album {
-                    override val id: Int = newPosition
-                    override var name = name
-                    override var audioCount = 0
-                }
-                model.dataHelper.addAlbum(newAlbum)
-                model.albumDataObservable.onNext(object: Constants.AlbumAction {
+                val newAlbum = Album(newPosition, name, 0)
+                model.dataModel.addAlbum(newAlbum)
+                model.albumDataObservable.onNext(object: Interfaces.AlbumAction {
                     override val action = "add"
                     override val data = newAlbum
                     override val position: Int = newPosition

@@ -14,18 +14,13 @@ class AddAlbumDialog(): DialogFragment() {
     val model: AddAlbumDialogModel by lazy { ViewModelProvider(activity as MainActivity)[AddAlbumDialogModel::class.java] }
     lateinit var binding: AddAlbumDialogBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        model.onCreate(this)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater,
             R.layout.add_album_dialog, container, false)
-        model.onCreateView()
+        model.onCreateView(this)
         return binding.root
     }
 }

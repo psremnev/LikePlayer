@@ -19,6 +19,7 @@ import com.like.MainActivityModel
 import com.like.R
 import com.like.adapters.AudioViewPageAdapter
 import com.like.audioPlay.AudioPlayModel
+import com.like.dataClass.Audio
 
 class AudioPlayFullscreenModel: ViewModel() {
 
@@ -28,7 +29,7 @@ class AudioPlayFullscreenModel: ViewModel() {
 
     private var playBtnChecked: Boolean = false;
     private lateinit var nameScrollTimer: CountDownTimer
-    val itemData: ObservableField<Constants.Audio> = ObservableField<Constants.Audio>()
+    val itemData: ObservableField<Audio> = ObservableField<Audio>()
     val duration: ObservableField<String> = ObservableField<String>("")
     val progressMax: ObservableInt = ObservableInt(0)
     val progress: ObservableInt = ObservableInt(0)
