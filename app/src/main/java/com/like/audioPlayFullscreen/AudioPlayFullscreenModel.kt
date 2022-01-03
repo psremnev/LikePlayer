@@ -2,6 +2,7 @@ package com.like.audioPlayFullscreen
 
 import android.content.pm.ActivityInfo
 import android.media.MediaPlayer
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,42 +19,48 @@ import com.like.MainActivityModel
 import com.like.R
 import com.like.adapters.AudioViewPageAdapter
 import com.like.audioPlay.AudioPlayModel
-import com.like.databinding.AudioPlayFullscreenBinding
 
 class AudioPlayFullscreenModel: ViewModel() {
 
     lateinit var ctx: AudioPlayFullscreen
     val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
-    val audioPlayModel: AudioPlayModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[AudioPlayModel::class.java] }
+    private val audioPlayModel: AudioPlayModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[AudioPlayModel::class.java] }
 
-    lateinit var binding: AudioPlayFullscreenBinding
     private var playBtnChecked: Boolean = false;
-    val imageScrollAdapter: AudioViewPageAdapter by lazy { AudioViewPageAdapter(ctx.activity as MainActivity) }
+    private lateinit var nameScrollTimer: CountDownTimer
     val itemData: ObservableField<Constants.Audio> = ObservableField<Constants.Audio>()
     val duration: ObservableField<String> = ObservableField<String>("")
     val progressMax: ObservableInt = ObservableInt(0)
     val progress: ObservableInt = ObservableInt(0)
-    val playBtn by lazy { binding.playPauseBtn }
-    val audioImageScrollList by lazy { binding.audioImageScrollList }
-    val mediaPlayer: MediaPlayer by lazy { audioPlayModel.mediaPlayer }
+    val mediaPlayer: MediaPlayer by lazy { ctx.mediaPlayer }
 
-    fun onCreateView(ctx: AudioPlayFullscreen, inflater: LayoutInflater, container: ViewGroup?): View {
+    fun onCreateView(ctx: AudioPlayFullscreen) {
         this.ctx = ctx
-        binding = DataBindingUtil.inflate(inflater,
-            R.layout.audio_play_fullscreen, container, false)
-        binding.model = this
-        return binding.root
+        itemData.set(model.playItemData)
+        duration.set(audioPlayModel.duration.get())
+        ctx.binding.model = this
     }
 
     fun onStart() {
+        initNameScrollTimer()
         setOrientationBaseLayout()
         imageScrollInit()
         seekbarInit()
         playBtnsInit()
+        subscribeOnDataChange()
+    }
+
+    private fun subscribeOnDataChange() {
+        audioPlayModel.progressObservable.subscribe {
+            progress.set(it)
+        }
+        audioPlayModel.durationObservable.subscribe {
+            duration.set(it)
+        }
     }
 
     private  fun setOrientationBaseLayout() {
-        val baseLayout = binding.baseLayout
+        val baseLayout = ctx.binding.baseLayout
         if (ctx.resources.configuration?.orientation == ActivityInfo.SCREEN_ORIENTATION_USER) {
             baseLayout.orientation= LinearLayout.HORIZONTAL
         } else {
@@ -66,12 +73,18 @@ class AudioPlayFullscreenModel: ViewModel() {
     }
 
     private fun imageScrollInit() {
-        audioImageScrollList.currentItem = 1
-        audioImageScrollList.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+        ctx.binding.audioImageScrollList.adapter = AudioViewPageAdapter(ctx.activity as MainActivity, model.audioData)
+        ctx.binding.audioImageScrollList.setCurrentItem(model.playItemPosition, true)
+        ctx.binding.audioImageScrollList.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 if (position != model.playItemPosition) {
-                    model.playItemDataObservable.onNext(model.audioData[position])
+                    val newItemData = model.audioData[position]
+                    itemData.set(newItemData)
                     model.playItemPosition = position
+                    model.playItemDataObservable.onNext(newItemData).run {
+                        mediaPlayer.start()
+                        ctx.binding.playPauseBtn.setImageResource(R.drawable.pause_fullscr)
+                    }
                 }
                 super.onPageSelected(position)
             }
@@ -79,7 +92,9 @@ class AudioPlayFullscreenModel: ViewModel() {
     }
 
     private fun seekbarInit() {
-        val seekBar: SeekBar = binding.playSeekBar
+        val seekBar: SeekBar = ctx.binding.playSeekBar
+        progressMax.set(itemData.get()!!.duration)
+        progress.set(mediaPlayer.currentPosition)
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -100,9 +115,10 @@ class AudioPlayFullscreenModel: ViewModel() {
     private fun playBtnsInit() {
         playBtnChecked = mediaPlayer.isPlaying
         if (playBtnChecked) {
-            playBtn.setImageResource(R.drawable.pause_fullscr)
+            ctx.binding.playPauseBtn.setImageResource(R.drawable.pause_fullscr)
+            nameScrollTimer.start()
         } else {
-            playBtn.setImageResource(R.drawable.play_fullscr)
+            ctx.binding.playPauseBtn.setImageResource(R.drawable.play_fullscr)
         }
     }
 
@@ -110,53 +126,65 @@ class AudioPlayFullscreenModel: ViewModel() {
         playBtnChecked = !playBtnChecked
         if (playBtnChecked) {
             mediaPlayer.start()
-            playBtn.setImageResource(R.drawable.pause_fullscr)
+            ctx.binding.playPauseBtn.setImageResource(R.drawable.pause_fullscr)
+            audioPlayModel.audioTimer?.start()
         } else {
             mediaPlayer.pause()
-            playBtn.setImageResource(R.drawable.play_fullscr)
+            ctx.binding.playPauseBtn.setImageResource(R.drawable.play_fullscr)
+            audioPlayModel.audioTimer?.cancel()
         }
     }
 
     fun onNextClick() {
+        restartNameScroll()
         val newPos = model.playItemPosition + 1
         if (newPos <=  model.audioData.size - 1) {
+            val newItemData = model.audioData[newPos]
             model.playItemPosition = newPos
-            audioImageScrollList.currentItem = newPos
-            model.playItemDataObservable.onNext(model.audioData[newPos])
+            ctx.binding.audioImageScrollList.currentItem = newPos
+            itemData.set(newItemData)
+            model.playItemDataObservable.onNext(newItemData).run {
+                mediaPlayer.start()
+                ctx.binding.playPauseBtn.setImageResource(R.drawable.pause_fullscr)
+            }
         }
     }
 
     fun onPreviousClick() {
+        restartNameScroll()
         val newPos = model.playItemPosition - 1
         if (newPos >= 0) {
+            val newItemData = model.audioData[newPos]
             model.playItemPosition = newPos
-            audioImageScrollList.currentItem = newPos
-            model.playItemDataObservable.onNext(model.audioData[newPos])
+            ctx.binding.audioImageScrollList.currentItem = newPos
+            itemData.set(newItemData)
+            model.playItemDataObservable.onNext(newItemData).run {
+                mediaPlayer.start()
+                ctx.binding.playPauseBtn.setImageResource(R.drawable.pause_fullscr)
+            }
         }
     }
 
-    /*private fun startNameScroll(): CountDownTimer {
-        val timer = object: CountDownTimer(itemData?.value?.duration!!.toLong(), Constants.halfSecond.toLong()) {
+    private fun initNameScrollTimer() {
+        nameScrollTimer = object: CountDownTimer(itemData.get()?.duration!!.toLong(), Constants.halfSecond.toLong()) {
             override fun onTick(millisUntilFinished: Long) {
-                val currentScrollX = nameScroll?.scrollX!!
-                val textLength = name?.right!!
-                val scrollXPos = nameScroll?.width!! + nameScroll?.scrollX!!
+                val currentScrollX = ctx.binding.nameScrollFullscr.scrollX
+                val textLength = ctx.binding.audioNameFullscr.right
+                val scrollXPos = ctx.binding.nameScrollFullscr.width + ctx.binding.nameScrollFullscr.scrollX
                 if (scrollXPos < textLength) {
-                    nameScroll?.scrollX = currentScrollX + 5
+                    ctx.binding.nameScrollFullscr.scrollX = currentScrollX + 5
                 } else {
-                    nameScroll?.smoothScrollTo(0, 0)
+                    ctx.binding.nameScrollFullscr.smoothScrollTo(0, 0)
                 }
             }
             override fun onFinish() {
                 start()
             }
         }
-        timer.start()
-        return timer
-    }*/
+    }
 
-    /*private fun restartNameScroll() {
-        nameScrollTimer?.cancel()
-        nameScrollTimer?.start()
-    }*/
+    private fun restartNameScroll() {
+        nameScrollTimer.cancel()
+        nameScrollTimer.start()
+    }
 }

@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.pm.ActivityInfo
 import android.database.Cursor
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.like.addAlbumDialog.AddAlbumDialog
 import com.like.adapters.AlbumListAdapter
 import com.like.adapters.AudioListAdapter
+import com.like.daggerModules.App
 import com.like.selectAlbumDialog.SelectAlbumDialog
 import com.like.utils.DataHelper
 import java.io.FileNotFoundException
@@ -33,6 +35,8 @@ class MainActivityModel: ViewModel() {
     val albumDataObservable: PublishSubject<Constants.AlbumAction> = PublishSubject.create()
     val audioDataObservable: PublishSubject<ArrayList<Constants.Audio>> = PublishSubject.create()
     val playItemDataObservable: PublishSubject<Constants.Audio> = PublishSubject.create()
+    val mediaPlayerStateChangedObservable: PublishSubject<Boolean> = PublishSubject.create()
+
     var audioData: ArrayList<Constants.Audio> = ArrayList()
     var albumData: ArrayList<Constants.Album> = ArrayList()
     lateinit var playItemData: Constants.Audio
@@ -198,7 +202,7 @@ class MainActivityModel: ViewModel() {
 
         // инициализируем данные шаблона
         holder.name.text = itemData.name
-        holder.count.text = itemData.audioCount!!.toString()
+        holder.count.text = itemData.audioCount.toString()
 
         // инициализируем маркер
         if (itemData.id == selectedAlbum) {
@@ -285,8 +289,10 @@ class MainActivityModel: ViewModel() {
 
         val setListeners = {
             holder.audioPlayContent.setOnClickListener {
-                playItemDataObservable.onNext(itemData)
                 playItemPosition = position
+                playItemDataObservable.onNext(itemData).run {
+                    mediaPlayerStateChangedObservable.onNext(true)
+                }
             }
             holder.menu?.setOnClickListener{
                 val args = Bundle()

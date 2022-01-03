@@ -27,11 +27,8 @@ class AddAlbumDialogModel: ViewModel() {
         albumName.set(ctx.arguments?.getString("name"))
     }
 
-    fun onCreateView(inflater: LayoutInflater, container: ViewGroup?): View {
-        binding = DataBindingUtil.inflate(inflater,
-            R.layout.add_album_dialog, container, false)
+    fun onCreateView() {
         binding.model = this
-        return binding.root
     }
 
     fun save() {

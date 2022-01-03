@@ -57,8 +57,7 @@
                     android:id="@+id/audioImageScrollList"
                     android:layout_width="270dp"
                     android:layout_height="270dp"
-                    android:layout_margin="50dp"
-                    android:adapter="@{ model.imageScrollAdapter }" />
+                    android:layout_margin="50dp" />
             </LinearLayout>
 
             <LinearLayout

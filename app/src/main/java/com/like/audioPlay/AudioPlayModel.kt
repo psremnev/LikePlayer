@@ -5,10 +5,7 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.CountDownTimer
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.fragment.app.DialogFragment
@@ -19,7 +16,7 @@ import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.R
 import com.like.audioPlayFullscreen.AudioPlayFullscreen
-import com.like.databinding.AudioPlayBinding
+import rx.subjects.PublishSubject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,37 +24,34 @@ class AudioPlayModel: ViewModel() {
     lateinit var ctx: AudioPlay
     val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
     val name: ObservableField<String> = ObservableField<String>("")
-    val mediaPlayer: MediaPlayer = MediaPlayer()
+    val mediaPlayer: MediaPlayer by lazy { ctx.mediaPlayer }
     var progress: ObservableInt = ObservableInt(0)
+    val progressObservable: PublishSubject<Int> = PublishSubject.create()
+    val durationObservable: PublishSubject<String> = PublishSubject.create()
     var progressMax: ObservableInt = ObservableInt(0)
     var duration: ObservableField<String> = ObservableField<String>("")
-
-    private var isInit: Boolean = true
     private var fragmentVisibility: Boolean = false
     var playBtnChecked: Boolean = false
     var audioTimer: CountDownTimer? = null
     lateinit var itemData: Constants.Audio
-    lateinit var binding: AudioPlayBinding
 
-    fun  onCreateView(inflater: LayoutInflater, container: ViewGroup?): View {
-        binding = DataBindingUtil.inflate(inflater,
-            R.layout.audio_play, container, false)
-        binding.model = this
-        fragmentVisibility = binding.root.visibility == View.VISIBLE
-        return binding.root
+
+    fun  onCreateView(ctx: AudioPlay) {
+        ctx.binding.model = this
+        fragmentVisibility = ctx.binding.root.visibility == View.VISIBLE
     }
 
     private fun subscribeOnItemDataChange() {
         model.playItemDataObservable.subscribe {
             itemData = it
-            if (!isInit) {
-                name.set(itemData.name)
-                duration.set(getTime(itemData.duration.toLong()))
-                progressMax.set(itemData.duration)
-                mediaPlayer.reset()
-                initMediaPlayerData(itemData)
-            }
-            isInit = false
+            name.set(itemData.name)
+            duration.set(getTime(itemData.duration.toLong()))
+            progressMax.set(itemData.duration)
+            initMediaPlayerData(itemData)
+        }
+
+        model.mediaPlayerStateChangedObservable.subscribe {
+            playAudio()
         }
     }
 
@@ -72,7 +66,6 @@ class AudioPlayModel: ViewModel() {
             audioTimer = getTrackTimer()
             initPlayBtn()
             if (!mediaPlayer.isPlaying) {
-                mediaPlayer.reset()
                 initMediaPlayerData(itemData)
             }
         }
@@ -85,7 +78,7 @@ class AudioPlayModel: ViewModel() {
     }
 
     private fun playAudio() {
-        val playBtn = binding.audioPlay
+        val playBtn = ctx.binding.audioPlay
         mediaPlayer.start()
         audioTimer?.start()
         playBtn.setImageResource(R.drawable.stop)
@@ -93,7 +86,7 @@ class AudioPlayModel: ViewModel() {
     }
 
     private fun initPlayBtn() {
-        val playBtn = binding.audioPlay
+        val playBtn = ctx.binding.audioPlay
         if (mediaPlayer.isPlaying) {
             playBtnChecked = mediaPlayer.isPlaying
             playBtn.setImageResource(R.drawable.stop)
@@ -102,11 +95,12 @@ class AudioPlayModel: ViewModel() {
         } else {
             mediaPlayer.reset()
             mediaPlayer.setDataSource(itemData.url)
+            audioTimer?.cancel()
         }
     }
 
     fun onPlayClick() {
-        val playBtn = binding.audioPlay
+        val playBtn = ctx.binding.audioPlay
         playBtnChecked = !playBtnChecked
         if (playBtnChecked) {
             playBtn.setImageResource(R.drawable.stop)
@@ -122,6 +116,7 @@ class AudioPlayModel: ViewModel() {
     }
 
     private fun initMediaPlayerData(itemData: Constants.Audio) {
+        mediaPlayer.reset()
         val audioAttributes = AudioAttributes.Builder()
         audioAttributes.setLegacyStreamType(AudioManager.STREAM_MUSIC)
         mediaPlayer.setDataSource(itemData.url)
@@ -145,6 +140,8 @@ class AudioPlayModel: ViewModel() {
                 val newTextDuration = getTime(newTime.toLong())
                 duration.set(newTextDuration)
                 progress.set(playerPos)
+                durationObservable.onNext(newTextDuration)
+                progressObservable.onNext(playerPos)
             }
 
             override fun onFinish() {
