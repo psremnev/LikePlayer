@@ -1,17 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Like" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/secondColor</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
+    <style name="Theme.Like" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
+        <item name="background">@color/baseColor</item>
+        <item name="android:background">@color/baseColor</item>
+        <item name="backgroundColor">@color/baseColor</item>
+        <item name="android:textColor">@color/secondColor</item>
+        <item name="android:foregroundTint">@color/baseColor</item>
     </style>
+
     <style name="Theme.Splash" parent="Theme.Like">
         <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+    <style name="Buttons">
+        <item name="android:windowBackground">@color/secondColor</item>
+        <item name="android:background">@color/secondColor</item>
+        <item name="android:textColor">@color/baseColor</item>
+        <item name="android:textColorPrimary">@color/baseColor</item>
+        <item name="android:color">@color/baseColor</item>
+        <item name="android:textColorHint">@color/baseColor</item>
     </style>
 </resources>

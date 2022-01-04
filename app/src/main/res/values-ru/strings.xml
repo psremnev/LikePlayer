@@ -1,0 +1,10 @@
+<resources>
+    <string name="allAlbumName">Все</string>
+    <string name="addAlbumText">Введите имя...</string>
+    <string name="addAlbumSaveText">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="emptyAudioList">Нет записей</string>
+    <string name="emptyAlbumPhoto">Нет фото</string>
+    <string name="emptyUpdateAudioListBtn">Обновить</string>
+</resources>

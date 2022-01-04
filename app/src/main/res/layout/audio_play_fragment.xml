@@ -55,11 +55,10 @@
                 android:id="@+id/audioPlay"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:background="@color/secondColor"
+                android:backgroundTint="@android:color/transparent"
                 android:onClick="@{ (view) -> model.onPlayClick() }"
-                android:tint="@color/secondColor"
+                android:theme="@style/Buttons"
                 app:srcCompat="@drawable/play"
-                app:tint="@color/baseColor"
                 tools:srcCompat="@drawable/play" />
 
             <TextView

@@ -1,17 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Like" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/secondColorDark</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
+    <style name="Theme.Like" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
+        <item name="background">@color/baseColorDark</item>
+        <item name="android:background">@color/baseColorDark</item>
+        <item name="backgroundColor">@color/baseColorDark</item>
+        <item name="android:textColor">@color/secondColorDark</item>
+        <item name="android:foregroundTint">@color/baseColorDark</item>
     </style>
+
     <style name="Theme.Splash" parent="Theme.Like">
-        <item name="android:windowBackground">@drawable/splash</item>
+        <item name="android:windowBackground">@drawable/splash_dark</item>
+    </style>
+
+    <style name="Buttons">
+        <item name="android:background">@color/secondColorDark</item>
+        <item name="android:textColor">@color/baseColorDark</item>
+        <item name="android:textColorPrimary">@color/baseColorDark</item>
+        <item name="android:textColorHint">@color/baseColorDark</item>
     </style>
 </resources>

@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/albumInfo"
     android:layout_width="80dp"
-    android:layout_height="24dp"
+    android:layout_height="30dp"
     android:layout_margin="3dp"
-    android:background="@drawable/album_background"
     android:gravity="center"
     android:orientation="horizontal"
     android:padding="4dp"
+    android:theme="@style/Buttons"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,6 @@
         android:paddingRight="3dp"
         android:text="name"
         android:textAlignment="textStart"
-        android:textColor="@color/white"
         app:autoSizeMaxTextSize="18dp"
         app:autoSizeMinTextSize="8dp"
         app:autoSizeTextType="uniform" />
@@ -39,7 +38,6 @@
         android:paddingRight="3dp"
         android:text="Count"
         android:textAlignment="viewStart"
-        android:textColor="@color/white"
         android:textSize="8sp" />
 
 </LinearLayout>

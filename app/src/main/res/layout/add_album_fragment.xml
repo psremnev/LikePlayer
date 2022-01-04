@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="6dp"
+        android:theme="@style/Buttons"
         tools:context=".addAlbumDialog.AddAlbumDialog">
 
         <EditText
@@ -24,38 +25,36 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@={ model.albumName }"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/addAlbumDialogSave"
-            android:layout_width="61dp"
+            android:layout_width="wrap_content"
             android:layout_height="46dp"
-            android:backgroundTint="@color/secondColor"
+            android:onClick="@{ (view) -> model.save()}"
             android:text="@string/addAlbumSaveText"
             android:textSize="8sp"
+            android:theme="@style/Theme.Like"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/addAlbumDialogCancel"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/addAlbumDialogName"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.343"
-            android:onClick="@{ (view) -> model.save()}"/>
+            app:layout_constraintVertical_bias="0.343" />
 
         <Button
             android:id="@+id/addAlbumDialogCancel"
-            android:layout_width="30dp"
+            android:layout_width="43dp"
             android:layout_height="46dp"
-            android:background="@android:color/transparent"
-            app:icon="@drawable/close"
-            app:iconGravity="top"
+            android:background="@drawable/close"
+            android:onClick="@{ (view) -> model.close()}"
+            android:theme="@style/Buttons"
             app:iconSize="16dp"
             app:iconTint="@color/secondColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            android:onClick="@{ (view) -> model.close()}"/>
+            app:layout_constraintVertical_bias="0.0" />
 
     </LinearLayout>
 </layout>

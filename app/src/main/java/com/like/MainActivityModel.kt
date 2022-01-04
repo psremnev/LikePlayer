@@ -40,7 +40,7 @@ class MainActivityModel: ViewModel() {
 
     var audioData: ArrayList<Audio> = ArrayList()
     var albumData: ArrayList<Album> = ArrayList()
-    lateinit var playItemData: Audio
+    var playItemData: Audio? = null
 
     val albumListAdapter: AlbumListAdapter by lazy { AlbumListAdapter(ctx, albumData) }
     val audioListAdapter: AudioListAdapter by lazy { AudioListAdapter(ctx, audioData) }
@@ -211,7 +211,9 @@ class MainActivityModel: ViewModel() {
             audioPlay.visibility = View.GONE
             if (selectedAlbum == Constants.AL_ALBUM_ID) {
                 updateEmptyView.visibility = View.VISIBLE
+                emptyView.visibility = View.GONE
             } else {
+                updateEmptyView.visibility = View.GONE
                 emptyView.visibility = View.VISIBLE
             }
         }
@@ -257,7 +259,7 @@ class MainActivityModel: ViewModel() {
         // инициализируем маркер
         if (itemData.id == selectedAlbum) {
             // изначально и при удалении сбрасываем маркер на альбом Все
-            holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
+            //holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
             albumPreHolder = holder
         }
 
@@ -311,11 +313,11 @@ class MainActivityModel: ViewModel() {
         // обработка клика на альбом
         holder.itemView.setOnClickListener {
             selectedAlbum = itemData.id!!
-            if (albumPreHolder !== null) {
+            /*if (albumPreHolder !== null) {
                 albumPreHolder!!.albumInfo.background = ctx.getDrawable(R.drawable.album_background)
-            }
+            }*/
             audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(selectedAlbum))
-            holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
+            //holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
             albumPreHolder = holder
         }
     }

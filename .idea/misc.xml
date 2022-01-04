@@ -7,18 +7,22 @@
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/drawable/album_item_bacground.xml" value="0.1" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/drawable/play_pause.xml" value="0.225" />
-        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/activity_main.xml" value="0.17415730337078653" />
+        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/activity_main.xml" value="0.5839112343966713" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/activity_splash_screen.xml" value="0.2" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/add_album_dialog.xml" value="0.33064516129032256" />
+        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/add_album_fragment.xml" value="0.3625" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/album_list_item.xml" value="0.75" />
+        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_image_scroll_item.xml" value="0.1" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_list_item.xml" value="0.35357917570498915" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play.xml" value="0.67" />
+        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play_fragment.xml" value="0.25" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play_fullscreen.xml" value="0.33" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play_fullscreen_image_page.xml" value="0.1" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play_fullscreen_list_item.xml" value="0.25" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_play_item.xml" value="0.3625" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/audio_view.xml" value="0.3625" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/select_album_dialog.xml" value="0.23236514522821577" />
+        <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/layout/select_album_fragment.xml" value="0.3625" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/menu/album.xml" value="0.33" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
         <entry key="..\:/Users/Pavel/AndroidStudioProjects/Like/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1787037037037037" />

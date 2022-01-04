@@ -45,7 +45,7 @@ class AudioPlayModel: ViewModel() {
     fun onStart(ctx: AudioPlay) {
         this.ctx = ctx
 
-        itemData = model.playItemData
+        itemData = model.playItemData!!
         name.set(itemData.name)
         duration.set(getTime(itemData.duration.toLong()))
         progressMax.set(itemData.duration)

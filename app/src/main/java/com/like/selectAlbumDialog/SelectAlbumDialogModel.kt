@@ -46,7 +46,7 @@ class SelectAlbumDialogModel: ViewModel() {
     private fun onItemClick(position: Int) {
         val albumItem = model.albumData[position]
         albumItem.audioCount = albumItem.audioCount.plus(1)
-        val audioItem: Audio = model.playItemData
+        val audioItem: Audio = model.playItemData!!
         audioItem.album = albumItem.id!!
         model.dataModel.updateAudio(audioItem)
 

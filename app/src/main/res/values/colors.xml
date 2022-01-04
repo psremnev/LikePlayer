@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="baseColor">#FFFFFF</color>
+    <color name="baseColor">#737373</color>
     <color name="secondColor">#272727</color>
     <color name="baseColorDark">#272727</color>
-    <color name="secondColorDark">#FFFFFF</color>
+    <color name="secondColorDark">#737373</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
