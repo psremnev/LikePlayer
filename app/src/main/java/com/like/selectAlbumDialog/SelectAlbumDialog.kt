@@ -9,18 +9,18 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.like.MainActivity
 import com.like.R
-import com.like.databinding.SelectAlbumDialogBinding
+import com.like.databinding.SelectAlbumFragmentBinding
 
 class SelectAlbumDialog : DialogFragment() {
 
     private val model: SelectAlbumDialogModel by lazy { ViewModelProvider(activity as MainActivity)[SelectAlbumDialogModel::class.java] }
-    lateinit var binding: SelectAlbumDialogBinding
+    lateinit var binding: SelectAlbumFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.select_album_dialog, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.select_album_fragment, container, false)
         model.onCreateView(this)
         return binding.root
     }

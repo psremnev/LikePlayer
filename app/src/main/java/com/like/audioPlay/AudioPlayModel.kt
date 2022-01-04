@@ -5,27 +5,27 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.CountDownTimer
-import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.like.Constants
-import com.like.MainActivity
-import com.like.MainActivityModel
-import com.like.R
+import com.like.*
 import com.like.audioPlayFullscreen.AudioPlayFullscreen
 import com.like.dataClass.Audio
+import rx.Scheduler
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 class AudioPlayModel: ViewModel() {
     lateinit var ctx: AudioPlay
+    @Inject lateinit var mediaPlayer: MediaPlayer
     val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
     val name: ObservableField<String> = ObservableField<String>("")
-    val mediaPlayer: MediaPlayer by lazy { ctx.mediaPlayer }
     var progress: ObservableInt = ObservableInt(0)
     val progressObservable: PublishSubject<Int> = PublishSubject.create()
     val durationObservable: PublishSubject<String> = PublishSubject.create()
@@ -37,21 +37,9 @@ class AudioPlayModel: ViewModel() {
 
 
     fun  onCreateView(ctx: AudioPlay) {
+        val mainActivityModules = (ctx.activity?.application as App).mainActivityComponent
+        mainActivityModules?.inject(this)
         ctx.binding.model = this
-    }
-
-    private fun subscribeOnItemDataChange() {
-        model.playItemDataObservable.subscribe {
-            itemData = it
-            name.set(itemData.name)
-            duration.set(getTime(itemData.duration.toLong()))
-            progressMax.set(itemData.duration)
-            initMediaPlayerData(itemData)
-        }
-
-        model.mediaPlayerStateChangedObservable.subscribe {
-            playAudio()
-        }
     }
 
     fun onStart(ctx: AudioPlay) {
@@ -66,6 +54,24 @@ class AudioPlayModel: ViewModel() {
         initPlayBtn()
         if (!mediaPlayer.isPlaying) {
             initMediaPlayerData(itemData)
+        }
+    }
+
+    private fun subscribeOnItemDataChange() {
+        model.playItemDataObservable
+            .subscribeOn(Schedulers.newThread())
+            .subscribe {
+            itemData = it
+            name.set(itemData.name)
+            duration.set(getTime(itemData.duration.toLong()))
+            progressMax.set(itemData.duration)
+            initMediaPlayerData(itemData)
+        }
+
+        model.mediaPlayerStateChangedObservable
+            .subscribeOn(Schedulers.newThread())
+            .subscribe {
+            playAudio()
         }
     }
 

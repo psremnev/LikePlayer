@@ -8,12 +8,23 @@ import android.util.Log
 import com.like.dataClass.Album
 import com.like.dataClass.Audio
 import com.like.utils.DBHelper
+import rx.schedulers.Schedulers
+import rx.Observable
 
 class DataModel(ctx: Context) {
     private val db: DBHelper = DBHelper(ctx)
     private val database: SQLiteDatabase = db.writableDatabase
     private val audioValues: ContentValues = ContentValues()
     private val albumValues: ContentValues = ContentValues()
+
+    fun getAllAudioByAlbumIdObservable(albumId: Int): Observable<Audio> {
+        return Observable.from(getAllAudioByAlbumId(albumId))
+            .observeOn(Schedulers.newThread())
+    }
+
+    fun getAllAlbumObservable(): Observable<Album> {
+        return Observable.from(getAllAlbum()).observeOn(Schedulers.newThread())
+    }
 
     fun getAllAudioByAlbumId(albumId: Int): ArrayList<Audio> {
         return getAllAudioBySelection("album=$albumId")
@@ -119,12 +130,11 @@ class DataModel(ctx: Context) {
         if (cursor.moveToFirst()) {
             val idIndex = cursor.getColumnIndex(DBHelper.KEY_ID)
             val nameIndex = cursor.getColumnIndex(DBHelper.KEY_NAME)
-            val id = cursor.getInt(idIndex)
             do {
                 albumsData.add(Album(
-                        id,
+                        cursor.getInt(idIndex),
                         cursor.getString(nameIndex),
-                        getAlbumCount(id)
+                        getAlbumCount(cursor.getInt(idIndex))
                 ))
             } while (cursor.moveToNext())
         } else {
@@ -140,7 +150,8 @@ class DataModel(ctx: Context) {
                 ctx.getString(R.string.allAlbumName),
                 0
         )
-        if (getAlbum(Constants.AL_ALBUM_ID) == null) {
+        val albumCursor = getAlbum(Constants.AL_ALBUM_ID)
+        if (albumCursor.count == 0) {
             addAlbum(defaultAlbum)
         }
     }

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -55,7 +56,6 @@
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:background="@drawable/add_album_btn_back"
-                android:backgroundTint="#43A047"
                 android:gravity="center"
                 android:onClick="@{ (view) -> model.addAlbum() }"
                 app:icon="@drawable/plus"
@@ -67,9 +67,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
+                android:adapter="@{ model.albumListAdapter }"
                 android:padding="6dp"
-                app:layoutManager="@{ model.albumLayoutManager }"
-                android:adapter="@{ model.albumListAdapter }" />
+                app:layoutManager="@{ model.albumLayoutManager }" />
 
         </LinearLayout>
 
@@ -84,12 +84,31 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/albumListLayout">
 
+            <LinearLayout
+                android:id="@+id/emptyUpdateAudioList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="50dp"
+                android:visibility="gone"
+                tools:visibility="gone">
+
+                <Button
+                    android:id="@+id/updateAudioListBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{ (view) -> model.updateAllAudioList() }"
+                    android:text="@string/emptyUpdateAudioListBtn" />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/audioList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:adapter="@{ model.audioListAdapter }"
                 app:layoutManager="@{ model.audioLayoutManager }"
-                android:adapter="@{ model.audioListAdapter }"/>
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/emptyAudioList"
@@ -113,7 +132,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            tools:layout="@layout/audio_play" />
+            tools:layout="@layout/audio_play_fragment" />
 
     </LinearLayout>
 </layout>

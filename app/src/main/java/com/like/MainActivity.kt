@@ -22,4 +22,11 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         model.onResume(this)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // очищаем dagger компонент MainActivity чтобы он не остался в памяти
+        val appComponent = (application as App)
+        appComponent.mainActivityComponent = null
+    }
 }

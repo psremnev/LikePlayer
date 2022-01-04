@@ -8,6 +8,5 @@
     <string name="edit">Edit</string>
     <string name="emptyAudioList">No audio</string>
     <string name="emptyAlbumPhoto">No Photo</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="emptyUpdateAudioListBtn">Update</string>
 </resources>

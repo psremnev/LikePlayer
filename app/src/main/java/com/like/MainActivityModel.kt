@@ -20,6 +20,8 @@ import com.like.adapters.AudioListAdapter
 import com.like.dataClass.Album
 import com.like.dataClass.Audio
 import com.like.selectAlbumDialog.SelectAlbumDialog
+import rx.Observer
+import rx.schedulers.Schedulers
 import java.io.FileNotFoundException
 import rx.subjects.PublishSubject
 
@@ -83,7 +85,7 @@ class MainActivityModel: ViewModel() {
                     if (fileType == Constants.audioType) {
                         val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
                         val audioCursor = dataModel.getAudio(id)
-                        if (audioCursor.count === 0) {
+                        if (audioCursor.count == 0) {
                             val baseName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                             dataModel.addAudio(Audio(
                                 cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID)),
@@ -102,8 +104,18 @@ class MainActivityModel: ViewModel() {
         }
     }
 
+    fun updateAllAudioList() {
+        initNewMp3Songs()
+        audioData.clear()
+        audioData.addAll(dataModel.getAllAudioByAlbumId(Constants.AL_ALBUM_ID))
+        setElementsVisibility()
+        audioListAdapter.notifyDataSetChanged()
+    }
+
     private fun subscribeOnObservable() {
-        albumDataObservable.subscribe {
+        albumDataObservable
+            .subscribeOn(Schedulers.newThread())
+            .subscribe {
             when (it.action) {
                 "updateAll" -> {
                     albumData.clear()
@@ -124,24 +136,58 @@ class MainActivityModel: ViewModel() {
                 }
             }
         }
-        audioDataObservable.subscribe {
+        audioDataObservable
+            .subscribeOn(Schedulers.newThread())
+            .subscribe {
             audioData.clear()
             audioData.addAll(it)
+            setElementsVisibility()
             audioListAdapter.notifyDataSetChanged()
         }
 
-        playItemDataObservable.subscribe {
+        playItemDataObservable
+            .subscribeOn(Schedulers.newThread())
+            .subscribe {
             playItemData = it
         }
     }
 
     private fun initModelData() {
+        // инициализируем альбом по умолчанию
         dataModel.initDefaultAlbum(ctx)
-        albumData = dataModel.getAllAlbum()
-        audioData = dataModel.getAllAudioByAlbumId(Constants.AL_ALBUM_ID)
-        if (audioData.size != 0) {
-            playItemData = audioData[playItemPosition]
-        }
+        // инициализируем альбомы
+        dataModel.getAllAlbumObservable()
+            .subscribe(object: Observer<Album> {
+                override fun onCompleted() {
+                    albumListAdapter.notifyDataSetChanged()
+                }
+
+                override fun onError(e: Throwable?) {
+                    return
+                }
+
+                override fun onNext(t: Album?) {
+                    albumData.add(t!!)
+                }
+            })
+        // инициализируем аудио лист
+        dataModel.getAllAudioByAlbumIdObservable(Constants.AL_ALBUM_ID)
+            .subscribe(object: Observer<Audio> {
+                override fun onCompleted() {
+                    if (audioData.size != 0) {
+                        playItemData = audioData[playItemPosition]
+                    }
+                    audioListAdapter.notifyDataSetChanged()
+                }
+
+                override fun onError(e: Throwable?) {
+                    return
+                }
+
+                override fun onNext(t: Audio?) {
+                    audioData.add(t!!)
+                }
+        })
     }
 
     fun addAlbum() {
@@ -154,15 +200,25 @@ class MainActivityModel: ViewModel() {
         val audioList = ctx.binding.audioList
         val audioPlay = ctx.binding.audioPlay
         val emptyView = ctx.binding.emptyAudioList
+        val updateEmptyView = ctx.binding.emptyUpdateAudioList
 
         if (audioData.size != 0) {
             audioList.visibility = View.VISIBLE
-            audioPlay.visibility= View.VISIBLE
             emptyView.visibility = View.GONE
+            updateEmptyView.visibility = View.GONE
         } else {
             audioList.visibility = View.GONE
             audioPlay.visibility = View.GONE
-            emptyView.visibility = View.VISIBLE
+            if (selectedAlbum == Constants.AL_ALBUM_ID) {
+                updateEmptyView.visibility = View.VISIBLE
+            } else {
+                emptyView.visibility = View.VISIBLE
+            }
+        }
+        if (playItemData == null) {
+            audioPlay.visibility= View.GONE
+        } else {
+            audioPlay.visibility= View.VISIBLE
         }
     }
 
@@ -207,9 +263,12 @@ class MainActivityModel: ViewModel() {
 
         // обработка лонг тап клика на альбом, открытие меню
         holder.itemView.setOnLongClickListener { v ->
-            if (itemData.id != Constants.AL_ALBUM_ID) {
-                val popup = PopupMenu(v?.context, v);
-                popup.inflate(R.menu.album);
+                val popup = PopupMenu(v?.context, v)
+                if (itemData.id == Constants.AL_ALBUM_ID) {
+                    popup.menu.add(1, Constants.updateItemId, 1, R.string.emptyUpdateAudioListBtn)
+                } else {
+                    popup.inflate(R.menu.album)
+                }
                 popup.setOnMenuItemClickListener { item ->
                     when (item?.itemId) {
                         R.id.edit -> {
@@ -239,11 +298,13 @@ class MainActivityModel: ViewModel() {
                             albumPreHolder?.albumInfo?.background = ctx.getDrawable(R.drawable.album_background_selected)
                             audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(adapter.getItemData(newPos).id!!))
                         }
+                        Constants.updateItemId -> {
+                            updateAllAudioList()
+                        }
                     }
                     true
                 };
                 popup.show();
-            }
             true
         }
 

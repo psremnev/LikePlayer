@@ -3,23 +3,18 @@ package com.like.audioPlayFullscreen
 import android.content.pm.ActivityInfo
 import android.media.MediaPlayer
 import android.os.CountDownTimer
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
-import com.like.Constants
-import com.like.MainActivity
-import com.like.MainActivityModel
-import com.like.R
+import com.like.*
 import com.like.adapters.AudioViewPageAdapter
 import com.like.audioPlay.AudioPlayModel
 import com.like.dataClass.Audio
+import rx.schedulers.Schedulers
+import javax.inject.Inject
 
 class AudioPlayFullscreenModel: ViewModel() {
 
@@ -33,16 +28,17 @@ class AudioPlayFullscreenModel: ViewModel() {
     val duration: ObservableField<String> = ObservableField<String>("")
     val progressMax: ObservableInt = ObservableInt(0)
     val progress: ObservableInt = ObservableInt(0)
-    val mediaPlayer: MediaPlayer by lazy { ctx.mediaPlayer }
+    @Inject lateinit var mediaPlayer: MediaPlayer
 
     fun onCreateView(ctx: AudioPlayFullscreen) {
         this.ctx = ctx
-        itemData.set(model.playItemData)
-        duration.set(audioPlayModel.duration.get())
+        val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
         ctx.binding.model = this
     }
 
     fun onStart() {
+        initUiData()
         initNameScrollTimer()
         setOrientationBaseLayout()
         imageScrollInit()
@@ -51,11 +47,20 @@ class AudioPlayFullscreenModel: ViewModel() {
         subscribeOnDataChange()
     }
 
+    fun initUiData() {
+        itemData.set(model.playItemData)
+        duration.set(audioPlayModel.duration.get())
+    }
+
     private fun subscribeOnDataChange() {
-        audioPlayModel.progressObservable.subscribe {
+        audioPlayModel.progressObservable
+            .observeOn(Schedulers.newThread())
+            .subscribe {
             progress.set(it)
         }
-        audioPlayModel.durationObservable.subscribe {
+        audioPlayModel.durationObservable
+            .observeOn(Schedulers.newThread())
+            .subscribe {
             duration.set(it)
         }
     }

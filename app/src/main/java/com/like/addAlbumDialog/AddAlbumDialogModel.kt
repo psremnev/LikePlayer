@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.like.Interfaces
 import com.like.MainActivity
 import com.like.MainActivityModel
-import com.like.databinding.AddAlbumDialogBinding
+import com.like.databinding.AddAlbumFragmentBinding
 import com.like.dataClass.Album
 
 class AddAlbumDialogModel: ViewModel() {
 
-    lateinit var binding: AddAlbumDialogBinding
+    lateinit var binding: AddAlbumFragmentBinding
     private lateinit var ctx: AddAlbumDialog
     var albumPosition: Int? = null
     var albumName: ObservableField<String> = ObservableField<String>("")

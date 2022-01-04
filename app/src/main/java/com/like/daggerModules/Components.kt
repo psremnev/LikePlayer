@@ -2,15 +2,12 @@ package com.like.daggerModules
 
 import com.like.MainActivity
 import com.like.audioPlay.AudioPlay
+import com.like.audioPlay.AudioPlayModel
 import com.like.audioPlayFullscreen.AudioPlayFullscreen
+import com.like.audioPlayFullscreen.AudioPlayFullscreenModel
 import dagger.Component
 import dagger.Subcomponent
-import javax.inject.Scope
 import javax.inject.Singleton
-
-@Scope
-@Retention(AnnotationRetention.RUNTIME)
-annotation class MainActivityScope
 
 @Component(modules = [AppModules::class])
 interface AppComponent {
@@ -19,9 +16,8 @@ interface AppComponent {
 }
 
 @Singleton
-@MainActivityScope
 @Subcomponent(modules = [MainActivityModules::class])
 interface MainActivityComponent {
-    fun inject(audioPlay: AudioPlay)
-    fun inject(audioPlayFullscreen: AudioPlayFullscreen)
+    fun inject(audioPlay: AudioPlayModel)
+    fun inject(audioPlayFullscreen: AudioPlayFullscreenModel)
 }
