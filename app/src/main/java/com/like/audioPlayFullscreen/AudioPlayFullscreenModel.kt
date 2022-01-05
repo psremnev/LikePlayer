@@ -47,7 +47,7 @@ class AudioPlayFullscreenModel: ViewModel() {
         subscribeOnDataChange()
     }
 
-    fun initUiData() {
+    private fun initUiData() {
         itemData.set(model.playItemData)
         duration.set(audioPlayModel.duration.get())
     }

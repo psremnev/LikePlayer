@@ -11,7 +11,7 @@ import com.like.MainActivity
 import com.like.R
 import com.like.databinding.AudioImageScrollItemBinding
 
-class AudioViewPage(val position: Int): Fragment() {
+class AudioViewPage(): Fragment() {
     val model: AudioViewPageModel by lazy { ViewModelProvider(activity as MainActivity)[AudioViewPageModel::class.java] }
     lateinit var binding: AudioImageScrollItemBinding
 

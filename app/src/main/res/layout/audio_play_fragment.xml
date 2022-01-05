@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:onClick="@{ (view) -> model.openFullscreen() }"
         android:orientation="vertical">
 
@@ -23,7 +23,7 @@
             android:layout_weight="0"
             android:max="@{ model.progressMax }"
             android:progress="@{ model.progress }"
-            android:progressTint="@color/progress_color"
+            android:progressTint="@color/secondColor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:background="@color/secondColor"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -44,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/secondColor"
                 android:ellipsize="end"
                 android:onClick="@{ (view) -> model.openFullscreen() }"
                 android:padding="6dp"
@@ -57,7 +59,6 @@
                 android:layout_height="match_parent"
                 android:backgroundTint="@android:color/transparent"
                 android:onClick="@{ (view) -> model.onPlayClick() }"
-                android:theme="@style/Buttons"
                 app:srcCompat="@drawable/play"
                 tools:srcCompat="@drawable/play" />
 
@@ -65,6 +66,7 @@
                 android:id="@+id/audioPlayDuration"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
+                android:background="@color/secondColor"
                 android:padding="8dp"
                 android:text="@{ model.duration }"
                 android:textAlignment="viewEnd" />

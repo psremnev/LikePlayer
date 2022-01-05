@@ -21,6 +21,7 @@
             android:id="@+id/top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/secondColor"
             android:orientation="horizontal"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,20 +50,16 @@
 
             <Button
                 android:id="@+id/addAlbumBtn"
-                android:layout_width="30dp"
+                android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
-                android:background="@drawable/add_album_btn_back"
-                android:foreground="@drawable/plus"
+                android:background="@drawable/add_album_btn_back_"
                 android:foregroundGravity="center"
                 android:gravity="center"
                 android:onClick="@{ (view) -> model.addAlbum() }"
-                app:cornerRadius="30dp"
-                app:iconGravity="top"
-                app:iconSize="10dp"
-                app:iconTint="#090606" />
+                app:iconGravity="top" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/albumList"
@@ -101,8 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{ (view) -> model.updateAllAudioList() }"
-                    android:text="@string/emptyUpdateAudioListBtn"
-                    android:theme="@style/Buttons" />
+                    android:text="@string/emptyUpdateAudioListBtn" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

@@ -2,15 +2,16 @@ package com.like
 
 import android.annotation.SuppressLint
 import android.content.ContentUris
-import android.content.pm.ActivityInfo
 import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.PopupMenu
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -56,13 +57,9 @@ class MainActivityModel: ViewModel() {
             initModelData()
         }
         initLayoutManagers()
-        setElementsVisibility()
     }
 
     fun onResume(ctx: MainActivity) {
-        // ставим обычную ориентацию и тему после splash экрана
-        ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        ctx.setTheme(R.style.Theme_Like)
         subscribeOnObservable()
     }
 
@@ -177,6 +174,7 @@ class MainActivityModel: ViewModel() {
                     if (audioData.size != 0) {
                         playItemData = audioData[playItemPosition]
                     }
+                    setElementsVisibility()
                     audioListAdapter.notifyDataSetChanged()
                 }
 
@@ -244,22 +242,20 @@ class MainActivityModel: ViewModel() {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun onBindAlbumListViewHolder(adapter: AlbumListAdapter, holder: AlbumListAdapter.ViewHolder, position: Int) {
         val itemData = adapter.getItemData(position)
-
+        holder.binding?.itemData = itemData
+        holder.binding?.marked = false
         // инициализируем текущий набор view
         if (!albumHolderList.containsKey(position)) {
             albumHolderList[position] = holder
         }
 
-        // инициализируем данные шаблона
-        holder.name.text = itemData.name
-        holder.count.text = itemData.audioCount.toString()
-
         // инициализируем маркер
         if (itemData.id == selectedAlbum) {
             // изначально и при удалении сбрасываем маркер на альбом Все
-            //holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
+            holder.binding?.marked = true
             albumPreHolder = holder
         }
 
@@ -297,7 +293,7 @@ class MainActivityModel: ViewModel() {
                             val newPos = position - 1
                             // чтобы снять маркер если удаляем не переключаясь на запись
                             albumPreHolder = albumHolderList[newPos]
-                            albumPreHolder?.albumInfo?.background = ctx.getDrawable(R.drawable.album_background_selected)
+                            albumPreHolder?.binding?.marked = true
                             audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(adapter.getItemData(newPos).id!!))
                         }
                         Constants.updateItemId -> {
@@ -313,12 +309,12 @@ class MainActivityModel: ViewModel() {
         // обработка клика на альбом
         holder.itemView.setOnClickListener {
             selectedAlbum = itemData.id!!
-            /*if (albumPreHolder !== null) {
-                albumPreHolder!!.albumInfo.background = ctx.getDrawable(R.drawable.album_background)
-            }*/
-            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(selectedAlbum))
-            //holder.albumInfo.background = ctx.getDrawable(R.drawable.album_background_selected)
+            if (albumPreHolder !== null) {
+                albumPreHolder?.binding?.marked = false
+            }
             albumPreHolder = holder
+            holder.binding?.marked = true
+            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(selectedAlbum))
         }
     }
 

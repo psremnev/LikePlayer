@@ -9,16 +9,23 @@ import androidx.lifecycle.ViewModelProvider
 import com.like.Constants
 import com.like.MainActivity
 import com.like.MainActivityModel
+import rx.subjects.PublishSubject
 import java.io.FileNotFoundException
 
 class AudioViewPageModel: ViewModel() {
     lateinit var ctx: AudioViewPage
     val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
+    val createViewPositionObservable: PublishSubject<Int> = PublishSubject.create()
+    var createViewPosition: Int = 0
 
     fun onCreateView(ctx: AudioViewPage) {
         this.ctx = ctx
+
+        createViewPositionObservable.subscribe{
+            createViewPosition = it
+        }
         val sArtworkUri = Uri.parse(Constants.ALBUM_ART_URI)
-        val uri: Uri = ContentUris.withAppendedId(sArtworkUri, model.audioData[ctx.position].albumId)
+        val uri: Uri = ContentUris.withAppendedId(sArtworkUri, model.audioData[createViewPosition].albumId)
 
         try {
             val inputStr = ctx.activity?.contentResolver?.openInputStream(uri)

@@ -12,31 +12,27 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/secondColor"
         android:orientation="vertical"
         tools:context=".audioPlayFullscreen.AudioPlayFullscreen">
 
-        <Button
+        <ImageButton
             android:id="@+id/rollBtn"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginTop="4dp"
-            android:background="@android:color/transparent"
-            android:foregroundGravity="center"
-            app:icon="@drawable/roll_up"
-            app:iconGravity="textEnd"
-            app:iconSize="16dp"
-            app:iconTint="@color/secondColor"
+            android:onClick="@{ (view) -> model.onRollBtnClick() }"
+            android:src="@drawable/roll_up"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.989"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpeakableTextPresentCheck"
-            android:onClick="@{ (view) -> model.onRollBtnClick() }"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/baseLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:gravity="bottom|center|center_horizontal|center_vertical"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -50,14 +46,14 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/audioImageScrollList"
-                    android:layout_width="270dp"
-                    android:layout_height="270dp"
-                    android:layout_margin="50dp" />
+                    android:layout_width="260dp"
+                    android:layout_height="260dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -98,8 +94,8 @@
                                 android:layout_marginTop="4dp"
                                 android:layout_marginBottom="2dp"
                                 android:layout_weight="0"
-                                android:text="@{ model.itemData.name }"
-                                android:textAlignment="center" />
+                                android:textAlignment="center"
+                                tools:text="@{ model.itemData.name }" />
                         </LinearLayout>
                     </HorizontalScrollView>
 
@@ -110,31 +106,28 @@
                         android:layout_marginTop="2dp"
                         android:layout_marginBottom="4dp"
                         android:layout_weight="0"
-                        android:text="@{ model.itemData.artist }"
                         android:textAlignment="center"
-                        android:textColor="@color/unnacented" />
+                        tools:text="@{ model.itemData.artist }" />
 
                     <SeekBar
                         android:id="@+id/playSeekBar"
-                        style="@style/Widget.AppCompat.SeekBar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:backgroundTint="@android:color/transparent"
                         android:indeterminate="false"
-                        android:progressTint="@color/secondColor"
-                        android:thumbTint="@color/secondColor"
                         android:max="@{ model.progressMax }"
-                        android:progress="@{ model.progress }" />
+                        android:progress="@{ model.progress }"
+                        android:progressTint="@color/thirdColor"
+                        android:thumbTint="@color/thirdColor" />
 
                     <TextView
                         android:id="@+id/audioDurationFullscr"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{ model.duration }"
                         android:textAlignment="center"
-                        android:textColor="@color/secondColor" />
+                        tools:text="@{ model.duration }" />
 
                 </LinearLayout>
 
@@ -145,18 +138,15 @@
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal">
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/previousBtn"
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
-                        android:textAlignment="center"
-                        app:icon="@drawable/previous_fullscr"
-                        app:iconGravity="textStart"
-                        app:iconTint="@color/secondColor"
-                        android:onClick="@{ (view) -> model.onPreviousClick() }"/>
+                        android:onClick="@{ (view) -> model.onPreviousClick() }"
+                        android:src="@drawable/previous_fullscr" />
 
                     <ImageButton
                         android:id="@+id/playPauseBtn"
@@ -164,21 +154,17 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
-                        android:src="@drawable/play_fullscr"
-                        android:tint="@color/secondColor"
-                        android:onClick="@{ (view) -> model.onPlayClick() }" />
+                        android:onClick="@{ (view) -> model.onPlayClick() }"
+                        android:src="@drawable/play_fullscr" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/nextBtn"
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
-                        android:textAlignment="center"
-                        app:icon="@drawable/next_fullscr"
-                        app:iconGravity="textEnd"
-                        app:iconTint="@color/secondColor"
-                        android:onClick="@{ (view) -> model.onNextClick() }"/>
+                        android:onClick="@{ (view) -> model.onNextClick() }"
+                        android:src="@drawable/next_fullscr" />
                 </LinearLayout>
 
             </LinearLayout>

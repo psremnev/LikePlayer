@@ -21,7 +21,7 @@ class AudioListAdapter(ctx: MainActivity, val data: ArrayList<Audio>):
         val image: ImageView? = itemView.findViewById(R.id.audioImage)
         val name: TextView? = itemView.findViewById(R.id.audioPlayName)
         val artist: TextView? = itemView.findViewById(R.id.audioArtist)
-        val menu: Button? = itemView.findViewById(R.id.audioMenu)
+        val menu: ImageButton = itemView.findViewById(R.id.audioMenu)
         val emptyAlbumPhoto: LinearLayout = itemView.findViewById(R.id.emptyAlbumPhoto)
     }
 

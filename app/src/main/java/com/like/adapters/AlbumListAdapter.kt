@@ -3,30 +3,33 @@ package com.like.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.like.Constants
 import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.R
 import com.like.dataClass.Album
+import com.like.databinding.AlbumListItemBinding
+
 
 class AlbumListAdapter(ctx: MainActivity, val data: ArrayList<Album>): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
     private val model = ViewModelProvider(ctx)[MainActivityModel::class.java]
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.albumName)
-        val count: TextView = itemView.findViewById(R.id.albumAudioCount)
-        val albumInfo: LinearLayout = itemView.findViewById(R.id.albumInfo)
+        val binding: AlbumListItemBinding? = DataBindingUtil.bind(itemView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.album_list_item, parent, false)
-        return ViewHolder(itemView)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding: AlbumListItemBinding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.album_list_item,
+            parent,
+            false
+        )
+        return ViewHolder(binding.root)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

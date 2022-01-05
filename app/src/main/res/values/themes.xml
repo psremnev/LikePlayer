@@ -2,22 +2,13 @@
     <!-- Base application theme. -->
     <style name="Theme.Like" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
-        <item name="background">@color/baseColor</item>
-        <item name="android:background">@color/baseColor</item>
-        <item name="backgroundColor">@color/baseColor</item>
-        <item name="android:textColor">@color/secondColor</item>
-        <item name="android:foregroundTint">@color/baseColor</item>
+        <item name="android:windowActionBar">@color/baseColor</item>
+        <item name="android:windowBackground">@color/baseColor</item>
+        <item name="android:textColorPrimary">@color/thirdColor</item>
+        <item name="android:textColor">@color/thirdColor</item>
     </style>
 
     <style name="Theme.Splash" parent="Theme.Like">
         <item name="android:windowBackground">@drawable/splash</item>
-    </style>
-    <style name="Buttons">
-        <item name="android:windowBackground">@color/secondColor</item>
-        <item name="android:background">@color/secondColor</item>
-        <item name="android:textColor">@color/baseColor</item>
-        <item name="android:textColorPrimary">@color/baseColor</item>
-        <item name="android:color">@color/baseColor</item>
-        <item name="android:textColorHint">@color/baseColor</item>
     </style>
 </resources>

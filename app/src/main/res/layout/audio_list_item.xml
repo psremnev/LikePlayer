@@ -5,12 +5,14 @@
     android:id="@+id/audioPlayContent"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:layout_margin="3dp">
+    android:layout_margin="2dp"
+    android:background="@drawable/border"
+    android:padding="2dp">
 
     <LinearLayout
         android:id="@+id/imageLayout"
         android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="2dp">
 
@@ -18,17 +20,15 @@
             android:id="@+id/emptyAlbumPhoto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/album_info"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone"
-            tools:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/emptyAlbumPhotoText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+                android:padding="4dp"
                 android:text="@string/emptyAlbumPhoto"
                 android:textAlignment="center"
                 app:autoSizeMaxTextSize="16sp"
@@ -40,7 +40,8 @@
             android:id="@+id/audioImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            tools:visibility="gone" />
 
     </LinearLayout>
 
@@ -57,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
-            android:padding="6dp"
+            android:padding="3dp"
             android:singleLine="true"
             android:text="Name"
             android:textAlignment="textStart"
@@ -68,23 +69,17 @@
             android:id="@+id/audioArtist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="6dp"
-            android:text="Artist"
-            android:textColor="@color/album_info" />
+            android:padding="3dp"
+            android:text="Artist" />
 
     </LinearLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/audioMenu"
         android:layout_width="48dp"
         android:layout_height="match_parent"
-        android:background="#00FFFFFF"
-        app:icon="@drawable/menu"
-        app:iconGravity="textEnd"
-        app:iconPadding="0dp"
-        app:iconSize="16dp"
-        app:iconTint="#E6E6E6"
+        android:background="@android:color/transparent"
+        android:src="@drawable/menu"
         tools:layout_editor_absoluteX="357dp"
         tools:layout_editor_absoluteY="2dp" />
 

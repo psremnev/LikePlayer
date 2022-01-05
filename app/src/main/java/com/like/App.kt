@@ -10,5 +10,9 @@ class App: Application() {
     // компонент приложения
     val appComponent: AppComponent = DaggerAppComponent.create()
     // компонент MainActivity
-    var mainActivityComponent: MainActivityComponent? = appComponent.mainActivityComponent(MainActivityModules())
+    var mainActivityComponent: MainActivityComponent? = null
+
+    fun createMainActivityComponent() {
+        mainActivityComponent = appComponent.mainActivityComponent(MainActivityModules())
+    }
 }

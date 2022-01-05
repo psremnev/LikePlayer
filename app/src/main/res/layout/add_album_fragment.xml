@@ -12,9 +12,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/secondColor"
         android:gravity="center"
         android:padding="6dp"
-        android:theme="@style/Buttons"
         tools:context=".addAlbumDialog.AddAlbumDialog">
 
         <EditText
@@ -25,7 +25,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@={ model.albumName }"/>
 
         <Button
             android:id="@+id/addAlbumDialogSave"
@@ -34,7 +35,6 @@
             android:onClick="@{ (view) -> model.save()}"
             android:text="@string/addAlbumSaveText"
             android:textSize="8sp"
-            android:theme="@style/Theme.Like"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/addAlbumDialogCancel"
             app:layout_constraintHorizontal_bias="0.0"
@@ -48,7 +48,6 @@
             android:layout_height="46dp"
             android:background="@drawable/close"
             android:onClick="@{ (view) -> model.close()}"
-            android:theme="@style/Buttons"
             app:iconSize="16dp"
             app:iconTint="@color/secondColor"
             app:layout_constraintBottom_toBottomOf="parent"

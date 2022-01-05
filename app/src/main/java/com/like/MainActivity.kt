@@ -1,5 +1,6 @@
 package com.like
 
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
@@ -12,10 +13,15 @@ class MainActivity : AppCompatActivity() {
     var savedInstanceState: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // ставим обычную ориентацию и тему после splash экрана
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+        setTheme(R.style.Theme_Like)
         super.onCreate(savedInstanceState)
 
         this.savedInstanceState = savedInstanceState
         model.onCreate(this)
+        // создаем компоннет даггер MainActivity
+        (application as App).createMainActivityComponent()
     }
 
     override fun onResume() {

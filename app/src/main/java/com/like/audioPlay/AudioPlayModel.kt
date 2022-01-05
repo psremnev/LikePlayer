@@ -86,7 +86,6 @@ class AudioPlayModel: ViewModel() {
         mediaPlayer.start()
         audioTimer?.start()
         playBtn.setImageResource(R.drawable.stop)
-        playBtn.alpha = 0.7F
     }
 
     private fun initPlayBtn() {
@@ -94,7 +93,6 @@ class AudioPlayModel: ViewModel() {
         if (mediaPlayer.isPlaying) {
             playBtnChecked = mediaPlayer.isPlaying
             playBtn.setImageResource(R.drawable.stop)
-            playBtn.alpha = 0.7F
             audioTimer?.start()
         } else {
             mediaPlayer.reset()
@@ -108,12 +106,10 @@ class AudioPlayModel: ViewModel() {
         playBtnChecked = !playBtnChecked
         if (playBtnChecked) {
             playBtn.setImageResource(R.drawable.stop)
-            playBtn.alpha = 0.7F
             mediaPlayer.start()
             audioTimer?.start()
         } else {
             playBtn.setImageResource(R.drawable.play)
-            playBtn.alpha = 1F
             mediaPlayer.pause()
             audioTimer?.cancel()
         }

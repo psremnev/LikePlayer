@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="baseColor">#737373</color>
-    <color name="secondColor">#272727</color>
-    <color name="baseColorDark">#272727</color>
-    <color name="secondColorDark">#737373</color>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="baseColor">#E6E6E6</color>
+    <color name="secondColor">#838C88</color>
+    <color name="thirdColor">#272727</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="audioBtn">#A4BBCF</color>
-    <color name="album_background">#E6E6E6</color>
     <color name="unnacented">#ACACAC</color>
-    <color name="album_info">#83757575</color>
-    <color name="light_blue_600">#FF039BE5</color>
-    <color name="light_blue_900">#FF01579B</color>
-    <color name="light_blue_A200">#FF40C4FF</color>
-    <color name="light_blue_A400">#FF00B0FF</color>
-    <color name="black_overlay">#66000000</color>
-    <color name="progress_color">#3F3F3F</color>
-    <color name="progress_thumb">#00897B</color>
-    <color name="play_buttons">#00897B</color>
+    <color name="marker_color">#EAEAEA</color>
 </resources>
