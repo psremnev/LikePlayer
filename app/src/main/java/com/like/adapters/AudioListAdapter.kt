@@ -4,17 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.like.Constants
-import com.like.MainActivity
-import com.like.MainActivityModel
-import com.like.R
+import com.like.*
 import com.like.dataClass.Audio
+import javax.inject.Inject
 
 class AudioListAdapter(ctx: MainActivity, val data: ArrayList<Audio>):
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
-    private val model = ViewModelProvider(ctx)[MainActivityModel::class.java]
+    @Inject lateinit var model: MainActivityModel
+
+    init {
+        val mainActivityComponent = (ctx.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+    }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val audioPlayContent: LinearLayout = itemView.findViewById(R.id.audioPlayContent)

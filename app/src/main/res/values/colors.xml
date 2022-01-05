@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="baseColor">#E6E6E6</color>
-    <color name="secondColor">#838C88</color>
+    <color name="secondColor">#7C7C7C</color>
     <color name="thirdColor">#272727</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="unnacented">#ACACAC</color>
-    <color name="marker_color">#EAEAEA</color>
+    <color name="marker_color">#000000</color>
 </resources>

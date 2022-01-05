@@ -6,18 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
 import com.like.*
 import com.like.databinding.AddAlbumFragmentBinding
+import javax.inject.Inject
 
 class AddAlbumDialog: DialogFragment() {
-    val model: AddAlbumDialogModel by lazy { ViewModelProvider(activity as MainActivity)[AddAlbumDialogModel::class.java] }
+    @Inject lateinit var model: AddAlbumDialogModel
     lateinit var binding: AddAlbumFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val mainActivityComponent = (activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         binding = DataBindingUtil.inflate(inflater,
             R.layout.add_album_fragment, container, false)
         model.onCreateView(this)

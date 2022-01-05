@@ -242,7 +242,6 @@ class MainActivityModel: ViewModel() {
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun onBindAlbumListViewHolder(adapter: AlbumListAdapter, holder: AlbumListAdapter.ViewHolder, position: Int) {
         val itemData = adapter.getItemData(position)
         holder.binding?.itemData = itemData

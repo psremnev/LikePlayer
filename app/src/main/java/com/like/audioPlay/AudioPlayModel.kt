@@ -9,12 +9,9 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.like.*
 import com.like.audioPlayFullscreen.AudioPlayFullscreen
 import com.like.dataClass.Audio
-import rx.Scheduler
-import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 import java.text.SimpleDateFormat
@@ -23,8 +20,8 @@ import javax.inject.Inject
 
 class AudioPlayModel: ViewModel() {
     lateinit var ctx: AudioPlay
-    @Inject lateinit var mediaPlayer: MediaPlayer
-    val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
+    @Inject lateinit var model: MainActivityModel
+    val mediaPlayer: MediaPlayer = MediaPlayer()
     val name: ObservableField<String> = ObservableField<String>("")
     var progress: ObservableInt = ObservableInt(0)
     val progressObservable: PublishSubject<Int> = PublishSubject.create()
@@ -37,8 +34,8 @@ class AudioPlayModel: ViewModel() {
 
 
     fun  onCreateView(ctx: AudioPlay) {
-        val mainActivityModules = (ctx.activity?.application as App).mainActivityComponent
-        mainActivityModules?.inject(this)
+        val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
         ctx.binding.model = this
     }
 

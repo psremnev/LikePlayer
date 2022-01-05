@@ -3,21 +3,23 @@ package com.like.selectAlbumDialog
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import com.like.App
 import com.like.Interfaces
-import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.dataClass.Audio
+import javax.inject.Inject
 
 class SelectAlbumDialogModel: ViewModel() {
     lateinit var ctx: SelectAlbumDialog
-    val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
+    @Inject lateinit var model: MainActivityModel
     var audioPosition: Int? = null
     lateinit var adapter: ArrayAdapter<Any>
     var choiceMode: Int =  ListView.CHOICE_MODE_SINGLE;
 
     fun onCreateView(ctx:SelectAlbumDialog) {
         this.ctx = ctx
+        val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
         ctx.binding.model = this
     }
 

@@ -5,21 +5,24 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.view.View
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import com.like.App
 import com.like.Constants
-import com.like.MainActivity
 import com.like.MainActivityModel
 import rx.subjects.PublishSubject
 import java.io.FileNotFoundException
+import javax.inject.Inject
 
 class AudioViewPageModel: ViewModel() {
     lateinit var ctx: AudioViewPage
-    val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
+    @Inject lateinit var model: MainActivityModel
     val createViewPositionObservable: PublishSubject<Int> = PublishSubject.create()
     var createViewPosition: Int = 0
 
     fun onCreateView(ctx: AudioViewPage) {
         this.ctx = ctx
+
+        val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
 
         createViewPositionObservable.subscribe{
             createViewPosition = it

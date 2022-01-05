@@ -2,12 +2,12 @@ package com.like.addAlbumDialog
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import com.like.App
 import com.like.Interfaces
-import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.databinding.AddAlbumFragmentBinding
 import com.like.dataClass.Album
+import javax.inject.Inject
 
 class AddAlbumDialogModel: ViewModel() {
 
@@ -15,10 +15,13 @@ class AddAlbumDialogModel: ViewModel() {
     private lateinit var ctx: AddAlbumDialog
     var albumPosition: Int? = null
     var albumName: ObservableField<String> = ObservableField<String>("")
-    val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
+    @Inject lateinit var model: MainActivityModel
 
     fun onCreateView(ctx: AddAlbumDialog) {
         this.ctx = ctx
+        val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         albumPosition = ctx.arguments?.getInt("position")
         albumName.set(ctx.arguments?.getString("name"))
         ctx.binding.model = this

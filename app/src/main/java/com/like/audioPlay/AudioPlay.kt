@@ -6,19 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
-import com.like.MainActivity
+import com.like.App
 import com.like.R
 import com.like.databinding.AudioPlayFragmentBinding
+import javax.inject.Inject
 
 class AudioPlay : Fragment() {
-    private val model by lazy { ViewModelProvider(activity as MainActivity)[AudioPlayModel::class.java] }
+    @Inject lateinit var model: AudioPlayModel
     lateinit var binding: AudioPlayFragmentBinding
     private var fragmentVisibility: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val mainActivityComponent = (activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         fragmentVisibility = container?.visibility == View.VISIBLE
         binding = DataBindingUtil.inflate(inflater,
             R.layout.audio_play_fragment, container, false)

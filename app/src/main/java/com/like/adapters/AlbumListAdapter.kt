@@ -7,21 +7,29 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.like.App
 import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.R
 import com.like.dataClass.Album
 import com.like.databinding.AlbumListItemBinding
+import javax.inject.Inject
 
 
 class AlbumListAdapter(ctx: MainActivity, val data: ArrayList<Album>): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
-    private val model = ViewModelProvider(ctx)[MainActivityModel::class.java]
+    @Inject lateinit var model: MainActivityModel
+
+    init {
+        val mainActivityComponent = (ctx.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+    }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding: AlbumListItemBinding? = DataBindingUtil.bind(itemView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+
         val inflater = LayoutInflater.from(parent.context)
         val binding: AlbumListItemBinding = DataBindingUtil.inflate(
             inflater,

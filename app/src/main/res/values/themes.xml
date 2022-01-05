@@ -4,8 +4,6 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionBar">@color/baseColor</item>
         <item name="android:windowBackground">@color/baseColor</item>
-        <item name="android:textColorPrimary">@color/thirdColor</item>
-        <item name="android:textColor">@color/thirdColor</item>
     </style>
 
     <style name="Theme.Splash" parent="Theme.Like">

@@ -7,7 +7,6 @@ import android.widget.*
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.like.*
 import com.like.adapters.AudioViewPageAdapter
@@ -19,8 +18,8 @@ import javax.inject.Inject
 class AudioPlayFullscreenModel: ViewModel() {
 
     lateinit var ctx: AudioPlayFullscreen
-    val model: MainActivityModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[MainActivityModel::class.java] }
-    private val audioPlayModel: AudioPlayModel by lazy { ViewModelProvider(ctx.activity as MainActivity)[AudioPlayModel::class.java] }
+    @Inject lateinit var model: MainActivityModel
+    @Inject lateinit var audioPlayModel: AudioPlayModel
 
     private var playBtnChecked: Boolean = false;
     private lateinit var nameScrollTimer: CountDownTimer
@@ -28,7 +27,7 @@ class AudioPlayFullscreenModel: ViewModel() {
     val duration: ObservableField<String> = ObservableField<String>("")
     val progressMax: ObservableInt = ObservableInt(0)
     val progress: ObservableInt = ObservableInt(0)
-    @Inject lateinit var mediaPlayer: MediaPlayer
+    val mediaPlayer: MediaPlayer by lazy { audioPlayModel.mediaPlayer }
 
     fun onCreateView(ctx: AudioPlayFullscreen) {
         this.ctx = ctx

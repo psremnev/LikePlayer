@@ -145,11 +145,7 @@ class DataModel(ctx: Context) {
     }
 
     fun initDefaultAlbum(ctx: Context) {
-        val defaultAlbum = Album(
-                Constants.AL_ALBUM_ID,
-                ctx.getString(R.string.allAlbumName),
-                0
-        )
+        val defaultAlbum = Album(Constants.AL_ALBUM_ID, ctx.getString(R.string.allAlbumName), 0)
         val albumCursor = getAlbum(Constants.AL_ALBUM_ID)
         if (albumCursor.count == 0) {
             addAlbum(defaultAlbum)

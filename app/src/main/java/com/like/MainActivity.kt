@@ -6,9 +6,10 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.like.databinding.ActivityMainBinding
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    val model: MainActivityModel by lazy { ViewModelProvider(this)[MainActivityModel::class.java] }
+    @Inject lateinit var model: MainActivityModel
     val binding: ActivityMainBinding by lazy { DataBindingUtil.setContentView(this, R.layout.activity_main) }
     var savedInstanceState: Bundle? = null
 
@@ -18,10 +19,13 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.Theme_Like)
         super.onCreate(savedInstanceState)
 
+        // создаем компоннет даггер MainActivity
+        val app = (application as App)
+        app.createMainActivityComponent(this)
+        app.mainActivityComponent?.inject(this)
+
         this.savedInstanceState = savedInstanceState
         model.onCreate(this)
-        // создаем компоннет даггер MainActivity
-        (application as App).createMainActivityComponent()
     }
 
     override fun onResume() {
@@ -31,8 +35,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         // очищаем dagger компонент MainActivity чтобы он не остался в памяти
         val appComponent = (application as App)
-        appComponent.mainActivityComponent = null
+        appComponent.clearMainActivityComponent()
     }
 }

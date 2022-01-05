@@ -6,19 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.like.MainActivity
+import com.like.App
 import com.like.R
 import com.like.databinding.AudioImageScrollItemBinding
+import javax.inject.Inject
 
 class AudioViewPage(): Fragment() {
-    val model: AudioViewPageModel by lazy { ViewModelProvider(activity as MainActivity)[AudioViewPageModel::class.java] }
+    @Inject lateinit var model: AudioViewPageModel
     lateinit var binding: AudioImageScrollItemBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val mainActivityComponent = (activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         binding = DataBindingUtil.inflate(inflater, R.layout.audio_image_scroll_item, container, false)
         model.onCreateView(this)
         return binding.root

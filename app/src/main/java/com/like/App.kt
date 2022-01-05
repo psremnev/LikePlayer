@@ -1,6 +1,7 @@
 package com.like
 
 import android.app.Application
+import android.content.Context
 import com.like.daggerModules.AppComponent
 import com.like.daggerModules.DaggerAppComponent
 import com.like.daggerModules.MainActivityComponent
@@ -12,7 +13,11 @@ class App: Application() {
     // компонент MainActivity
     var mainActivityComponent: MainActivityComponent? = null
 
-    fun createMainActivityComponent() {
-        mainActivityComponent = appComponent.mainActivityComponent(MainActivityModules())
+    fun createMainActivityComponent(ctx: MainActivity) {
+        mainActivityComponent = appComponent.mainActivityComponent(MainActivityModules(ctx))
+    }
+
+    fun clearMainActivityComponent() {
+        mainActivityComponent = null
     }
 }

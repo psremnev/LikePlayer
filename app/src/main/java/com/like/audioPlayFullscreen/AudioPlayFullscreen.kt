@@ -6,19 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
-import com.like.MainActivity
+import com.like.App
 import com.like.R
 import com.like.databinding.AudioPlayFullscreenFragmentBinding
+import javax.inject.Inject
 
 class AudioPlayFullscreen : DialogFragment() {
-    val model: AudioPlayFullscreenModel by lazy { ViewModelProvider(activity as MainActivity)[AudioPlayFullscreenModel::class.java] }
+    @Inject lateinit var model: AudioPlayFullscreenModel
     lateinit var binding: AudioPlayFullscreenFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val mainActivityComponent = (activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         binding = DataBindingUtil.inflate(inflater,
             R.layout.audio_play_fullscreen_fragment, container, false)
         model.onCreateView(this)
