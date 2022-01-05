@@ -1,17 +1,11 @@
 package com.like
 
 import android.annotation.SuppressLint
-import android.content.ContentUris
 import android.database.Cursor
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.PopupMenu
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,11 +14,9 @@ import com.like.adapters.AlbumListAdapter
 import com.like.adapters.AudioListAdapter
 import com.like.dataClass.Album
 import com.like.dataClass.Audio
-import com.like.selectAlbumDialog.SelectAlbumDialog
 import rx.Observer
 import rx.Subscription
 import rx.schedulers.Schedulers
-import java.io.FileNotFoundException
 import rx.subjects.PublishSubject
 import javax.inject.Inject
 
@@ -36,7 +28,7 @@ class MainActivityModel: ViewModel() {
     lateinit var albumLayoutManager: LinearLayoutManager
     lateinit var audioLayoutManager: LinearLayoutManager
 
-    val albumDataObservable: PublishSubject<Interfaces.AlbumAction> = PublishSubject.create()
+    val albumDataObservable: PublishSubject<AlbumAction> = PublishSubject.create()
     val audioDataObservable: PublishSubject<ArrayList<Audio>> = PublishSubject.create()
     val playItemDataObservable: PublishSubject<Audio> = PublishSubject.create()
     val mediaPlayerStateChangedObservable: PublishSubject<Boolean> = PublishSubject.create()
@@ -263,134 +255,5 @@ class MainActivityModel: ViewModel() {
         }
         albumListLayout.visibility = LinearLayout.GONE
         return true
-    }
-
-    fun onBindAlbumListViewHolder(adapter: AlbumListAdapter, holder: AlbumListAdapter.ViewHolder, position: Int) {
-        val itemData = adapter.getItemData(position)
-        holder.binding?.itemData = itemData
-        holder.binding?.marked = false
-        // инициализируем текущий набор view
-        if (!albumHolderList.containsKey(position)) {
-            albumHolderList[position] = holder
-        }
-
-        // инициализируем маркер
-        if (itemData.id == selectedAlbum) {
-            // изначально и при удалении сбрасываем маркер на альбом Все
-            holder.binding?.marked = true
-            albumPreHolder = holder
-        }
-
-        // обработка лонг тап клика на альбом, открытие меню
-        holder.itemView.setOnLongClickListener { v ->
-                val popup = PopupMenu(v?.context, v)
-                if (itemData.id == Constants.AL_ALBUM_ID) {
-                    popup.menu.add(1, Constants.updateItemId, 1, R.string.emptyUpdateAudioListBtn)
-                } else {
-                    popup.inflate(R.menu.album)
-                }
-                popup.setOnMenuItemClickListener { item ->
-                    when (item?.itemId) {
-                        R.id.edit -> {
-                            val addAlbumFrg: DialogFragment = AddAlbumDialog()
-                            addAlbumFrg.setStyle(
-                                DialogFragment.STYLE_NORMAL,
-                                R.style.ThemeOverlay_AppCompat_Dialog
-                            )
-                            val args = Bundle()
-                            args.putInt("position", position)
-                            args.putString("name", itemData.name)
-                            addAlbumFrg.arguments = args
-                            addAlbumFrg.show(ctx.supportFragmentManager, "addAlbum")
-                        }
-                        R.id.delete -> {
-                            dataModel.deleteAlbum(itemData.id)
-                            albumDataObservable.onNext(object: Interfaces.AlbumAction {
-                                override val action = "delete"
-                                override val data = itemData
-                                override val position = position
-                            })
-                            adapter.notifyItemRemoved(position)
-                            // чтобы сменить маркер на предыдущий элемент и данные
-                            val newPos = position - 1
-
-                            // если маркер на альбоме который удалем то надо сменить его
-                            if (albumHolderList[position]?.binding?.marked == true && newPos >= 0) {
-                                albumPreHolder?.binding?.marked = false // снимаем текущий маркер
-                                // ставим маркер на новый элемент
-                                albumPreHolder = albumHolderList[newPos]
-                                albumPreHolder?.binding?.marked = true
-                                // получаем данные по новому альбому
-                                audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(adapter.getItemData(newPos).id!!))
-                            }
-                        }
-                        Constants.updateItemId -> {
-                            updateAllAudioList()
-                        }
-                    }
-                    true
-                };
-                popup.show();
-            true
-        }
-
-        // обработка клика на альбом
-        holder.itemView.setOnClickListener {
-            selectedAlbum = itemData.id!!
-            if (albumPreHolder !== null) {
-                albumPreHolder?.binding?.marked = false
-            }
-            albumPreHolder = holder
-            holder.binding?.marked = true
-            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(selectedAlbum))
-        }
-    }
-
-    fun onBindAudioListViewHolder(adapter: AudioListAdapter, holder: AudioListAdapter.ViewHolder, position: Int) {
-        val itemData = adapter.getItemData(position)
-        val setArtist = {
-            if (itemData.artist != Constants.unknownArtist) {
-                holder.artist?.text = itemData.artist
-            } else {
-                holder.artist?.text = ""
-            }
-        }
-        val setPhoto = {
-            val sArtworkUri = Uri.parse(Constants.ALBUM_ART_URI)
-            val uri: Uri = ContentUris.withAppendedId(sArtworkUri, itemData.albumId)
-            try {
-                val inputStr = ctx.contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(inputStr)
-                holder.emptyAlbumPhoto.visibility = View.GONE
-                holder.image?.setImageBitmap(bitmap)
-            } catch (e: FileNotFoundException) {
-                holder.emptyAlbumPhoto.visibility = View.VISIBLE
-            }
-        }
-
-        val setListeners = {
-            holder.audioPlayContent.setOnClickListener {
-                playItemPosition = position
-                playItemDataObservable.onNext(itemData).run {
-                    mediaPlayerStateChangedObservable.onNext(true)
-                }
-            }
-            holder.menu?.setOnClickListener{
-                val args = Bundle()
-                args.putInt("audioPosition", position)
-                val frg = SelectAlbumDialog()
-                frg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
-                frg.arguments = args
-                frg.show(ctx.supportFragmentManager, "selectAlbum")
-            }
-        }
-
-        holder.name?.text = itemData.name
-        setArtist()
-        setPhoto()
-        setListeners()
-        if (holder.image?.drawable === null) {
-            holder.emptyAlbumPhoto.visibility = View.VISIBLE
-        }
     }
 }

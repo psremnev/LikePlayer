@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="model"
-            type="com.like.MainActivityModel" />
+            name="listeners"
+            type="com.like.AlbumListeners" />
 
         <variable
             name="itemData"
@@ -23,8 +23,9 @@
         android:layout_width="80dp"
         android:layout_height="30dp"
         android:layout_marginLeft="4dp"
-        android:background="@color/secondColor"
         android:gravity="center"
+        android:onClick="@{ listeners::onClick }"
+        android:onLongClick="@{ listeners::onLongTapClick }"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +75,7 @@
         <LinearLayout
             android:id="@+id/marker"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_height="6dp"
             android:layout_weight="1"
             android:background="@{ marked ? @color/marker_color : @color/secondColor}"
             android:orientation="vertical" />

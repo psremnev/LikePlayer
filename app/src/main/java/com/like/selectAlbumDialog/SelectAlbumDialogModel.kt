@@ -3,8 +3,8 @@ package com.like.selectAlbumDialog
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.lifecycle.ViewModel
+import com.like.AlbumAction
 import com.like.App
-import com.like.Interfaces
 import com.like.MainActivityModel
 import com.like.dataClass.Audio
 import javax.inject.Inject
@@ -52,7 +52,7 @@ class SelectAlbumDialogModel: ViewModel() {
         audioItem.album = albumItem.id!!
         model.dataModel.updateAudio(audioItem)
 
-        model.albumDataObservable.onNext(object: Interfaces.AlbumAction {
+        model.albumDataObservable.onNext(object: AlbumAction {
             override val action = "updateAll"
             override val data = model.dataModel.getAllAlbum()
         })
