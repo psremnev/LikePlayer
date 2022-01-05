@@ -1,11 +1,10 @@
 package com.like
 
 import android.app.Application
-import android.content.Context
-import com.like.daggerModules.AppComponent
-import com.like.daggerModules.DaggerAppComponent
-import com.like.daggerModules.MainActivityComponent
-import com.like.daggerModules.MainActivityModules
+import com.like.dagger.AppComponent
+import com.like.dagger.DaggerAppComponent
+import com.like.dagger.MainActivityComponent
+import com.like.dagger.MainActivityModules
 
 class App: Application() {
     // компонент приложения

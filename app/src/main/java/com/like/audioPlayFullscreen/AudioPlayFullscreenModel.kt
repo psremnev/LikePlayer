@@ -12,6 +12,7 @@ import com.like.*
 import com.like.adapters.AudioViewPageAdapter
 import com.like.audioPlay.AudioPlayModel
 import com.like.dataClass.Audio
+import rx.Subscription
 import rx.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -28,6 +29,8 @@ class AudioPlayFullscreenModel: ViewModel() {
     val progressMax: ObservableInt = ObservableInt(0)
     val progress: ObservableInt = ObservableInt(0)
     val mediaPlayer: MediaPlayer by lazy { audioPlayModel.mediaPlayer }
+    private var progressSubscription: Subscription? = null
+    private var durationSubscription: Subscription? = null
 
     fun onCreateView(ctx: AudioPlayFullscreen) {
         this.ctx = ctx
@@ -46,18 +49,27 @@ class AudioPlayFullscreenModel: ViewModel() {
         subscribeOnDataChange()
     }
 
+    fun onDestroy() {
+        if (progressSubscription != null) {
+            progressSubscription?.unsubscribe()
+        }
+        if (durationSubscription != null) {
+            durationSubscription?.unsubscribe()
+        }
+    }
+
     private fun initUiData() {
         itemData.set(model.playItemData)
         duration.set(audioPlayModel.duration.get())
     }
 
     private fun subscribeOnDataChange() {
-        audioPlayModel.progressObservable
+        progressSubscription = audioPlayModel.progressObservable
             .observeOn(Schedulers.newThread())
             .subscribe {
             progress.set(it)
         }
-        audioPlayModel.durationObservable
+        durationSubscription = audioPlayModel.durationObservable
             .observeOn(Schedulers.newThread())
             .subscribe {
             duration.set(it)

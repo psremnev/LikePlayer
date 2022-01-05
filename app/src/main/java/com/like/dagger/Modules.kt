@@ -1,6 +1,7 @@
-package com.like.daggerModules
+package com.like.dagger
 
 import androidx.lifecycle.ViewModelProvider
+import com.like.DataModel
 import com.like.MainActivity
 import com.like.MainActivityModel
 import com.like.addAlbumDialog.AddAlbumDialogModel
@@ -17,6 +18,11 @@ class AppModules {
 
 @Module
 class MainActivityModules(val ctx: MainActivity) {
+
+    @Provides
+    fun providesDataModel(): DataModel {
+        return DataModel(ctx)
+    }
 
     @Provides
     fun providesMainActivityModel(): MainActivityModel {

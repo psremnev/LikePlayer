@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.like.App
 import com.like.MainActivity
@@ -14,7 +12,6 @@ import com.like.R
 import com.like.dataClass.Album
 import com.like.databinding.AlbumListItemBinding
 import javax.inject.Inject
-
 
 class AlbumListAdapter(ctx: MainActivity, val data: ArrayList<Album>): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
     @Inject lateinit var model: MainActivityModel

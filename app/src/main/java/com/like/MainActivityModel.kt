@@ -22,14 +22,16 @@ import com.like.dataClass.Album
 import com.like.dataClass.Audio
 import com.like.selectAlbumDialog.SelectAlbumDialog
 import rx.Observer
+import rx.Subscription
 import rx.schedulers.Schedulers
 import java.io.FileNotFoundException
 import rx.subjects.PublishSubject
+import javax.inject.Inject
 
 class MainActivityModel: ViewModel() {
     lateinit var ctx: MainActivity
-    val dataModel by lazy { DataModel(ctx) }
-    private var albumHolderList: HashMap<Int, AlbumListAdapter.ViewHolder> = HashMap<Int, AlbumListAdapter.ViewHolder>()
+    @Inject lateinit var dataModel: DataModel
+    private var albumHolderList: HashMap<Int, AlbumListAdapter.ViewHolder> = HashMap()
     private var albumPreHolder: AlbumListAdapter.ViewHolder? = null
     lateinit var albumLayoutManager: LinearLayoutManager
     lateinit var audioLayoutManager: LinearLayoutManager
@@ -38,6 +40,9 @@ class MainActivityModel: ViewModel() {
     val audioDataObservable: PublishSubject<ArrayList<Audio>> = PublishSubject.create()
     val playItemDataObservable: PublishSubject<Audio> = PublishSubject.create()
     val mediaPlayerStateChangedObservable: PublishSubject<Boolean> = PublishSubject.create()
+    var albumDataSubscripton: Subscription? = null
+    var audioDataSubscripton: Subscription? = null
+    var playItemDataSubscripton: Subscription? = null
 
     var audioData: ArrayList<Audio> = ArrayList()
     var albumData: ArrayList<Album> = ArrayList()
@@ -51,16 +56,34 @@ class MainActivityModel: ViewModel() {
 
     fun onCreate(ctx: MainActivity) {
         this.ctx = ctx
+
+        val mainActivityComponent = (ctx.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         ctx.binding.model = this
         if (ctx.savedInstanceState == null) {
             initNewMp3Songs()
             initModelData()
+        } else {
+            setElementsVisibility()
         }
         initLayoutManagers()
     }
 
-    fun onResume(ctx: MainActivity) {
+    fun onResume() {
         subscribeOnObservable()
+    }
+
+    fun onDestroy() {
+        if (albumDataSubscripton != null) {
+            albumDataSubscripton?.unsubscribe()
+        }
+        if (audioDataSubscripton != null) {
+            audioDataSubscripton?.unsubscribe()
+        }
+        if (playItemDataSubscripton != null) {
+            playItemDataSubscripton?.unsubscribe()
+        }
     }
 
     private fun initLayoutManagers () {
@@ -110,7 +133,7 @@ class MainActivityModel: ViewModel() {
     }
 
     private fun subscribeOnObservable() {
-        albumDataObservable
+        albumDataSubscripton = albumDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             when (it.action) {
@@ -133,7 +156,7 @@ class MainActivityModel: ViewModel() {
                 }
             }
         }
-        audioDataObservable
+        audioDataSubscripton =  audioDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             audioData.clear()
@@ -142,7 +165,7 @@ class MainActivityModel: ViewModel() {
             audioListAdapter.notifyDataSetChanged()
         }
 
-        playItemDataObservable
+        playItemDataSubscripton = playItemDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             playItemData = it
@@ -290,10 +313,16 @@ class MainActivityModel: ViewModel() {
                             adapter.notifyItemRemoved(position)
                             // чтобы сменить маркер на предыдущий элемент и данные
                             val newPos = position - 1
-                            // чтобы снять маркер если удаляем не переключаясь на запись
-                            albumPreHolder = albumHolderList[newPos]
-                            albumPreHolder?.binding?.marked = true
-                            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(adapter.getItemData(newPos).id!!))
+
+                            // если маркер на альбоме который удалем то надо сменить его
+                            if (albumHolderList[position]?.binding?.marked == true && newPos >= 0) {
+                                albumPreHolder?.binding?.marked = false // снимаем текущий маркер
+                                // ставим маркер на новый элемент
+                                albumPreHolder = albumHolderList[newPos]
+                                albumPreHolder?.binding?.marked = true
+                                // получаем данные по новому альбому
+                                audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(adapter.getItemData(newPos).id!!))
+                            }
                         }
                         Constants.updateItemId -> {
                             updateAllAudioList()

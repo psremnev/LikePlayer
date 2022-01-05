@@ -16,6 +16,7 @@ class AddAlbumDialogModel: ViewModel() {
     var albumPosition: Int? = null
     var albumName: ObservableField<String> = ObservableField<String>("")
     @Inject lateinit var model: MainActivityModel
+    var isAdd: Boolean = false
 
     fun onCreateView(ctx: AddAlbumDialog) {
         this.ctx = ctx
@@ -24,6 +25,7 @@ class AddAlbumDialogModel: ViewModel() {
 
         albumPosition = ctx.arguments?.getInt("position")
         albumName.set(ctx.arguments?.getString("name"))
+        isAdd = albumName.get() == null
         ctx.binding.model = this
     }
 
@@ -31,16 +33,7 @@ class AddAlbumDialogModel: ViewModel() {
         val name = albumName.get().toString()
         if (name.isNotEmpty()) {
             // если апдейт альбома
-            if (albumPosition !== null) {
-                val item = model.albumData[albumPosition!!]
-                item.name = name
-                model.dataModel.updateAlbum(item)
-                model.albumDataObservable.onNext(object: Interfaces.AlbumAction {
-                    override val action = "update"
-                    override val data = item
-                    override val position: Int = albumPosition!!
-                })
-            } else {
+            if (isAdd) {
                 val newPosition = model.albumData.size + 1
                 // если добавление нового альбома
                 val newAlbum = Album(newPosition, name, 0)
@@ -49,7 +42,17 @@ class AddAlbumDialogModel: ViewModel() {
                     override val action = "add"
                     override val data = newAlbum
                     override val position: Int = newPosition
-                }) }
+                })
+            } else {
+                val item = model.albumData[albumPosition!!]
+                item.name = name
+                model.dataModel.updateAlbum(item)
+                model.albumDataObservable.onNext(object: Interfaces.AlbumAction {
+                    override val action = "update"
+                    override val data = item
+                    override val position: Int = albumPosition!!
+                })
+            }
             close()
         }
     }

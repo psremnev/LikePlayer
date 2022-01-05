@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.like.App
 import com.like.Constants
 import com.like.MainActivityModel
+import rx.Subscription
 import rx.subjects.PublishSubject
 import java.io.FileNotFoundException
 import javax.inject.Inject
@@ -16,7 +17,8 @@ class AudioViewPageModel: ViewModel() {
     lateinit var ctx: AudioViewPage
     @Inject lateinit var model: MainActivityModel
     val createViewPositionObservable: PublishSubject<Int> = PublishSubject.create()
-    var createViewPosition: Int = 0
+    private var createViewPositionSubscription: Subscription? = null
+    private var createViewPosition: Int = 0
 
     fun onCreateView(ctx: AudioViewPage) {
         this.ctx = ctx
@@ -37,6 +39,12 @@ class AudioViewPageModel: ViewModel() {
             ctx.binding.imageView.setImageBitmap(bitmap)
         } catch (e: FileNotFoundException) {
             ctx.binding.noPhoto.visibility = View.VISIBLE
+        }
+    }
+
+    fun onDestroy() {
+        if (createViewPositionSubscription != null) {
+            createViewPositionSubscription?.unsubscribe()
         }
     }
 }

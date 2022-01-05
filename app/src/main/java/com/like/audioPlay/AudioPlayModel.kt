@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import com.like.*
 import com.like.audioPlayFullscreen.AudioPlayFullscreen
 import com.like.dataClass.Audio
+import rx.Subscription
 import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 import java.text.SimpleDateFormat
@@ -31,7 +32,8 @@ class AudioPlayModel: ViewModel() {
     var playBtnChecked: Boolean = false
     var audioTimer: CountDownTimer? = null
     lateinit var itemData: Audio
-
+    private var playItemDataSubscription: Subscription? = null
+    private var mediaPlayerStateChangedSubscription: Subscription? = null
 
     fun  onCreateView(ctx: AudioPlay) {
         val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
@@ -54,8 +56,17 @@ class AudioPlayModel: ViewModel() {
         }
     }
 
+    fun onDestroy() {
+        if (playItemDataSubscription != null) {
+            playItemDataSubscription?.unsubscribe()
+        }
+        if (mediaPlayerStateChangedSubscription != null) {
+            mediaPlayerStateChangedSubscription?.unsubscribe()
+        }
+    }
+
     private fun subscribeOnItemDataChange() {
-        model.playItemDataObservable
+        playItemDataSubscription = model.playItemDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             itemData = it
@@ -65,7 +76,7 @@ class AudioPlayModel: ViewModel() {
             initMediaPlayerData(itemData)
         }
 
-        model.mediaPlayerStateChangedObservable
+        mediaPlayerStateChangedSubscription = model.mediaPlayerStateChangedObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             playAudio()

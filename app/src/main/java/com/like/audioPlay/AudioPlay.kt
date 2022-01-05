@@ -15,6 +15,7 @@ class AudioPlay : Fragment() {
     @Inject lateinit var model: AudioPlayModel
     lateinit var binding: AudioPlayFragmentBinding
     private var fragmentVisibility: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,5 +37,10 @@ class AudioPlay : Fragment() {
         if (fragmentVisibility) {
             model.onStart(this)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        model.onDestroy()
     }
 }

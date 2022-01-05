@@ -26,4 +26,9 @@ class AudioViewPage(): Fragment() {
         model.onCreateView(this)
         return binding.root
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        model.onDestroy()
+    }
 }

@@ -1,6 +1,7 @@
-package com.like.daggerModules
+package com.like.dagger
 
 import com.like.MainActivity
+import com.like.MainActivityModel
 import com.like.adapters.AlbumListAdapter
 import com.like.adapters.AudioListAdapter
 import com.like.adapters.AudioViewPageAdapter
@@ -27,6 +28,7 @@ interface AppComponent {
 @Subcomponent(modules = [MainActivityModules::class])
 interface MainActivityComponent {
     fun inject(mainActivity: MainActivity)
+    fun inject(mainActivityModel: MainActivityModel)
     fun inject(audioPlay: AudioPlay)
     fun inject(ctx: AudioPlayModel)
     fun inject(audioPlay: AudioPlayFullscreen)

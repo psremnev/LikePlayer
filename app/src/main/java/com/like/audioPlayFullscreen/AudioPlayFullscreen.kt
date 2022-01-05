@@ -32,4 +32,9 @@ class AudioPlayFullscreen : DialogFragment() {
         super.onStart()
         model.onStart()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        model.onDestroy()
+    }
 }

@@ -30,12 +30,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        model.onResume(this)
+        model.onResume()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
+        model.onDestroy()
         // очищаем dagger компонент MainActivity чтобы он не остался в памяти
         val appComponent = (application as App)
         appComponent.clearMainActivityComponent()
