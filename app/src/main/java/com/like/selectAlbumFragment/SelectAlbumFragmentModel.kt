@@ -2,6 +2,7 @@ package com.like.selectAlbumFragment
 
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
 import com.like.AlbumAction
 import com.like.App
@@ -25,8 +26,10 @@ class SelectAlbumFragmentModel: ViewModel() {
 
     fun onStart(ctx: SelectAlbumFragment) {
         audioPosition = ctx.arguments?.getInt("audioPosition")
+        ctx.binding.selectAlbumList.post {
+            ctx.binding.selectAlbumList.setItemChecked(model.selectedAlbum - 1, true)
+        }
         initAdapter()
-        ctx.binding.selectAlbumList.setItemChecked(model.selectedAlbum - 1, true)
         ctx.binding.selectAlbumList.setOnItemClickListener {
                 _, _, position, _ -> onItemClick(position)
         }
