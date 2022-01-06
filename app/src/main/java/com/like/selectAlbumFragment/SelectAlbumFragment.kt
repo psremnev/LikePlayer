@@ -20,21 +20,16 @@ class SelectAlbumFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val mainActivityComponent = (activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         binding = DataBindingUtil.inflate(inflater, R.layout.select_album_fragment, container, false)
         model.onCreateView(this)
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        val mainActivityComponent = (activity?.application as App).mainActivityComponent
-        mainActivityComponent?.inject(this)
-
-        super.onCreate(savedInstanceState)
-        model.onCreate(this)
-    }
-
     override fun onStart() {
         super.onStart()
-        model.onStart()
+        model.onStart(this)
     }
 }

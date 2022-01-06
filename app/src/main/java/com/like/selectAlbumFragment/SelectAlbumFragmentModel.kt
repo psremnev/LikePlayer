@@ -23,13 +23,10 @@ class SelectAlbumFragmentModel: ViewModel() {
         ctx.binding.model = this
     }
 
-    fun onCreate(ctx: SelectAlbumFragment) {
+    fun onStart(ctx: SelectAlbumFragment) {
         audioPosition = ctx.arguments?.getInt("audioPosition")
-    }
-
-    fun onStart() {
         initAdapter()
-        ctx.binding.selectAlbumList.setSelection(model.selectedAlbum - 1)
+        ctx.binding.selectAlbumList.setItemChecked(model.selectedAlbum - 1, true)
         ctx.binding.selectAlbumList.setOnItemClickListener {
                 _, _, position, _ -> onItemClick(position)
         }
