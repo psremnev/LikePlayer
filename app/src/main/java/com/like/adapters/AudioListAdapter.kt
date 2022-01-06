@@ -46,10 +46,6 @@ class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //снимаем маркер если перешли на другой альбом
-        if (selectAlbum !== model.selectedAlbum) {
-            isPlayAudio = false
-        }
         val position: Int = holder.adapterPosition
         if (!holderList.contains(holder)) {
             holderList.add(holder)
@@ -89,12 +85,10 @@ class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
             val inputStr = ctx.contentResolver.openInputStream(uri)
             val bitmap = BitmapFactory.decodeStream(inputStr)
             holder.binding?.emptyAlbumPhoto?.visibility = View.GONE
+            holder.binding?.audioImage?.visibility = View.VISIBLE
             holder.binding?.audioImage?.setImageBitmap(bitmap)
         } catch (e: FileNotFoundException) {
-            holder.binding?.emptyAlbumPhoto?.visibility = View.VISIBLE
-        }
-
-        if (holder.binding?.audioImage?.drawable === null) {
+            holder.binding?.audioImage?.visibility = View.GONE
             holder.binding?.emptyAlbumPhoto?.visibility = View.VISIBLE
         }
     }
