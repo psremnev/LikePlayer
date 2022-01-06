@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="itemData"
@@ -7,11 +9,13 @@
         <variable
             name="listeners"
             type="com.like.AudioListeners" />
+        <variable
+            name="isMark"
+            type="Boolean" />
         <import type="com.like.Constants"/>
+        <import type="android.view.View"/>
     </data>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/audioPlayContent"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -28,12 +32,32 @@
             tools:layout_editor_absoluteX="2dp">
 
             <LinearLayout
+                android:id="@+id/audioMarker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{ isMark ? View.VISIBLE : View.GONE }"
+                android:background="@drawable/audio_marker"
+                android:orientation="vertical"
+                android:rotationX="4">
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/audioImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                tools:srcCompat="@tools:sample/avatars"
+                tools:visibility="visible" />
+
+            <LinearLayout
                 android:id="@+id/emptyAlbumPhoto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone"
+                tools:visibility="gone">
 
                 <TextView
                     android:id="@+id/emptyAlbumPhotoText"
@@ -42,17 +66,11 @@
                     android:padding="4dp"
                     android:text="@string/emptyAlbumPhoto"
                     android:textAlignment="center"
+                    android:textColor="@color/secondColor"
                     app:autoSizeMaxTextSize="16sp"
                     app:autoSizeMinTextSize="12sp"
                     app:autoSizeTextType="uniform" />
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/audioImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:srcCompat="@tools:sample/avatars"
-                tools:visibility="gone" />
 
         </LinearLayout>
 
@@ -73,6 +91,7 @@
                 android:singleLine="true"
                 android:text="@{ itemData.name }"
                 android:textAlignment="textStart"
+                android:textColor="@color/secondColor"
                 tools:layout_editor_absoluteX="62dp"
                 tools:layout_editor_absoluteY="14dp" />
 
@@ -81,7 +100,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:text="@{ itemData.artist != Constants.unknownArtist ? itemData.artist : Constants.emptyString }" />
+                android:text="@{ itemData.artist != Constants.unknownArtist ? itemData.artist : Constants.emptyString }"
+                android:textColor="@color/secondColor" />
 
         </LinearLayout>
 

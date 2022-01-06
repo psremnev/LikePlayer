@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.like.addAlbumDialog.AddAlbumDialog
+import com.like.addAlbumFragment.AddAlbumFragment
 import com.like.adapters.AlbumListAdapter
 import com.like.adapters.AudioListAdapter
 import com.like.dataClass.Album
@@ -23,8 +23,6 @@ import javax.inject.Inject
 class MainActivityModel: ViewModel() {
     lateinit var ctx: MainActivity
     @Inject lateinit var dataModel: DataModel
-    private var albumHolderList: HashMap<Int, AlbumListAdapter.ViewHolder> = HashMap()
-    private var albumPreHolder: AlbumListAdapter.ViewHolder? = null
     lateinit var albumLayoutManager: LinearLayoutManager
     lateinit var audioLayoutManager: LinearLayoutManager
 
@@ -32,16 +30,16 @@ class MainActivityModel: ViewModel() {
     val audioDataObservable: PublishSubject<ArrayList<Audio>> = PublishSubject.create()
     val playItemDataObservable: PublishSubject<Audio> = PublishSubject.create()
     val mediaPlayerStateChangedObservable: PublishSubject<Boolean> = PublishSubject.create()
-    var albumDataSubscripton: Subscription? = null
-    var audioDataSubscripton: Subscription? = null
-    var playItemDataSubscripton: Subscription? = null
+    var albumDataSubscription: Subscription? = null
+    var audioDataSubscription: Subscription? = null
+    var playItemDataSubscription: Subscription? = null
 
     var audioData: ArrayList<Audio> = ArrayList()
     var albumData: ArrayList<Album> = ArrayList()
     var playItemData: Audio? = null
 
-    val albumListAdapter: AlbumListAdapter by lazy { AlbumListAdapter(ctx, albumData) }
-    val audioListAdapter: AudioListAdapter by lazy { AudioListAdapter(ctx, audioData) }
+    lateinit var albumListAdapter: AlbumListAdapter
+    lateinit var audioListAdapter: AudioListAdapter
     var playItemPosition: Int = 0
     var selectedAlbum: Int = 1
 
@@ -53,6 +51,7 @@ class MainActivityModel: ViewModel() {
         mainActivityComponent?.inject(this)
 
         ctx.binding.model = this
+        initListAdapters()
         if (ctx.savedInstanceState == null) {
             initNewMp3Songs()
             initModelData()
@@ -67,15 +66,20 @@ class MainActivityModel: ViewModel() {
     }
 
     fun onDestroy() {
-        if (albumDataSubscripton != null) {
-            albumDataSubscripton?.unsubscribe()
+        if (albumDataSubscription != null) {
+            albumDataSubscription?.unsubscribe()
         }
-        if (audioDataSubscripton != null) {
-            audioDataSubscripton?.unsubscribe()
+        if (audioDataSubscription != null) {
+            audioDataSubscription?.unsubscribe()
         }
-        if (playItemDataSubscripton != null) {
-            playItemDataSubscripton?.unsubscribe()
+        if (playItemDataSubscription != null) {
+            playItemDataSubscription?.unsubscribe()
         }
+    }
+
+    fun initListAdapters() {
+        albumListAdapter = AlbumListAdapter(ctx, albumData)
+        audioListAdapter = AudioListAdapter(ctx, audioData)
     }
 
     private fun initLayoutManagers () {
@@ -125,7 +129,7 @@ class MainActivityModel: ViewModel() {
     }
 
     private fun subscribeOnObservable() {
-        albumDataSubscripton = albumDataObservable
+        albumDataSubscription = albumDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             when (it.action) {
@@ -148,7 +152,7 @@ class MainActivityModel: ViewModel() {
                 }
             }
         }
-        audioDataSubscripton =  audioDataObservable
+        audioDataSubscription =  audioDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             audioData.clear()
@@ -157,7 +161,7 @@ class MainActivityModel: ViewModel() {
             audioListAdapter.notifyDataSetChanged()
         }
 
-        playItemDataSubscripton = playItemDataObservable
+        playItemDataSubscription = playItemDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
             playItemData = it
@@ -186,6 +190,7 @@ class MainActivityModel: ViewModel() {
         dataModel.getAllAudioByAlbumIdObservable(Constants.AL_ALBUM_ID)
             .subscribe(object: Observer<Audio> {
                 override fun onCompleted() {
+
                     if (audioData.size != 0) {
                         playItemData = audioData[playItemPosition]
                     }
@@ -204,7 +209,7 @@ class MainActivityModel: ViewModel() {
     }
 
     fun addAlbum() {
-        val addAlbumFrg: DialogFragment = AddAlbumDialog()
+        val addAlbumFrg: DialogFragment = AddAlbumFragment()
         addAlbumFrg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
         addAlbumFrg.show(ctx.supportFragmentManager, "addAlbumDialog")
     }

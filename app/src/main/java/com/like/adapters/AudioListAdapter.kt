@@ -13,13 +13,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.like.*
 import com.like.dataClass.Audio
 import com.like.databinding.AudioListItemBinding
-import com.like.selectAlbumDialog.SelectAlbumDialog
+import com.like.selectAlbumFragment.SelectAlbumFragment
 import java.io.FileNotFoundException
 import javax.inject.Inject
 
 class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
     @Inject lateinit var model: MainActivityModel
+    var selectHolder: ViewHolder? = null
+    var holderList: ArrayList<ViewHolder> = ArrayList()
+    var isPlayAudio: Boolean = false
+    var selectAlbum: Int = 1
 
     init {
         val mainActivityComponent = (ctx.application as App).mainActivityComponent
@@ -42,11 +46,25 @@ class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //снимаем маркер если перешли на другой альбом
+        if (selectAlbum !== model.selectedAlbum) {
+            isPlayAudio = false
+        }
         val position: Int = holder.adapterPosition
+        if (!holderList.contains(holder)) {
+            holderList.add(holder)
+        }
         val itemData = getItemData(position)
         holder.binding?.itemData = itemData
+        holder.binding?.isMark = position == model.playItemPosition && isPlayAudio
         holder.binding?.listeners = object: AudioListeners {
             override fun onAudioClick(view: View) {
+                isPlayAudio = true
+                holder.binding?.isMark = true
+                if (selectHolder != null && holderList.contains(selectHolder)) {
+                    selectHolder?.binding?.audioMarker?.visibility = View.GONE
+                }
+                selectHolder = holder
                 model.playItemPosition = position
                 model.playItemDataObservable.onNext(itemData).run {
                     model.mediaPlayerStateChangedObservable.onNext(true)
@@ -56,7 +74,7 @@ class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
             override fun onAudioMenuClick(view: View) {
                 val args = Bundle()
                 args.putInt("audioPosition", position)
-                val frg = SelectAlbumDialog()
+                val frg = SelectAlbumFragment()
                 frg.setStyle(DialogFragment.STYLE_NORMAL, R.style.ThemeOverlay_AppCompat_Dialog)
                 frg.arguments = args
                 frg.show(ctx.supportFragmentManager, "selectAlbumFragment")

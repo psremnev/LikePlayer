@@ -1,4 +1,4 @@
-package com.like.selectAlbumDialog
+package com.like.selectAlbumFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,24 +11,24 @@ import com.like.R
 import com.like.databinding.SelectAlbumFragmentBinding
 import javax.inject.Inject
 
-class SelectAlbumDialog : DialogFragment() {
+class SelectAlbumFragment : DialogFragment() {
 
-    @Inject lateinit var model: SelectAlbumDialogModel
+    @Inject lateinit var model: SelectAlbumFragmentModel
     lateinit var binding: SelectAlbumFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val mainActivityComponent = (activity?.application as App).mainActivityComponent
-        mainActivityComponent?.inject(this)
-
         binding = DataBindingUtil.inflate(inflater, R.layout.select_album_fragment, container, false)
         model.onCreateView(this)
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val mainActivityComponent = (activity?.application as App).mainActivityComponent
+        mainActivityComponent?.inject(this)
+
         super.onCreate(savedInstanceState)
         model.onCreate(this)
     }

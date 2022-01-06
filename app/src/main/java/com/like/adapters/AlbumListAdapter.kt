@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.like.*
-import com.like.addAlbumDialog.AddAlbumDialog
+import com.like.addAlbumFragment.AddAlbumFragment
 import com.like.dataClass.Album
 import com.like.databinding.AlbumListItemBinding
 import javax.inject.Inject
@@ -63,7 +63,7 @@ class AlbumListAdapter(val ctx: MainActivity, val data: ArrayList<Album>): Recyc
                 popup.setOnMenuItemClickListener { item ->
                     when (item?.itemId) {
                         R.id.edit -> {
-                            val addAlbumFrg: DialogFragment = AddAlbumDialog()
+                            val addAlbumFrg: DialogFragment = AddAlbumFragment()
                             addAlbumFrg.setStyle(
                                 DialogFragment.STYLE_NORMAL,
                                 R.style.ThemeOverlay_AppCompat_Dialog
@@ -109,6 +109,7 @@ class AlbumListAdapter(val ctx: MainActivity, val data: ArrayList<Album>): Recyc
         holder.binding?.itemData = itemData
         holder.binding?.marked = false
         holder.binding?.listeners = listeners
+
         // инициализируем текущий набор view
         if (!albumHolderList.containsKey(position)) {
             albumHolderList[position] = holder

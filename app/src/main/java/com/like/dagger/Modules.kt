@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.like.DataModel
 import com.like.MainActivity
 import com.like.MainActivityModel
-import com.like.addAlbumDialog.AddAlbumDialogModel
-import com.like.audioPlay.AudioPlayModel
-import com.like.audioPlayFullscreen.AudioPlayFullscreenModel
-import com.like.audioViewPage.AudioViewPageModel
-import com.like.selectAlbumDialog.SelectAlbumDialogModel
+import com.like.addAlbumFragment.AddAlbumFragmentModel
+import com.like.audioPlayFragment.AudioPlayFragmentModel
+import com.like.audioPlayFullscreenFragment.AudioPlayFullscreenFragmentModel
+import com.like.audioViewPageFragment.AudioViewPageFragmentModel
+import com.like.selectAlbumFragment.SelectAlbumFragmentModel
 import dagger.Module
 import dagger.Provides
 
@@ -30,27 +30,27 @@ class MainActivityModules(val ctx: MainActivity) {
     }
 
     @Provides
-    fun providesAudioPlayModel(): AudioPlayModel {
-        return ViewModelProvider(ctx)[AudioPlayModel::class.java]
+    fun providesAudioPlayModel(): AudioPlayFragmentModel {
+        return ViewModelProvider(ctx)[AudioPlayFragmentModel::class.java]
     }
 
     @Provides
-    fun providesAudioPlayFullscreenModel(): AudioPlayFullscreenModel {
-        return ViewModelProvider(ctx)[AudioPlayFullscreenModel::class.java]
+    fun providesAudioPlayFullscreenModel(): AudioPlayFullscreenFragmentModel {
+        return ViewModelProvider(ctx)[AudioPlayFullscreenFragmentModel::class.java]
     }
 
     @Provides
-    fun providesAddAlbumDialogModel(): AddAlbumDialogModel {
-        return ViewModelProvider(ctx)[AddAlbumDialogModel::class.java]
+    fun providesAddAlbumDialogModel(): AddAlbumFragmentModel {
+        return ViewModelProvider(ctx)[AddAlbumFragmentModel::class.java]
     }
 
     @Provides
-    fun providesAudioViewPageModel(): AudioViewPageModel {
-        return ViewModelProvider(ctx)[AudioViewPageModel::class.java]
+    fun providesAudioViewPageModel(): AudioViewPageFragmentModel {
+        return ViewModelProvider(ctx)[AudioViewPageFragmentModel::class.java]
     }
 
     @Provides
-    fun providesSelectAlbumDialogModel(): SelectAlbumDialogModel {
-        return ViewModelProvider(ctx)[SelectAlbumDialogModel::class.java]
+    fun providesSelectAlbumDialogModel(): SelectAlbumFragmentModel {
+        return ViewModelProvider(ctx)[SelectAlbumFragmentModel::class.java]
     }
 }

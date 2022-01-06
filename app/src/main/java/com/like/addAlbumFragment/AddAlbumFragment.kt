@@ -1,19 +1,18 @@
-package com.like.audioViewPage
+package com.like.addAlbumFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import com.like.App
-import com.like.R
-import com.like.databinding.AudioImageScrollItemBinding
+import androidx.fragment.app.DialogFragment
+import com.like.*
+import com.like.databinding.AddAlbumFragmentBinding
 import javax.inject.Inject
 
-class AudioViewPage(): Fragment() {
-    @Inject lateinit var model: AudioViewPageModel
-    lateinit var binding: AudioImageScrollItemBinding
+class AddAlbumFragment: DialogFragment() {
+    @Inject lateinit var model: AddAlbumFragmentModel
+    lateinit var binding: AddAlbumFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,13 +21,9 @@ class AudioViewPage(): Fragment() {
         val mainActivityComponent = (activity?.application as App).mainActivityComponent
         mainActivityComponent?.inject(this)
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.audio_image_scroll_item, container, false)
+        binding = DataBindingUtil.inflate(inflater,
+            R.layout.add_album_fragment, container, false)
         model.onCreateView(this)
         return binding.root
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        model.onDestroy()
     }
 }

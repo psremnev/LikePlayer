@@ -6,7 +6,7 @@
 
     <data>
         <variable name="model"
-            type="com.like.audioPlayFullscreen.AudioPlayFullscreenModel" />
+            type="com.like.audioPlayFullscreenFragment.AudioPlayFullscreenFragmentModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,13 +14,14 @@
         android:layout_height="match_parent"
         android:background="@color/secondColor"
         android:orientation="vertical"
-        tools:context=".audioPlayFullscreen.AudioPlayFullscreen">
+        tools:context=".audioPlayFullscreenFragment.AudioPlayFullscreenFragment">
 
         <ImageButton
             android:id="@+id/rollBtn"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginTop="4dp"
+            android:background="@android:color/transparent"
             android:onClick="@{ (view) -> model.onRollBtnClick() }"
             android:src="@drawable/roll_up"
             app:layout_constraintEnd_toEndOf="parent"
@@ -95,6 +96,7 @@
                                 android:layout_marginBottom="2dp"
                                 android:layout_weight="0"
                                 android:textAlignment="center"
+                                android:textColor="@color/baseColor"
                                 tools:text="@{ model.itemData.name }" />
                         </LinearLayout>
                     </HorizontalScrollView>
@@ -107,6 +109,7 @@
                         android:layout_marginBottom="4dp"
                         android:layout_weight="0"
                         android:textAlignment="center"
+                        android:textColor="@color/baseColor"
                         tools:text="@{ model.itemData.artist }" />
 
                     <SeekBar
@@ -118,8 +121,8 @@
                         android:indeterminate="false"
                         android:max="@{ model.progressMax }"
                         android:progress="@{ model.progress }"
-                        android:progressTint="@color/thirdColor"
-                        android:thumbTint="@color/thirdColor" />
+                        android:progressTint="@color/white"
+                        android:thumbTint="@color/white" />
 
                     <TextView
                         android:id="@+id/audioDurationFullscr"
@@ -127,7 +130,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAlignment="center"
-                        tools:text="@{ model.duration }" />
+                        android:textColor="@color/baseColor"
+                        android:text="@{ model.duration }"/>
 
                 </LinearLayout>
 

@@ -5,19 +5,20 @@
 
     <data>
         <variable name="model"
-            type="com.like.selectAlbumDialog.SelectAlbumDialogModel" />
+            type="com.like.selectAlbumFragment.SelectAlbumFragmentModel" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".selectAlbumDialog.SelectAlbumDialog">
+        tools:context=".selectAlbumFragment.SelectAlbumFragment">
 
         <ListView
             android:id="@+id/selectAlbumList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:choiceMode="@{ model.choiceMode }"
-            android:adapter="@{ model.adapter }"/>
+            android:adapter="@{ model.adapter }"
+            android:background="@color/secondColor"
+            android:choiceMode="@{ model.choiceMode }" />
     </FrameLayout>
 </layout>

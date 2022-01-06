@@ -1,19 +1,19 @@
-package com.like.audioPlayFullscreen
+package com.like.audioViewPageFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.like.App
 import com.like.R
-import com.like.databinding.AudioPlayFullscreenFragmentBinding
+import com.like.databinding.AudioImageScrollItemBinding
 import javax.inject.Inject
 
-class AudioPlayFullscreen : DialogFragment() {
-    @Inject lateinit var model: AudioPlayFullscreenModel
-    lateinit var binding: AudioPlayFullscreenFragmentBinding
+class AudioViewPageFragment(): Fragment() {
+    @Inject lateinit var fragmentModel: AudioViewPageFragmentModel
+    lateinit var binding: AudioImageScrollItemBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,19 +22,13 @@ class AudioPlayFullscreen : DialogFragment() {
         val mainActivityComponent = (activity?.application as App).mainActivityComponent
         mainActivityComponent?.inject(this)
 
-        binding = DataBindingUtil.inflate(inflater,
-            R.layout.audio_play_fullscreen_fragment, container, false)
-        model.onCreateView(this)
+        binding = DataBindingUtil.inflate(inflater, R.layout.audio_image_scroll_item, container, false)
+        fragmentModel.onCreateView(this)
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-        model.onStart()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        model.onDestroy()
+        fragmentModel.onDestroy()
     }
 }

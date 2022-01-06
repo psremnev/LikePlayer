@@ -1,20 +1,19 @@
-package com.like.audioPlay
+package com.like.audioPlayFullscreenFragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import com.like.App
 import com.like.R
-import com.like.databinding.AudioPlayFragmentBinding
+import com.like.databinding.AudioPlayFullscreenFragmentBinding
 import javax.inject.Inject
 
-class AudioPlay : Fragment() {
-    @Inject lateinit var model: AudioPlayModel
-    lateinit var binding: AudioPlayFragmentBinding
-    private var fragmentVisibility: Boolean = false
+class AudioPlayFullscreenFragment : DialogFragment() {
+    @Inject lateinit var fragmentModel: AudioPlayFullscreenFragmentModel
+    lateinit var binding: AudioPlayFullscreenFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,24 +22,19 @@ class AudioPlay : Fragment() {
         val mainActivityComponent = (activity?.application as App).mainActivityComponent
         mainActivityComponent?.inject(this)
 
-        fragmentVisibility = container?.visibility == View.VISIBLE
         binding = DataBindingUtil.inflate(inflater,
-            R.layout.audio_play_fragment, container, false)
-        if (fragmentVisibility) {
-            model.onCreateView(this)
-        }
+            R.layout.audio_play_fullscreen_fragment, container, false)
+        fragmentModel.onCreateView(this)
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        if (fragmentVisibility) {
-            model.onStart(this)
-        }
+        fragmentModel.onStart()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        model.onDestroy()
+        fragmentModel.onDestroy()
     }
 }

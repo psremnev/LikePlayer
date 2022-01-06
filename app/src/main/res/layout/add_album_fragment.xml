@@ -6,7 +6,7 @@
 
     <data>
         <variable name="model"
-            type="com.like.addAlbumDialog.AddAlbumDialogModel" />
+            type="com.like.addAlbumFragment.AddAlbumFragmentModel" />
     </data>
 
     <LinearLayout
@@ -15,7 +15,7 @@
         android:background="@color/secondColor"
         android:gravity="center"
         android:padding="6dp"
-        tools:context=".addAlbumDialog.AddAlbumDialog">
+        tools:context=".addAlbumFragment.AddAlbumFragment">
 
         <EditText
             android:id="@+id/addAlbumDialogName"

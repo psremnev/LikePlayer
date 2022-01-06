@@ -1,4 +1,4 @@
-package com.like.audioViewPage
+package com.like.audioViewPageFragment
 
 import android.content.ContentUris
 import android.graphics.BitmapFactory
@@ -13,14 +13,14 @@ import rx.subjects.PublishSubject
 import java.io.FileNotFoundException
 import javax.inject.Inject
 
-class AudioViewPageModel: ViewModel() {
-    lateinit var ctx: AudioViewPage
+class AudioViewPageFragmentModel: ViewModel() {
+    lateinit var ctx: AudioViewPageFragment
     @Inject lateinit var model: MainActivityModel
     val createViewPositionObservable: PublishSubject<Int> = PublishSubject.create()
     private var createViewPositionSubscription: Subscription? = null
     private var createViewPosition: Int = 0
 
-    fun onCreateView(ctx: AudioViewPage) {
+    fun onCreateView(ctx: AudioViewPageFragment) {
         this.ctx = ctx
 
         val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent

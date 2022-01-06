@@ -124,7 +124,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/audioPlay"
-            android:name="com.like.audioPlay.AudioPlay"
+            android:name="com.like.audioPlayFragment.AudioPlayFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -1,26 +1,30 @@
-package com.like.audioPlayFullscreen
+package com.like.audioPlayFullscreenFragment
 
 import android.content.pm.ActivityInfo
 import android.media.MediaPlayer
 import android.os.CountDownTimer
+import android.view.View
 import android.widget.*
+import androidx.core.view.get
+import androidx.core.view.size
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
 import androidx.viewpager2.widget.ViewPager2
 import com.like.*
 import com.like.adapters.AudioViewPageAdapter
-import com.like.audioPlay.AudioPlayModel
+import com.like.audioPlayFragment.AudioPlayFragmentModel
 import com.like.dataClass.Audio
 import rx.Subscription
 import rx.schedulers.Schedulers
+import java.text.FieldPosition
 import javax.inject.Inject
 
-class AudioPlayFullscreenModel: ViewModel() {
+class AudioPlayFullscreenFragmentModel: ViewModel() {
 
-    lateinit var ctx: AudioPlayFullscreen
+    lateinit var ctx: AudioPlayFullscreenFragment
     @Inject lateinit var model: MainActivityModel
-    @Inject lateinit var audioPlayModel: AudioPlayModel
+    @Inject lateinit var audioPlayFragmentModel: AudioPlayFragmentModel
 
     private var playBtnChecked: Boolean = false;
     private lateinit var nameScrollTimer: CountDownTimer
@@ -28,11 +32,12 @@ class AudioPlayFullscreenModel: ViewModel() {
     val duration: ObservableField<String> = ObservableField<String>("")
     val progressMax: ObservableInt = ObservableInt(0)
     val progress: ObservableInt = ObservableInt(0)
-    val mediaPlayer: MediaPlayer by lazy { audioPlayModel.mediaPlayer }
+    val mediaPlayer: MediaPlayer by lazy { audioPlayFragmentModel.mediaPlayer }
     private var progressSubscription: Subscription? = null
     private var durationSubscription: Subscription? = null
+    private var playItemDataSubscription: Subscription? = null
 
-    fun onCreateView(ctx: AudioPlayFullscreen) {
+    fun onCreateView(ctx: AudioPlayFullscreenFragment) {
         this.ctx = ctx
         val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
         mainActivityComponent?.inject(this)
@@ -56,24 +61,34 @@ class AudioPlayFullscreenModel: ViewModel() {
         if (durationSubscription != null) {
             durationSubscription?.unsubscribe()
         }
+        if (playItemDataSubscription != null) {
+            playItemDataSubscription?.unsubscribe()
+        }
     }
 
     private fun initUiData() {
         itemData.set(model.playItemData)
-        duration.set(audioPlayModel.duration.get())
+        duration.set(audioPlayFragmentModel.duration.get())
     }
 
     private fun subscribeOnDataChange() {
-        progressSubscription = audioPlayModel.progressObservable
-            .observeOn(Schedulers.newThread())
+        progressSubscription = audioPlayFragmentModel.progressObservable
+            .subscribeOn(Schedulers.newThread())
             .subscribe {
             progress.set(it)
         }
-        durationSubscription = audioPlayModel.durationObservable
-            .observeOn(Schedulers.newThread())
+        durationSubscription = audioPlayFragmentModel.durationObservable
+            .subscribeOn(Schedulers.newThread())
             .subscribe {
             duration.set(it)
         }
+        playItemDataSubscription = model.playItemDataObservable
+            .subscribeOn(Schedulers.newThread())
+            .subscribe {
+                ctx.binding.audioImageScrollList.currentItem = model.playItemPosition
+                itemData.set(it)
+                initUiData()
+            }
     }
 
     private  fun setOrientationBaseLayout() {
@@ -95,6 +110,7 @@ class AudioPlayFullscreenModel: ViewModel() {
         ctx.binding.audioImageScrollList.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 if (position != model.playItemPosition) {
+                    // обновляем данные
                     val newItemData = model.audioData[position]
                     itemData.set(newItemData)
                     model.playItemPosition = position
@@ -102,6 +118,7 @@ class AudioPlayFullscreenModel: ViewModel() {
                         mediaPlayer.start()
                         ctx.binding.playPauseBtn.setImageResource(R.drawable.pause_fullscr)
                     }
+
                 }
                 super.onPageSelected(position)
             }
@@ -144,11 +161,11 @@ class AudioPlayFullscreenModel: ViewModel() {
         if (playBtnChecked) {
             mediaPlayer.start()
             ctx.binding.playPauseBtn.setImageResource(R.drawable.pause_fullscr)
-            audioPlayModel.audioTimer?.start()
+            audioPlayFragmentModel.audioTimer?.start()
         } else {
             mediaPlayer.pause()
             ctx.binding.playPauseBtn.setImageResource(R.drawable.play_fullscr)
-            audioPlayModel.audioTimer?.cancel()
+            audioPlayFragmentModel.audioTimer?.cancel()
         }
     }
 

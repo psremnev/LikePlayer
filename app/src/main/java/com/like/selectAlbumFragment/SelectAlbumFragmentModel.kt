@@ -1,4 +1,4 @@
-package com.like.selectAlbumDialog
+package com.like.selectAlbumFragment
 
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -9,21 +9,21 @@ import com.like.MainActivityModel
 import com.like.dataClass.Audio
 import javax.inject.Inject
 
-class SelectAlbumDialogModel: ViewModel() {
-    lateinit var ctx: SelectAlbumDialog
+class SelectAlbumFragmentModel: ViewModel() {
+    lateinit var ctx: SelectAlbumFragment
     @Inject lateinit var model: MainActivityModel
     var audioPosition: Int? = null
     lateinit var adapter: ArrayAdapter<Any>
     var choiceMode: Int =  ListView.CHOICE_MODE_SINGLE;
 
-    fun onCreateView(ctx:SelectAlbumDialog) {
+    fun onCreateView(ctx:SelectAlbumFragment) {
         this.ctx = ctx
         val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
         mainActivityComponent?.inject(this)
         ctx.binding.model = this
     }
 
-    fun onCreate(ctx: SelectAlbumDialog) {
+    fun onCreate(ctx: SelectAlbumFragment) {
         audioPosition = ctx.arguments?.getInt("audioPosition")
     }
 

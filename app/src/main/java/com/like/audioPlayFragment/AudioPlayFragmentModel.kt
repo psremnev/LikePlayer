@@ -1,4 +1,4 @@
-package com.like.audioPlay
+package com.like.audioPlayFragment
 
 import android.annotation.SuppressLint
 import android.media.AudioAttributes
@@ -10,7 +10,7 @@ import androidx.databinding.ObservableInt
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import com.like.*
-import com.like.audioPlayFullscreen.AudioPlayFullscreen
+import com.like.audioPlayFullscreenFragment.AudioPlayFullscreenFragment
 import com.like.dataClass.Audio
 import rx.Subscription
 import rx.schedulers.Schedulers
@@ -19,8 +19,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class AudioPlayModel: ViewModel() {
-    lateinit var ctx: AudioPlay
+class AudioPlayFragmentModel: ViewModel() {
+    lateinit var ctx: AudioPlayFragment
     @Inject lateinit var model: MainActivityModel
     val mediaPlayer: MediaPlayer = MediaPlayer()
     val name: ObservableField<String> = ObservableField<String>("")
@@ -35,20 +35,20 @@ class AudioPlayModel: ViewModel() {
     private var playItemDataSubscription: Subscription? = null
     private var mediaPlayerStateChangedSubscription: Subscription? = null
 
-    fun  onCreateView(ctx: AudioPlay) {
+    fun  onCreateView(ctx: AudioPlayFragment) {
         val mainActivityComponent = (ctx.activity?.application as App).mainActivityComponent
         mainActivityComponent?.inject(this)
         ctx.binding.model = this
     }
 
-    fun onStart(ctx: AudioPlay) {
+    fun onStart(ctx: AudioPlayFragment) {
         this.ctx = ctx
-
         itemData = model.playItemData!!
         name.set(itemData.name)
         duration.set(getTime(itemData.duration.toLong()))
         progressMax.set(itemData.duration)
-        subscribeOnItemDataChange()
+        subscribeOnDataChange()
+        mediaPlayerSubscribe()
         audioTimer = getTrackTimer()
         initPlayBtn()
         if (!mediaPlayer.isPlaying) {
@@ -65,7 +65,18 @@ class AudioPlayModel: ViewModel() {
         }
     }
 
-    private fun subscribeOnItemDataChange() {
+    private fun mediaPlayerSubscribe() {
+        mediaPlayer.setOnCompletionListener {
+            model.playItemPosition += 1
+            if (model.playItemPosition < model.audioData.size) {
+                model.playItemDataObservable.onNext(model.audioData[model.playItemPosition])
+                initMediaPlayerData(model.playItemData!!)
+                playAudio()
+            }
+        }
+    }
+
+    private fun subscribeOnDataChange() {
         playItemDataSubscription = model.playItemDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
@@ -84,7 +95,7 @@ class AudioPlayModel: ViewModel() {
     }
 
     fun openFullscreen() {
-        val audioPlayFullscreen= AudioPlayFullscreen()
+        val audioPlayFullscreen= AudioPlayFullscreenFragment()
         audioPlayFullscreen.setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Light_NoTitleBar_Fullscreen)
         audioPlayFullscreen.show(ctx.activity!!.supportFragmentManager, "AudioPlayFullscreen")
     }

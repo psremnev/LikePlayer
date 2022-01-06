@@ -5,16 +5,16 @@ import com.like.MainActivityModel
 import com.like.adapters.AlbumListAdapter
 import com.like.adapters.AudioListAdapter
 import com.like.adapters.AudioViewPageAdapter
-import com.like.addAlbumDialog.AddAlbumDialog
-import com.like.addAlbumDialog.AddAlbumDialogModel
-import com.like.audioPlay.AudioPlay
-import com.like.audioPlay.AudioPlayModel
-import com.like.audioPlayFullscreen.AudioPlayFullscreen
-import com.like.audioPlayFullscreen.AudioPlayFullscreenModel
-import com.like.audioViewPage.AudioViewPage
-import com.like.audioViewPage.AudioViewPageModel
-import com.like.selectAlbumDialog.SelectAlbumDialog
-import com.like.selectAlbumDialog.SelectAlbumDialogModel
+import com.like.addAlbumFragment.AddAlbumFragment
+import com.like.addAlbumFragment.AddAlbumFragmentModel
+import com.like.audioPlayFragment.AudioPlayFragment
+import com.like.audioPlayFragment.AudioPlayFragmentModel
+import com.like.audioPlayFullscreenFragment.AudioPlayFullscreenFragment
+import com.like.audioPlayFullscreenFragment.AudioPlayFullscreenFragmentModel
+import com.like.audioViewPageFragment.AudioViewPageFragment
+import com.like.audioViewPageFragment.AudioViewPageFragmentModel
+import com.like.selectAlbumFragment.SelectAlbumFragment
+import com.like.selectAlbumFragment.SelectAlbumFragmentModel
 import dagger.Component
 import dagger.Subcomponent
 import javax.inject.Singleton
@@ -29,17 +29,17 @@ interface AppComponent {
 interface MainActivityComponent {
     fun inject(mainActivity: MainActivity)
     fun inject(mainActivityModel: MainActivityModel)
-    fun inject(audioPlay: AudioPlay)
-    fun inject(ctx: AudioPlayModel)
-    fun inject(audioPlay: AudioPlayFullscreen)
-    fun inject(audioPlayFullscreenModel: AudioPlayFullscreenModel)
-    fun inject(audioViewPage: AudioViewPage)
-    fun inject(audioViewPage: AudioViewPageModel)
-    fun inject(addAlbumDialog: AddAlbumDialog)
-    fun inject(addAlbumDialogModel: AddAlbumDialogModel)
+    fun inject(audioPlayFragment: AudioPlayFragment)
+    fun inject(ctx: AudioPlayFragmentModel)
+    fun inject(audioPlayFragment: AudioPlayFullscreenFragment)
+    fun inject(audioPlayFullscreenFragmentModel: AudioPlayFullscreenFragmentModel)
+    fun inject(audioViewPageFragment: AudioViewPageFragment)
+    fun inject(audioViewPageFragment: AudioViewPageFragmentModel)
+    fun inject(addAlbumFragment: AddAlbumFragment)
+    fun inject(addAlbumFragmentModel: AddAlbumFragmentModel)
     fun inject(albumListAdapter: AlbumListAdapter)
     fun inject(audioListAdapter: AudioListAdapter)
     fun inject(audioViewPageAdapter: AudioViewPageAdapter)
-    fun inject(selectAlbumDialog: SelectAlbumDialog)
-    fun inject(selectAlbumDialogModel: SelectAlbumDialogModel)
+    fun inject(selectAlbumFragment: SelectAlbumFragment)
+    fun inject(selectAlbumFragmentModel: SelectAlbumFragmentModel)
 }
