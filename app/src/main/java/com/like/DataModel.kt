@@ -92,11 +92,11 @@ class DataModel(ctx: Context) {
         audioValues.clear()
     }
 
-    fun getAlbum(id: Int?): Cursor {
+    private fun getAlbum(id: Int?): Cursor {
         return database.query(DBHelper.DATABASE_ALBUM_NAME, null, "${DBHelper.KEY_ID} = $id", null, null, null, null)
     }
 
-    fun getAlbumCount(id: Int): Int {
+    private fun getAlbumCount(id: Int): Int {
         val cursor: Cursor = database.query(DBHelper.DATABASE_AUDIO_NAME, null, "album=$id", null, null, null, null)
         return cursor.count
     }
@@ -128,7 +128,7 @@ class DataModel(ctx: Context) {
         database.delete(DBHelper.DATABASE_ALBUM_NAME, "id=${id}", null);
     }
 
-    fun getAllAlbum(): ArrayList<Album> {
+    private fun getAllAlbum(): ArrayList<Album> {
         val albumsData = ArrayList<Album>()
         val cursor: Cursor =
             database.query(DBHelper.DATABASE_ALBUM_NAME, null, null, null, null, null, null)
