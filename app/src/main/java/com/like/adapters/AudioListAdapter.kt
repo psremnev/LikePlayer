@@ -19,11 +19,9 @@ import javax.inject.Inject
 
 class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {
-    @Inject lateinit var model: MainActivityModel
     var selectHolder: ViewHolder? = null
     var holderList: ArrayList<ViewHolder> = ArrayList()
     var isPlayAudio: Boolean = false
-    var selectAlbum: Int = 1
 
     init {
         val mainActivityComponent = (ctx.application as App).mainActivityComponent
@@ -52,7 +50,7 @@ class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
         }
         val itemData = getItemData(position)
         holder.binding?.itemData = itemData
-        holder.binding?.isMark = position == model.playItemPosition && isPlayAudio
+        holder.binding?.isMark = position == ctx.model.playItemPosition && isPlayAudio
         holder.binding?.listeners = object: AudioListeners {
             override fun onAudioClick(view: View) {
                 isPlayAudio = true
@@ -61,9 +59,9 @@ class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
                     selectHolder?.binding?.audioMarker?.visibility = View.GONE
                 }
                 selectHolder = holder
-                model.playItemPosition = position
-                model.playItemDataObservable.onNext(itemData).run {
-                    model.mediaPlayerStateChangedObservable.onNext(true)
+                ctx.model.playItemPosition = position
+                ctx.model.playItemDataObservable.onNext(itemData).run {
+                    ctx.model.mediaPlayerStateChangedObservable.onNext(true)
                 }
             }
 

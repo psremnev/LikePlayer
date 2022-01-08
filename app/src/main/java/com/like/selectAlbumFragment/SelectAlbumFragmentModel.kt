@@ -2,7 +2,6 @@ package com.like.selectAlbumFragment
 
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
 import com.like.AlbumAction
 import com.like.App
