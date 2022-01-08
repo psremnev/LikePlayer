@@ -18,11 +18,6 @@ class AlbumListAdapter(val ctx: MainActivity, val data: ArrayList<Album>): Recyc
     private var albumPreHolder: ViewHolder? = null
     private var albumHolderList: HashMap<Int, ViewHolder> = HashMap()
 
-    init {
-        val mainActivityComponent = (ctx.application as App).mainActivityComponent
-        mainActivityComponent?.inject(this)
-    }
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding: AlbumListItemBinding? = DataBindingUtil.bind(itemView)
     }

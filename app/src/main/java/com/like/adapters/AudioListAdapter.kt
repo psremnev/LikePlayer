@@ -23,11 +23,6 @@ class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
     var holderList: ArrayList<ViewHolder> = ArrayList()
     var isPlayAudio: Boolean = false
 
-    init {
-        val mainActivityComponent = (ctx.application as App).mainActivityComponent
-        mainActivityComponent?.inject(this)
-    }
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding: AudioListItemBinding? = DataBindingUtil.bind(itemView)
     }
