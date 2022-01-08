@@ -3,7 +3,6 @@ package com.like.selectAlbumFragment
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.lifecycle.ViewModel
-import com.like.AlbumAction
 import com.like.App
 import com.like.MainActivityModel
 import com.like.dataClass.Audio
@@ -46,16 +45,12 @@ class SelectAlbumFragmentModel: ViewModel() {
 
     private fun onItemClick(position: Int) {
         val albumItem = model.albumData[position]
-        albumItem.audioCount = albumItem.audioCount.plus(1)
+        albumItem.audioCount = albumItem.audioCount?.plus(1)
         val audioItem: Audio = model.playItemData!!
         audioItem.album = albumItem.id!!
         model.dataModel.updateAudio(audioItem)
 
-        model.albumDataObservable.onNext(object: AlbumAction {
-            override val action = "updateAll"
-            override val data = model.dataModel.getAllAlbum()
-        })
-
-        model.audioDataObservable.onNext(model.dataModel.getAllAudioByAlbumId(model.selectedAlbum))
+        model.updateAudioList()
+        model.updateAlbumList()
     }
 }

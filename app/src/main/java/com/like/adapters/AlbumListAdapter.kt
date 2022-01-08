@@ -12,7 +12,6 @@ import com.like.*
 import com.like.addAlbumFragment.AddAlbumFragment
 import com.like.dataClass.Album
 import com.like.databinding.AlbumListItemBinding
-import javax.inject.Inject
 
 class AlbumListAdapter(val ctx: MainActivity, val data: ArrayList<Album>): RecyclerView.Adapter<AlbumListAdapter.ViewHolder>()  {
     private var albumPreHolder: ViewHolder? = null
@@ -44,7 +43,8 @@ class AlbumListAdapter(val ctx: MainActivity, val data: ArrayList<Album>): Recyc
                 }
                 albumPreHolder = holder
                 holder.binding?.marked = true
-                ctx.model.audioDataObservable.onNext(ctx.model.dataModel.getAllAudioByAlbumId(ctx.model.selectedAlbum))
+                ctx.model.audioData.clear()
+                ctx.model.updateAudioList()
             }
 
             override fun onLongTapClick(view: View): Boolean {
@@ -69,13 +69,8 @@ class AlbumListAdapter(val ctx: MainActivity, val data: ArrayList<Album>): Recyc
                             addAlbumFrg.show(ctx.supportFragmentManager, "addAlbum")
                         }
                         R.id.delete -> {
-                            ctx.model.dataModel.deleteAlbum(itemData.id)
-                            ctx.model.albumDataObservable.onNext(object: AlbumAction {
-                                override val action = "delete"
-                                override val data = itemData
-                                override val position = position
-                            })
-                            notifyItemRemoved(position)
+                            ctx.model.deleteAlbum(itemData, position)
+
                             // чтобы сменить маркер на предыдущий элемент и данные
                             val newPos = position - 1
 
@@ -86,11 +81,11 @@ class AlbumListAdapter(val ctx: MainActivity, val data: ArrayList<Album>): Recyc
                                 albumPreHolder = albumHolderList[newPos]
                                 albumPreHolder?.binding?.marked = true
                                 // получаем данные по новому альбому
-                                ctx.model.audioDataObservable.onNext(ctx.model.dataModel.getAllAudioByAlbumId(getItemData(newPos).id!!))
+                                ctx.model.updateAudioList()
                             }
                         }
                         Constants.updateItemId -> {
-                            ctx.model.updateAllAudioList()
+                            ctx.model.updateAudioList()
                         }
                     }
                     true

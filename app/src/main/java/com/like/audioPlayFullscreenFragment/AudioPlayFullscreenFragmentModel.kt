@@ -3,10 +3,7 @@ package com.like.audioPlayFullscreenFragment
 import android.content.pm.ActivityInfo
 import android.media.MediaPlayer
 import android.os.CountDownTimer
-import android.view.View
 import android.widget.*
-import androidx.core.view.get
-import androidx.core.view.size
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
@@ -17,7 +14,6 @@ import com.like.audioPlayFragment.AudioPlayFragmentModel
 import com.like.dataClass.Audio
 import rx.Subscription
 import rx.schedulers.Schedulers
-import java.text.FieldPosition
 import javax.inject.Inject
 
 class AudioPlayFullscreenFragmentModel: ViewModel() {

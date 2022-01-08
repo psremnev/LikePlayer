@@ -97,7 +97,7 @@
                     android:id="@+id/updateAudioListBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="@{ (view) -> model.updateAllAudioList() }"
+                    android:onClick="@{ (view) -> model.updateNewAudio() }"
                     android:text="@string/emptyUpdateAudioListBtn" />
             </LinearLayout>
 

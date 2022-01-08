@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
@@ -26,12 +27,8 @@ class MainActivityModel: ViewModel() {
     lateinit var albumLayoutManager: LinearLayoutManager
     lateinit var audioLayoutManager: LinearLayoutManager
 
-    val albumDataObservable: PublishSubject<AlbumAction> = PublishSubject.create()
-    val audioDataObservable: PublishSubject<ArrayList<Audio>> = PublishSubject.create()
     val playItemDataObservable: PublishSubject<Audio> = PublishSubject.create()
     val mediaPlayerStateChangedObservable: PublishSubject<Boolean> = PublishSubject.create()
-    var albumDataSubscription: Subscription? = null
-    var audioDataSubscription: Subscription? = null
     var playItemDataSubscription: Subscription? = null
 
     var audioData: ArrayList<Audio> = ArrayList()
@@ -42,6 +39,7 @@ class MainActivityModel: ViewModel() {
     lateinit var audioListAdapter: AudioListAdapter
     var playItemPosition: Int = 0
     var selectedAlbum: Int = 1
+    var search: String = ""
 
 
     fun onCreate(ctx: MainActivity) {
@@ -52,6 +50,7 @@ class MainActivityModel: ViewModel() {
 
         ctx.binding.model = this
         initListAdapters()
+        initSearch()
         if (ctx.savedInstanceState == null) {
             initNewMp3Songs()
             initModelData()
@@ -62,18 +61,18 @@ class MainActivityModel: ViewModel() {
     }
 
     fun onResume() {
-        subscribeOnObservable()
+        subscribeOnDataChange()
     }
 
     fun onDestroy() {
-        if (albumDataSubscription != null) {
-            albumDataSubscription?.unsubscribe()
-        }
-        if (audioDataSubscription != null) {
-            audioDataSubscription?.unsubscribe()
-        }
         if (playItemDataSubscription != null) {
             playItemDataSubscription?.unsubscribe()
+        }
+    }
+
+    fun initSearch() {
+        if (search.isNotEmpty()) {
+            ctx.binding.searchAudio.setQuery(search, false)
         }
     }
 
@@ -120,7 +119,7 @@ class MainActivityModel: ViewModel() {
         }
     }
 
-    fun updateAllAudioList() {
+    fun updateNewAudio() {
         initNewMp3Songs()
         audioData.clear()
         audioData.addAll(dataModel.getAllAudioByAlbumId(Constants.AL_ALBUM_ID))
@@ -128,39 +127,7 @@ class MainActivityModel: ViewModel() {
         audioListAdapter.notifyDataSetChanged()
     }
 
-    private fun subscribeOnObservable() {
-        albumDataSubscription = albumDataObservable
-            .subscribeOn(Schedulers.newThread())
-            .subscribe {
-            when (it.action) {
-                "updateAll" -> {
-                    albumData.clear()
-                    albumData.addAll(it.data as ArrayList<Album>)
-                    albumListAdapter.notifyDataSetChanged()
-                }
-                "add" -> {
-                    albumData.add(it.data as Album)
-                    albumListAdapter.notifyItemInserted(it.position!!)
-                }
-                "delete" -> {
-                    albumData.remove(it.data as Album)
-                    albumListAdapter.notifyItemRemoved(it.position!!)
-                }
-                "update" -> {
-                    albumData[it.position!!] = it.data as Album
-                    albumListAdapter.notifyItemChanged(it.position!!)
-                }
-            }
-        }
-        audioDataSubscription =  audioDataObservable
-            .subscribeOn(Schedulers.newThread())
-            .subscribe {
-            audioData.clear()
-            audioData.addAll(it)
-            setElementsVisibility()
-            audioListAdapter.notifyDataSetChanged()
-        }
-
+    private fun subscribeOnDataChange() {
         playItemDataSubscription = playItemDataObservable
             .subscribeOn(Schedulers.newThread())
             .subscribe {
@@ -172,6 +139,32 @@ class MainActivityModel: ViewModel() {
         // инициализируем альбом по умолчанию
         dataModel.initDefaultAlbum(ctx)
         // инициализируем альбомы
+        updateAlbumList()
+        // инициализируем аудио лист
+        updateAudioList()
+    }
+
+    fun addAlbum(data: Album, position: Int) {
+        dataModel.addAlbum(data)
+        albumData.add(data)
+        albumListAdapter.notifyItemInserted(position)
+    }
+
+    fun updateAlbum(data: Album, position: Int) {
+        dataModel.updateAlbum(data)
+        albumData[position] = data
+        albumListAdapter.notifyItemChanged(position)
+    }
+
+    fun deleteAlbum(data: Album, position: Int) {
+        dataModel.deleteAlbum(data.id)
+        albumData.remove(data)
+        albumListAdapter.notifyItemRemoved(position)
+        updateAlbumList()
+    }
+
+    fun updateAlbumList() {
+        albumData.clear()
         dataModel.getAllAlbumObservable()
             .subscribe(object: Observer<Album> {
                 override fun onCompleted() {
@@ -186,26 +179,35 @@ class MainActivityModel: ViewModel() {
                     albumData.add(t!!)
                 }
             })
-        // инициализируем аудио лист
-        dataModel.getAllAudioByAlbumIdObservable(Constants.AL_ALBUM_ID)
-            .subscribe(object: Observer<Audio> {
-                override fun onCompleted() {
+    }
 
-                    if (audioData.size != 0) {
-                        playItemData = audioData[playItemPosition]
-                    }
-                    setElementsVisibility()
-                    audioListAdapter.notifyDataSetChanged()
-                }
+    fun updateAudioList() {
+        audioData.clear()
+        val observer: Observer<Audio> = object: Observer<Audio> {
+            override fun onCompleted() {
 
-                override fun onError(e: Throwable?) {
-                    return
+                if (audioData.size != 0 && playItemData == null) {
+                    playItemData = audioData[playItemPosition]
                 }
+                setElementsVisibility()
+                audioListAdapter.notifyDataSetChanged()
+            }
 
-                override fun onNext(t: Audio?) {
-                    audioData.add(t!!)
-                }
-        })
+            override fun onError(e: Throwable?) {
+                Log.d("MainActivityModel", "UpdateAudioListError")
+            }
+
+            override fun onNext(t: Audio?) {
+                audioData.add(t!!)
+            }
+        }
+        if (search.isNotEmpty()) {
+            dataModel.getAllAudioBySearchObservable(search)
+                .subscribe(observer)
+        } else {
+            dataModel.getAllAudioByAlbumIdObservable(selectedAlbum)
+                .subscribe(observer)
+        }
     }
 
     fun addAlbum() {
@@ -227,13 +229,18 @@ class MainActivityModel: ViewModel() {
         } else {
             audioList.visibility = View.GONE
             audioPlay.visibility = View.GONE
-            if (selectedAlbum == Constants.AL_ALBUM_ID) {
+            if (selectedAlbum == Constants.AL_ALBUM_ID && search.isEmpty()) {
                 updateEmptyView.visibility = View.VISIBLE
                 emptyView.visibility = View.GONE
             } else {
                 updateEmptyView.visibility = View.GONE
                 emptyView.visibility = View.VISIBLE
             }
+        }
+        if (search.isEmpty()) {
+            ctx.binding.albumListLayout.visibility = LinearLayout.VISIBLE
+        } else {
+            ctx.binding.albumListLayout.visibility = LinearLayout.GONE
         }
         if (playItemData == null) {
             audioPlay.visibility= View.GONE
@@ -246,17 +253,19 @@ class MainActivityModel: ViewModel() {
         val search = ctx.binding.searchAudio
         val albumListLayout = ctx.binding.albumListLayout
         if (newText == "") {
-            audioDataObservable.onNext(dataModel.getAllAudioByAlbumId(selectedAlbum))
+            updateAudioList()
             albumListLayout.visibility = LinearLayout.VISIBLE
             search.isIconified = true
         }
         return false
     }
 
+
     fun onSearchTextSubmit(query: String?): Boolean {
         val albumListLayout = ctx.binding.albumListLayout
         query?.let {
-            audioDataObservable.onNext(dataModel.getAllAudioBySearch(it))
+            search = it
+            updateAudioList()
         }
         albumListLayout.visibility = LinearLayout.GONE
         return true

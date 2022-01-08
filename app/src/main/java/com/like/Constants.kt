@@ -13,6 +13,5 @@ object Constants {
     // uri обложек аудиозаписей
     const val ALBUM_ART_URI = "content://media/external/audio/albumart"
     const val updateItemId = 1
-    const val updateDataProgressMax = 100
     const val emptyString = ""
 }

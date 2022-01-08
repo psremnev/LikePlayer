@@ -19,11 +19,14 @@ class DataModel(ctx: Context) {
 
     fun getAllAudioByAlbumIdObservable(albumId: Int): Observable<Audio> {
         return Observable.from(getAllAudioByAlbumId(albumId))
-            .observeOn(Schedulers.newThread())
     }
 
     fun getAllAlbumObservable(): Observable<Album> {
-        return Observable.from(getAllAlbum()).observeOn(Schedulers.newThread())
+        return Observable.from(getAllAlbum())
+    }
+
+    fun getAllAudioBySearchObservable(searchString: String): Observable<Audio> {
+        return Observable.from(getAllAudioBySearch(searchString))
     }
 
     fun getAllAudioByAlbumId(albumId: Int): ArrayList<Audio> {
@@ -108,7 +111,9 @@ class DataModel(ctx: Context) {
 
     fun updateAlbum(data: Album) {
         albumValues.put(DBHelper.KEY_NAME, data.name)
-        albumValues.put(DBHelper.KEY_AUDIO_COUNT, data.audioCount)
+        if (data.audioCount != null) {
+            albumValues.put(DBHelper.KEY_AUDIO_COUNT, data.audioCount)
+        }
         database.update(DBHelper.DATABASE_ALBUM_NAME, albumValues,"id=${data.id}", null);
         albumValues.clear()
     }

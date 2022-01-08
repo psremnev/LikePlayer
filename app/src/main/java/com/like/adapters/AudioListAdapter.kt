@@ -15,7 +15,6 @@ import com.like.dataClass.Audio
 import com.like.databinding.AudioListItemBinding
 import com.like.selectAlbumFragment.SelectAlbumFragment
 import java.io.FileNotFoundException
-import javax.inject.Inject
 
 class AudioListAdapter(val ctx: MainActivity, val data: ArrayList<Audio>):
     RecyclerView.Adapter<AudioListAdapter.ViewHolder>() {

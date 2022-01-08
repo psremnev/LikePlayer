@@ -2,7 +2,6 @@ package com.like.addAlbumFragment
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
-import com.like.AlbumAction
 import com.like.App
 import com.like.MainActivityModel
 import com.like.databinding.AddAlbumFragmentBinding
@@ -37,21 +36,11 @@ class AddAlbumFragmentModel: ViewModel() {
                 val newPosition = model.albumData.size + 1
                 // если добавление нового альбома
                 val newAlbum = Album(newPosition, name, 0)
-                model.dataModel.addAlbum(newAlbum)
-                model.albumDataObservable.onNext(object: AlbumAction {
-                    override val action = "add"
-                    override val data = newAlbum
-                    override val position: Int = newPosition
-                })
+                model.addAlbum(newAlbum, newPosition)
             } else {
                 val item = model.albumData[albumPosition!!]
                 item.name = name
-                model.dataModel.updateAlbum(item)
-                model.albumDataObservable.onNext(object: AlbumAction {
-                    override val action = "update"
-                    override val data = item
-                    override val position: Int = albumPosition!!
-                })
+                model.updateAlbum(item, albumPosition!!)
             }
             close()
         }
